@@ -40,6 +40,11 @@ services:
     volumes:
       - wp_database:/var/www/html/wp-content/database
       - wp_uploads:/var/www/html/wp-content/uploads
+    extra_hosts:
+      - "qaservices.wschilexpress.com:135.237.61.242"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     restart: unless-stopped
 
   db:

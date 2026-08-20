@@ -37,6 +37,11 @@ services:
       - ./baselines:/var/www/baselines:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      # Docker Desktop a veces no sigue el CNAME de Azure (cURL error 6).
+      - "qaservices.wschilexpress.com:135.237.61.242"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     restart: unless-stopped
 
   db:

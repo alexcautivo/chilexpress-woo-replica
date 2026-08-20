@@ -52,6 +52,28 @@ function cxp_chilexpress_log_http( $response, $context, $class, $parsed_args, $u
 	}
 	error_log( '[CXP HTTP] ' . ( $parsed_args['method'] ?? 'GET' ) . ' ' . $url . ' → ' . $code . ' body=' . $body );
 }
+
+add_action( 'http_api_curl', 'cxp_chilexpress_curl_resolve', 10, 3 );
+
+function cxp_chilexpress_curl_resolve( $handle, $parsed_args, $url ) {
+	if ( ! is_resource( $handle ) && ! ( $handle instanceof CurlHandle ) ) {
+		return;
+	}
+	if ( ! is_string( $url ) || false === stripos( $url, 'qaservices.wschilexpress.com' ) ) {
+		return;
+	}
+	if ( ! defined( 'CURLOPT_RESOLVE' ) ) {
+		return;
+	}
+	curl_setopt(
+		$handle,
+		CURLOPT_RESOLVE,
+		array(
+			'qaservices.wschilexpress.com:443:135.237.61.242',
+			'qaservices.wschilexpress.com:80:135.237.61.242',
+		)
+	);
+}
 add_action( 'cxp_debug_console_panels', 'cxp_chilexpress_apis_console' );
 add_action( 'admin_post_cxp_cxp_save_keys', 'cxp_chilexpress_apis_save' );
 

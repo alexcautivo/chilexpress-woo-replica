@@ -51,7 +51,7 @@ final class Cxp_Stack_Versions {
 			#cxp-dbg-stack p,#cxp-dbg-stack td,#cxp-dbg-stack th,#cxp-dbg-stack label{margin:0 0 8px;color:#bbf7d0 !important;-webkit-text-fill-color:#bbf7d0}
 			#cxp-dbg-stack p strong,#cxp-dbg-stack h4{color:#fff200 !important;-webkit-text-fill-color:#fff200}
 			#cxp-dbg-stack .cxp-lab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
-			#cxp-dbg-stack select,#cxp-dbg-stack input[type=text],#cxp-dbg-stack input[type=email]{color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5;background:#1e293b;border:1px solid #3d4d66;border-radius:6px;padding:4px 8px;min-width:140px}
+			#cxp-dbg-stack select,#cxp-dbg-stack input[type=text],#cxp-dbg-stack input[type=email],#cxp-dbg-stack option{color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5 !important;background:#1e293b !important;background-color:#1e293b !important;border:1px solid #64748b !important;border-radius:6px;padding:4px 8px;min-width:140px;color-scheme:dark}
 			#cxp-dbg-stack .ok{color:#86efac !important;-webkit-text-fill-color:#86efac}
 			#cxp-dbg-stack .bad{color:#fca5a5 !important;-webkit-text-fill-color:#fca5a5}
 			#cxp-dbg-stack pre{margin:8px 0 0;max-height:200px;overflow:auto;white-space:pre-wrap;color:#f8fafc !important;-webkit-text-fill-color:#f8fafc !important;background:#020617 !important;padding:8px;border-radius:6px;border:1px solid #334155}

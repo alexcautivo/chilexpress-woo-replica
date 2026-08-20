@@ -49,7 +49,7 @@ final class Cxp_Plugin_Lab {
 			#cxp-dbg-lab .cxp-ver{color:#86efac;font-weight:700}
 			#cxp-dbg-lab .is-off{color:#fca5a5}
 			#cxp-dbg-lab .cxp-lab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
-			#cxp-dbg-lab input[type=file],#cxp-dbg-lab select{color:#e8edf5;background:#1e293b;border:1px solid #3d4d66;border-radius:6px;padding:4px 8px}
+		#cxp-dbg-lab input,#cxp-dbg-lab select,#cxp-dbg-lab option{color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5 !important;background:#1e293b !important;background-color:#1e293b !important;border:1px solid #64748b !important;border-radius:6px;padding:4px 8px;color-scheme:dark}
 			#cxp-dbg-lab .is-safe{color:#fde68a}
 		</style>
 		<div id="cxp-dbg-lab">

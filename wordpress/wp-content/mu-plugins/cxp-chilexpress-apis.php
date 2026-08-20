@@ -149,7 +149,7 @@ function cxp_chilexpress_apis_console() {
 		#cxp-dbg-apis th{color:#fff200;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 		#cxp-dbg-apis .ok{color:#86efac}
 		#cxp-dbg-apis .off{color:#fca5a5}
-		#cxp-dbg-apis input[type=text]{width:100%;max-width:420px;background:#1e293b;border:1px solid #3d4d66;color:#e8edf5;border-radius:6px;padding:4px 8px}
+		#cxp-dbg-apis input,#cxp-dbg-apis select,#cxp-dbg-apis option{width:100%;max-width:420px;background:#1e293b !important;background-color:#1e293b !important;border:1px solid #64748b !important;color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5 !important;border-radius:6px;padding:4px 8px;color-scheme:dark}
 		#cxp-dbg-apis .cxp-lab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
 		#cxp-dbg-apis a{color:#93c5fd}
 	</style>

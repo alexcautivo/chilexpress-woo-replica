@@ -82,7 +82,31 @@ final class Cxp_Debug_Console {
 		<style id="cxp-debug-console-css">
 			#cxp-dbg{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5;text-align:left;color-scheme:dark}
 			#cxp-dbg *{box-sizing:border-box;color:inherit}
-			#cxp-dbg a,#cxp-dbg button,#cxp-dbg p,#cxp-dbg td,#cxp-dbg th,#cxp-dbg span,#cxp-dbg label,#cxp-dbg strong,#cxp-dbg pre,#cxp-dbg h3{color:#e8edf5;-webkit-text-fill-color:#e8edf5}
+			#cxp-dbg a,#cxp-dbg button,#cxp-dbg p,#cxp-dbg td,#cxp-dbg th,#cxp-dbg span,#cxp-dbg label,#cxp-dbg strong,#cxp-dbg pre,#cxp-dbg h3,#cxp-dbg code,#cxp-dbg em{color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5}
+			#cxp-dbg select,#cxp-dbg input,#cxp-dbg textarea,#cxp-dbg option{
+				appearance:auto;
+				color:#e8edf5 !important;
+				-webkit-text-fill-color:#e8edf5 !important;
+				background:#1e293b !important;
+				background-color:#1e293b !important;
+				border:1px solid #64748b !important;
+				border-radius:6px;
+				padding:4px 8px;
+				color-scheme:dark;
+				caret-color:#f8fafc
+			}
+			#cxp-dbg select option,#cxp-dbg optgroup{
+				background:#0f172a !important;
+				background-color:#0f172a !important;
+				color:#e8edf5 !important;
+				-webkit-text-fill-color:#e8edf5 !important
+			}
+			#cxp-dbg input::placeholder,#cxp-dbg textarea::placeholder{
+				color:#94a3b8 !important;
+				-webkit-text-fill-color:#94a3b8 !important;
+				opacity:1
+			}
+			#cxp-dbg input[type=checkbox],#cxp-dbg input[type=radio]{accent-color:#38bdf8;background:#1e293b !important;width:auto;height:auto}
 			#cxp-dbg-bar{display:flex;gap:10px;align-items:center;min-height:36px;padding:6px 12px;border-top:1px solid #3d4d66;background:#111827;cursor:pointer;user-select:none}
 			#cxp-dbg-bar strong{color:#fff200 !important;-webkit-text-fill-color:#fff200;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 			#cxp-dbg-credit{color:#93c5fd !important;-webkit-text-fill-color:#93c5fd;font-size:11px;white-space:nowrap}

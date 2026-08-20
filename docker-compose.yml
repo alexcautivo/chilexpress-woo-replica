@@ -1,0 +1,61 @@
+# Replica local — Informe tecnico celularesenventa.cl / SR-108688
+# 3 servicios: db (MariaDB 11), wordpress (php8.4-apache, puerto 8080), wpcli.
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+
+  wordpress:
+    image: wordpress:7.0.4-php8.4-apache
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: "1"
+    volumes:
+      - wp_data:/var/www/html
+      - ./chilexpress-oficial:/var/www/html/wp-content/plugins/chilexpress-oficial
+    depends_on:
+      db:
+        condition: service_healthy
+
+  wpcli:
+    image: wordpress:cli-php8.4
+    user: "33:33"
+    working_dir: /var/www/html
+    environment:
+      HOME: /tmp
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wp_data:/var/www/html
+      - ./chilexpress-oficial:/var/www/html/wp-content/plugins/chilexpress-oficial
+    depends_on:
+      wordpress:
+        condition: service_started
+      db:
+        condition: service_healthy
+    command: ["sleep", "infinity"]
+
+volumes:
+  db_data:
+  wp_data:

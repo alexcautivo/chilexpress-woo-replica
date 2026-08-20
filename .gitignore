@@ -1,0 +1,13 @@
+runtime/
+downloads/
+wordpress/wp-content/database/
+wordpress/wp-content/debug.log
+wordpress/wp-content/uploads/
+wordpress/wp-content/cache/
+wordpress/wp-content/upgrade/
+wordpress/wp-content/upgrade-temp-backup/
+wordpress/wp-config.php
+*.zip
+*.log
+.DS_Store
+Thumbs.db

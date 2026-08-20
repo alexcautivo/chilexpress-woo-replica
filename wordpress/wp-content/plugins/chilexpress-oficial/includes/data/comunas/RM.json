@@ -1,0 +1,505 @@
+{
+    "coverageAreas": [
+        {
+            "countyCode": "ALHU",
+            "coverageName": "ALHUE"
+        },
+        {
+            "countyCode": "AJAH",
+            "coverageName": "ALTO JAHUEL"
+        },
+        {
+            "countyCode": "BATU",
+            "coverageName": "BATUCO"
+        },
+        {
+            "countyCode": "BUIN",
+            "coverageName": "BUIN"
+        },
+        {
+            "countyCode": "LIND",
+            "coverageName": "BUIN - LINDEROS"
+        },
+        {
+            "countyCode": "MAIP",
+            "coverageName": "BUIN - MAIPO"
+        },
+        {
+            "countyCode": "VANE",
+            "coverageName": "BUIN - VALDIVIA DE PAINE"
+        },
+        {
+            "countyCode": "CTAN",
+            "coverageName": "CALERA DE TANGO"
+        },
+        {
+            "countyCode": "LOSC",
+            "coverageName": "CERRILLOS"
+        },
+        {
+            "countyCode": "LERR",
+            "coverageName": "CERRILLOS - LO ERRAZURIZ"
+        },
+        {
+            "countyCode": "CNAV",
+            "coverageName": "CERRO NAVIA"
+        },
+        {
+            "countyCode": "CHIC",
+            "coverageName": "CHICUREO"
+        },
+        {
+            "countyCode": "COLI",
+            "coverageName": "COLINA"
+        },
+        {
+            "countyCode": "CCHA",
+            "coverageName": "CONCHALI"
+        },
+        {
+            "countyCode": "CRCV",
+            "coverageName": "CURACAVI"
+        },
+        {
+            "countyCode": "BUST",
+            "coverageName": "CURACAVI - BUSTAMANTE"
+        },
+        {
+            "countyCode": "CUYU",
+            "coverageName": "CURACAVI - CUYUNCAVI"
+        },
+        {
+            "countyCode": "EORO",
+            "coverageName": "CURACAVI - EL TORO"
+        },
+        {
+            "countyCode": "LACH",
+            "coverageName": "CURACAVI - LA CHUPALLA"
+        },
+        {
+            "countyCode": "LASR",
+            "coverageName": "CURACAVI - LAS ROSAS"
+        },
+        {
+            "countyCode": "LEPE",
+            "coverageName": "CURACAVI - LEPE"
+        },
+        {
+            "countyCode": "LOLE",
+            "coverageName": "CURACAVI - LOLENCO"
+        },
+        {
+            "countyCode": "LOPA",
+            "coverageName": "CURACAVI - LOS PANGUILES"
+        },
+        {
+            "countyCode": "PATA",
+            "coverageName": "CURACAVI - PATAGUILLA"
+        },
+        {
+            "countyCode": "ELBO",
+            "coverageName": "EL BOSQUE"
+        },
+        {
+            "countyCode": "ELMO",
+            "coverageName": "EL MONTE"
+        },
+        {
+            "countyCode": "ELPA",
+            "coverageName": "EL MONTE - EL PAICO"
+        },
+        {
+            "countyCode": "LOCH",
+            "coverageName": "EL MONTE - LO CHACON"
+        },
+        {
+            "countyCode": "ECEN",
+            "coverageName": "ESTACION CENTRAL"
+        },
+        {
+            "countyCode": "HUEC",
+            "coverageName": "HUECHURABA"
+        },
+        {
+            "countyCode": "LRAS",
+            "coverageName": "HUECHURABA - LAS CANTERAS"
+        },
+        {
+            "countyCode": "INDE",
+            "coverageName": "INDEPENDENCIA"
+        },
+        {
+            "countyCode": "IMAI",
+            "coverageName": "ISLA DE MAIPO"
+        },
+        {
+            "countyCode": "ELHU",
+            "coverageName": "ISLA DE MAIPO - EL HUERTO"
+        },
+        {
+            "countyCode": "NATA",
+            "coverageName": "ISLA DE MAIPO - NANTAGUA"
+        },
+        {
+            "countyCode": "SAVN",
+            "coverageName": "ISLA DE MAIPO - SAN VICENTE NANTAGUA"
+        },
+        {
+            "countyCode": "LACI",
+            "coverageName": "LA CISTERNA"
+        },
+        {
+            "countyCode": "LAFL",
+            "coverageName": "LA FLORIDA"
+        },
+        {
+            "countyCode": "LAGR",
+            "coverageName": "LA GRANJA"
+        },
+        {
+            "countyCode": "LAPI",
+            "coverageName": "LA PINTANA"
+        },
+        {
+            "countyCode": "LARE",
+            "coverageName": "LA REINA"
+        },
+        {
+            "countyCode": "LAMP",
+            "coverageName": "LAMPA"
+        },
+        {
+            "countyCode": "LCON",
+            "coverageName": "LAS CONDES"
+        },
+        {
+            "countyCode": "LOBA",
+            "coverageName": "LO BARNECHEA"
+        },
+        {
+            "countyCode": "LOES",
+            "coverageName": "LO ESPEJO"
+        },
+        {
+            "countyCode": "LOPR",
+            "coverageName": "LO PRADO"
+        },
+        {
+            "countyCode": "LONQ",
+            "coverageName": "LONQUEN"
+        },
+        {
+            "countyCode": "MACU",
+            "coverageName": "MACUL"
+        },
+        {
+            "countyCode": "MIPU",
+            "coverageName": "MAIPU"
+        },
+        {
+            "countyCode": "LASM",
+            "coverageName": "MAIPU - LAS MARIPOSAS"
+        },
+        {
+            "countyCode": "MALL",
+            "coverageName": "MALLOCO"
+        },
+        {
+            "countyCode": "MAPI",
+            "coverageName": "MARIA PINTO"
+        },
+        {
+            "countyCode": "MELI",
+            "coverageName": "MELIPILLA"
+        },
+        {
+            "countyCode": "BOLL",
+            "coverageName": "MELIPILLA - BOLLENAR"
+        },
+        {
+            "countyCode": "CICO",
+            "coverageName": "MELIPILLA - CANAL DEL PAICO"
+        },
+        {
+            "countyCode": "CABA",
+            "coverageName": "MELIPILLA - CARMEN BAJO"
+        },
+        {
+            "countyCode": "CAAS",
+            "coverageName": "MELIPILLA - CARMEN DE LAS ROSAS"
+        },
+        {
+            "countyCode": "CHOC",
+            "coverageName": "MELIPILLA - CHOCALAN"
+        },
+        {
+            "countyCode": "LQUI",
+            "coverageName": "MELIPILLA - CHOLQUI"
+        },
+        {
+            "countyCode": "IGUA",
+            "coverageName": "MELIPILLA - CODIGUA"
+        },
+        {
+            "countyCode": "CULI",
+            "coverageName": "MELIPILLA - CULIPRAN"
+        },
+        {
+            "countyCode": "ESME",
+            "coverageName": "MELIPILLA - ESMERALDA"
+        },
+        {
+            "countyCode": "CHUN",
+            "coverageName": "MELIPILLA - HUECHUN"
+        },
+        {
+            "countyCode": "LLPU",
+            "coverageName": "MELIPILLA - LA LUMBRERA DE PUANGUE"
+        },
+        {
+            "countyCode": "ACIA",
+            "coverageName": "MELIPILLA - LAS ACACIAS"
+        },
+        {
+            "countyCode": "NDOS",
+            "coverageName": "MELIPILLA - LOS GUINDOS"
+        },
+        {
+            "countyCode": "LOMO",
+            "coverageName": "MELIPILLA - LOS MOLINOS"
+        },
+        {
+            "countyCode": "LTOS",
+            "coverageName": "MELIPILLA - LOS PATOS"
+        },
+        {
+            "countyCode": "MACO",
+            "coverageName": "MELIPILLA - MALLARAUCO"
+        },
+        {
+            "countyCode": "MAND",
+            "coverageName": "MELIPILLA - MANDINGA"
+        },
+        {
+            "countyCode": "PABE",
+            "coverageName": "MELIPILLA - PABELLON"
+        },
+        {
+            "countyCode": "PAHU",
+            "coverageName": "MELIPILLA - PAHUILMO"
+        },
+        {
+            "countyCode": "POMA",
+            "coverageName": "MELIPILLA - POMAIRE"
+        },
+        {
+            "countyCode": "POPE",
+            "coverageName": "MELIPILLA - POPETA"
+        },
+        {
+            "countyCode": "PUAN",
+            "coverageName": "MELIPILLA - PUANGUE"
+        },
+        {
+            "countyCode": "SANJ",
+            "coverageName": "MELIPILLA - SAN JOSE"
+        },
+        {
+            "countyCode": "PETA",
+            "coverageName": "MELIPILLA - SAN JUAN DE POPETA"
+        },
+        {
+            "countyCode": "SANM",
+            "coverageName": "MELIPILLA - SAN MANUEL"
+        },
+        {
+            "countyCode": "LENA",
+            "coverageName": "MELIPILLA - SANTA ELENA"
+        },
+        {
+            "countyCode": "AURA",
+            "coverageName": "MELIPILLA - SANTA LAURA"
+        },
+        {
+            "countyCode": "UENA",
+            "coverageName": "MELIPILLA - YERBA BUENA"
+        },
+        {
+            "countyCode": "NOSO",
+            "coverageName": "NOS"
+        },
+        {
+            "countyCode": "NUNO",
+            "coverageName": "NUNOA"
+        },
+        {
+            "countyCode": "PHUR",
+            "coverageName": "PADRE HURTADO"
+        },
+        {
+            "countyCode": "ANZA",
+            "coverageName": "PADRE HURTADO - CASAS DE LA ESPERANZA"
+        },
+        {
+            "countyCode": "ENIR",
+            "coverageName": "PADRE HURTADO - EL PORVENIR"
+        },
+        {
+            "countyCode": "PAIN",
+            "coverageName": "PAINE"
+        },
+        {
+            "countyCode": "TURA",
+            "coverageName": "PAINE - ANGOSTURA"
+        },
+        {
+            "countyCode": "HADA",
+            "coverageName": "PAINE - CHADA"
+        },
+        {
+            "countyCode": "CHAM",
+            "coverageName": "PAINE - CHAMPA"
+        },
+        {
+            "countyCode": "AJIA",
+            "coverageName": "PAINE - EL AJIAL"
+        },
+        {
+            "countyCode": "ERAL",
+            "coverageName": "PAINE - EL PERAL"
+        },
+        {
+            "countyCode": "HOSP",
+            "coverageName": "PAINE - HOSPITAL"
+        },
+        {
+            "countyCode": "HUEL",
+            "coverageName": "PAINE - HUELQUEN"
+        },
+        {
+            "countyCode": "GLOR",
+            "coverageName": "PAINE - LA GLORIA"
+        },
+        {
+            "countyCode": "TURB",
+            "coverageName": "PAINE - LA TURBINA"
+        },
+        {
+            "countyCode": "ACUL",
+            "coverageName": "PAINE - LAGUNA DE ACULEO"
+        },
+        {
+            "countyCode": "PIUE",
+            "coverageName": "PAINE - PINTUE"
+        },
+        {
+            "countyCode": "MANS",
+            "coverageName": "PAINE - QUEBRADA DE MANSEL"
+        },
+        {
+            "countyCode": "PEDR",
+            "coverageName": "PEDRO AGUIRRE CERDA"
+        },
+        {
+            "countyCode": "PENA",
+            "coverageName": "PENAFLOR"
+        },
+        {
+            "countyCode": "PLOL",
+            "coverageName": "PENALOLEN"
+        },
+        {
+            "countyCode": "PIRQ",
+            "coverageName": "PIRQUE"
+        },
+        {
+            "countyCode": "ISPI",
+            "coverageName": "PIRQUE - ISLA DE PIRQUE"
+        },
+        {
+            "countyCode": "PROV",
+            "coverageName": "PROVIDENCIA"
+        },
+        {
+            "countyCode": "PUDA",
+            "coverageName": "PUDAHUEL"
+        },
+        {
+            "countyCode": "AERO",
+            "coverageName": "PUDAHUEL - AEROPUERTO A.M. BENITEZ"
+        },
+        {
+            "countyCode": "LOSM",
+            "coverageName": "PUDAHUEL - LOS MAITENES"
+        },
+        {
+            "countyCode": "PALT",
+            "coverageName": "PUENTE ALTO"
+        },
+        {
+            "countyCode": "QILI",
+            "coverageName": "QUILICURA"
+        },
+        {
+            "countyCode": "QNOR",
+            "coverageName": "QUINTA NORMAL"
+        },
+        {
+            "countyCode": "RECO",
+            "coverageName": "RECOLETA"
+        },
+        {
+            "countyCode": "CERR",
+            "coverageName": "RECOLETA - CERRO BLANCO"
+        },
+        {
+            "countyCode": "RENC",
+            "coverageName": "RENCA"
+        },
+        {
+            "countyCode": "SBER",
+            "coverageName": "SAN BERNARDO"
+        },
+        {
+            "countyCode": "SJOA",
+            "coverageName": "SAN JOAQUIN"
+        },
+        {
+            "countyCode": "SJOS",
+            "coverageName": "SAN JOSE DE MAIPO"
+        },
+        {
+            "countyCode": "SMIG",
+            "coverageName": "SAN MIGUEL"
+        },
+        {
+            "countyCode": "SNPD",
+            "coverageName": "SAN PEDRO"
+        },
+        {
+            "countyCode": "SRAM",
+            "coverageName": "SAN RAMON"
+        },
+        {
+            "countyCode": "STGO",
+            "coverageName": "SANTIAGO CENTRO"
+        },
+        {
+            "countyCode": "TALA",
+            "coverageName": "TALAGANTE"
+        },
+        {
+            "countyCode": "TILT",
+            "coverageName": "TIL TIL"
+        },
+        {
+            "countyCode": "POLP",
+            "coverageName": "TIL TIL - POLPAICO"
+        },
+        {
+            "countyCode": "VITA",
+            "coverageName": "VITACURA"
+        }
+    ],
+    "dateUpdated": "2026-08-20 17:53:27"
+}

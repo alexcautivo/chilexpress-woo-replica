@@ -104,7 +104,7 @@ function cxp_chilexpress_seed_shop() {
 	return array(
 		'name'       => 'Tienda Replica Providencia',
 		'phone'      => '222234567',
-		'email'      => 'alexander.cautivo+testwordpress@aeolabs.io',
+		'email'      => function_exists( 'cxp_lab_email' ) ? cxp_lab_email() : 'alexander.cautivo+testwordpress@aeolabs.io',
 		'region'     => 'RM',
 		'comuna'     => 'PROVIDENCIA',
 		'comuna_code'=> 'PROV',
@@ -118,7 +118,7 @@ function cxp_chilexpress_seed_destination() {
 	return array(
 		'first_name' => 'Juan',
 		'last_name'  => 'Espoz',
-		'email'      => 'alexander.cautivo+testwordpress@aeolabs.io',
+		'email'      => function_exists( 'cxp_lab_email' ) ? cxp_lab_email() : 'alexander.cautivo+testwordpress@aeolabs.io',
 		'phone'      => '912345678',
 		'country'    => 'CL',
 		'state'      => 'RM',

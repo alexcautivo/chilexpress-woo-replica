@@ -70,3 +70,23 @@ function cxp_docs_dir() {
 	}
 	return dirname( ABSPATH ) . '/docs';
 }
+
+function cxp_lab_email_default() {
+	return 'alexander.cautivo+testwordpress@aeolabs.io';
+}
+
+function cxp_lab_email() {
+	$opt = function_exists( 'get_option' ) ? get_option( 'cxp_lab_email', '' ) : '';
+	if ( is_string( $opt ) && is_email( $opt ) ) {
+		return $opt;
+	}
+	$env = function_exists( 'cxp_env' ) ? cxp_env( 'CXP_LAB_EMAIL', '' ) : '';
+	if ( is_string( $env ) && is_email( $env ) ) {
+		return $env;
+	}
+	$admin = function_exists( 'get_option' ) ? get_option( 'admin_email', '' ) : '';
+	if ( is_string( $admin ) && is_email( $admin ) ) {
+		return $admin;
+	}
+	return cxp_lab_email_default();
+}

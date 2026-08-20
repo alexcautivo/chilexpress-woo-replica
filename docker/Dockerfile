@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		libzip-dev \
 		libicu-dev \
 		libonig-dev \
+		libsqlite3-dev \
 		unzip \
 		less \
 		curl \
@@ -31,7 +32,8 @@ COPY chilexpress-oficial/ /var/www/chilexpress-oficial/
 COPY baselines/ /var/www/baselines/
 COPY wordpress/ /var/www/html/
 
-RUN chmod +x /usr/local/bin/cxp-entrypoint.sh \
+RUN sed -i 's/\r$//' /usr/local/bin/cxp-entrypoint.sh \
+	&& chmod +x /usr/local/bin/cxp-entrypoint.sh \
 	&& mkdir -p /var/www/html/wp-content/database /var/www/html/wp-content/uploads \
 	&& chown -R www-data:www-data /var/www/html /var/www/docs
 

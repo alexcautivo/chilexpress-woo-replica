@@ -98,7 +98,16 @@ cp wordpress/wp-config.sample.php wordpress/wp-config.php
 bash start.sh
 ```
 
-`start.sh` espera PHP 8.4.19 en `runtime/php-8.4.19/` (Windows). En Linux/macOS:
+`start.sh` usa la PHP de `runtime/php-VERSION/` (Windows). La versión sale de `PHP_VERSION`, o de `runtime/.php-version` (consola → **Preparar esta PHP**), o 8.4.19 por defecto.
+
+```bash
+# Una sola vez, sin tocar la consola:
+PHP_VERSION=8.3.33 bash start.sh
+
+# O descarga el ZIP y deja la preferencia:
+bash tools/fetch-php.sh 8.3.33
+bash start.sh
+```
 
 ```bash
 cp wordpress/wp-config.sample.php wordpress/wp-config.php

@@ -133,7 +133,7 @@ Semilla de tienda (datos de prueba del plugin, no secretos de producción): TCC 
 - No parchea `chilexpress-oficial`.
 - No envía correo real con `php -S` (no hay MTA).
 - SQLite no corre el SQL de *reserved stock* de Woo: hold de checkout = 0 minutos.
-- PHP no se cambia desde la consola: se cambia en Docker (`.env` → `PHP_VERSION`) o en `runtime/`.
+- PHP se cambia desde la consola (**Preparar esta PHP**) y reiniciando `start.sh`, o en Docker (`.env` → `PHP_VERSION` + rebuild).
 
 Manual de cada botón: [consola-replica.md](consola-replica.md).  
 Despliegue en Dokploy: [dokploy.md](dokploy.md).

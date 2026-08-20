@@ -10,7 +10,7 @@ Este archivo es seguro para un repo **público**: no incluye subscription keys n
 |---|---|
 | Usuario | `admin` |
 | Contraseña | `admin` |
-| Email | `alexander.cautivo+testwordpress@aeolabs.io` |
+| Email | `alexander.cautivo+testwordpress@aeolabs.io` (cambiable en consola → **Correo de laboratorio**) |
 | Auto-login | solo localhost, o `CXP_AUTO_LOGIN=1` |
 
 **Cambia `admin` en cuanto el contenedor sea público (Dokploy).**

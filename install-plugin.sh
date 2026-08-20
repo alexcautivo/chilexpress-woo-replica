@@ -2,9 +2,11 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-PHP="$ROOT/runtime/php-8.4.19/php.exe"
-INI="$ROOT/runtime/php-8.4.19/php.ini"
-export PHPRC="$ROOT/runtime/php-8.4.19"
+# shellcheck source=tools/php-runtime.sh
+. "$ROOT/tools/php-runtime.sh"
+cxp_php_setup "$ROOT" || exit 1
+PHP="$CXP_PHP"
+INI="${CXP_INI:-}"
 
 cd "$ROOT"
 
@@ -14,12 +16,21 @@ found=0
 for zip in "$ROOT/drop-plugins"/*.zip "$ROOT/drop-plugins"/*.ZIP; do
   found=1
   echo "  -> $(basename "$zip")"
-  "$PHP" -c "$INI" -r "
-    \$zip = new ZipArchive();
-    if (\$zip->open('$zip') !== true) { fwrite(STDERR, 'No se pudo abrir el zip\n'); exit(1); }
-    \$zip->extractTo('$ROOT/wordpress/wp-content/plugins');
-    \$zip->close();
-  "
+  if [ -n "$INI" ]; then
+    "$PHP" -c "$INI" -r "
+      \$zip = new ZipArchive();
+      if (\$zip->open('$zip') !== true) { fwrite(STDERR, 'No se pudo abrir el zip\n'); exit(1); }
+      \$zip->extractTo('$ROOT/wordpress/wp-content/plugins');
+      \$zip->close();
+    "
+  else
+    "$PHP" -r "
+      \$zip = new ZipArchive();
+      if (\$zip->open('$zip') !== true) { fwrite(STDERR, 'No se pudo abrir el zip\n'); exit(1); }
+      \$zip->extractTo('$ROOT/wordpress/wp-content/plugins');
+      \$zip->close();
+    "
+  fi
 done
 
 if [ "$found" -eq 0 ]; then

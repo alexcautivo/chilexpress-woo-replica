@@ -303,7 +303,7 @@ function cxp_checkout_debug_customer_data() {
 	return array(
 		'first_name' => 'Juan',
 		'last_name'  => 'Espoz',
-		'email'      => 'alexander.cautivo+testwordpress@aeolabs.io',
+		'email'      => function_exists( 'cxp_lab_email' ) ? cxp_lab_email() : 'alexander.cautivo+testwordpress@aeolabs.io',
 		'country'    => 'CL',
 		'state'      => 'RM',
 		'city'       => 'LA REINA',
@@ -487,7 +487,7 @@ function cxp_checkout_debug_configure() {
 		return;
 	}
 
-	$email = 'alexander.cautivo+testwordpress@aeolabs.io';
+	$email = function_exists( 'cxp_lab_email' ) ? cxp_lab_email() : 'alexander.cautivo+testwordpress@aeolabs.io';
 	update_option( 'admin_email', $email );
 	$user = get_user_by( 'login', 'admin' );
 	if ( $user ) {

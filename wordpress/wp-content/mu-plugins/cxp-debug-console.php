@@ -147,6 +147,7 @@ final class Cxp_Debug_Console {
 						<span id="cxp-dbg-copied" hidden>Copiado</span>
 					</div>
 				</div>
+				<?php do_action( 'cxp_debug_console_panels' ); ?>
 				<div id="cxp-dbg-orders">
 					<p><strong>Pedidos</strong> — <?php echo esc_html( (string) count( $orders ) ); ?> actuales. Bórralos todos o uno por uno (definitivo, sin papelera).</p>
 					<table>
@@ -185,7 +186,6 @@ final class Cxp_Debug_Console {
 						</tbody>
 					</table>
 				</div>
-				<?php do_action( 'cxp_debug_console_panels' ); ?>
 				<div id="cxp-dbg-plugins">
 					<p><strong>Plugins instalados</strong> — <?php echo esc_html( (string) count( $inventory['rows'] ) ); ?> ítems. Copia la lista completa o cada uno con su versión.</p>
 					<table>

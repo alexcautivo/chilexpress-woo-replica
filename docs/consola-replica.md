@@ -63,18 +63,22 @@ Cada «Descargar» usa `admin-post.php?action=cxp_docs_download` (hace falta ses
 
 ## Panel — Pila / versiones (simular deploy)
 
-MU-plugin: `cxp-stack-versions.php`.
+MU-plugin: `cxp-stack-versions.php`. Caja verde/amarilla arriba de la consola (prioridad 2).
 
 | Control | Efecto |
 |---|---|
-| Select WordPress + **Instalar esta WP** | Baja el ZIP de wordpress.org y pisa el core. Recarga |
-| Select WooCommerce + instalar | Igual con el plugin Woo |
-| Restaurar Chilexpress 1.4.0 | Copia `chilexpress-oficial/` del repo sobre el plugin instalado (ZIP intacto) |
-| **Volver a versiones del cliente** | WP **7.0.3** + Woo **11.0.1** + Chilexpress **1.4.0** + Woodmart Child |
+| Select **PHP** + **Preparar esta PHP** | Descarga NTS x64 a `runtime/php-VER/` y escribe `runtime/.php-version`. **Hay que reiniciar** `start.sh` (PHP no cambia en caliente). En Docker: `PHP_VERSION` en `.env` + rebuild |
+| Select WordPress + **Instalar esta WordPress** | Baja el ZIP de wordpress.org y pisa el core. No toca `wp-content`. Recarga |
+| Tabla por plugin (Woo, SQLite, Akismet, …) | Select de versión + campo “otra” + **Instalar esta versión** |
+| **Restaurar 1.4.0** (Chilexpress) | Copia intacta desde `chilexpress-oficial/` del repo. No se parchea PHP |
+| Otro plugin (slug wordpress.org) | Instala cualquier plugin público por slug + versión |
+| **Recargar WordPress completo** | Reinstala el core (versión del selector) **y** todos los plugins de la tabla. Conserva uploads/DB. Recarga el navegador |
+| **Volver a pila del cliente** | WP **7.0.3** + Woo **11.0.1** + Chilexpress **1.4.0** + Woodmart Child |
+| **Correo de laboratorio** | Cambia el mail de admin WP, usuario `admin`, Woo from/stock, remitente Chilexpress y prefill del checkout |
 
 PHP **no** se cambia aquí. En Docker: `PHP_VERSION` en `.env` y rebuild. En Windows local: carpeta `runtime/php-8.4.19/`.
 
-Tras un cambio, espera el mensaje y recarga. Si el sitio queda a medias, el mismo botón default vuelve a la pila del cliente.
+Tras un cambio, espera el mensaje y recarga. Si el sitio queda a medias, el botón de pila del cliente vuelve al stack de SR-108688.
 
 ---
 

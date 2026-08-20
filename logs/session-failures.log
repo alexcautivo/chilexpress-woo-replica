@@ -1,0 +1,38 @@
+# Sesión de prueba local — 2026-08-20
+# Sitio: http://127.0.0.1:8080
+# Fuente: wordpress/wp-content/debug.log + PHP built-in server
+# Baseline: se marca al reiniciar el servidor. Lo anterior es histórico (SR-108688).
+
+SESSION_START 2026-08-20T16:00:00-04:00
+STATUS waiting-for-user-clicks
+SESSION_RESTART 2026-08-20T16:00:19
+
+SMOKE 2026-08-20T16:01
+- http://127.0.0.1:8080/ 200
+- /shop/ 200
+- /cart/ 200
+- /checkout/ 200
+- /wp-admin/ 200 (con cookies; sin cookies urllib ve 302 loop, el navegador está bien)
+- Sin PHP Fatal nuevo desde el baseline
+- Chilexpress solo logs informativos de regiones/comunas
+STATUS listening
+
+FIX 2026-08-20T16:07 checkout APIs
+- Causa: checkout en bloques + tarifas fake cxp_debug_cxp (PREX 11745 / CHEX 8747)
+- Checkout clásico [woocommerce_checkout]; se quitó el método debug
+- Semilla: 16 regiones / 185 comunas; destino RM + LA REINA
+- Cotizador staging OK: PROV→LARE teclado 0.9kg 45x15x4 → PREX 8800 / CHEX 5950
+STATUS listening
+
+## 2026-08-20T16:05:36
+[20-Aug-2026 20:05:34 UTC] PHP Fatal error:  Uncaught TypeError: call_user_func_array(): Argument #1 ($callback) must be a valid callback, function "cxp_checkout_force_oficial_shipping" not found or invalid function name in C:\Users\HP\Desktop\wirdscrepss\wordpress\wp-includes\class-wp-hook.php:341
+
+## 2026-08-20T16:05:39
+[20-Aug-2026 20:05:37 UTC] PHP Fatal error:  Uncaught TypeError: call_user_func_array(): Argument #1 ($callback) must be a valid callback, function "cxp_checkout_force_oficial_shipping" not found or invalid function name in C:\Users\HP\Desktop\wirdscrepss\wordpress\wp-includes\class-wp-hook.php:341
+SESSION_RESTART 2026-08-20T16:09:21
+SESSION_RESTART 2026-08-20T16:15:41
+SMOKE / /shop/ /cart/ /checkout/ 200; checkout tiene botón Llenar datos válidos
+STATUS listening
+
+## 2026-08-20T16:30:33
+[20-Aug-2026 20:30:33 UTC] PHP Parse error:  syntax error, unexpected single-quoted string "title", expecting ")" in C:\Users\HP\Desktop\wirdscrepss\wordpress\wp-content\mu-plugins\cxp-client-docs.php on line 23

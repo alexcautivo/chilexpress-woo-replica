@@ -1,20 +1,6 @@
-runtime/
-downloads/
-wordpress/wp-content/database/
-wordpress/wp-content/debug.log
-wordpress/wp-content/cache/
-wordpress/wp-content/upgrade/
-wordpress/wp-content/upgrade-temp-backup/
-wordpress/wp-content/cxp-snapshots/
-wordpress/wp-config.php
+# Repo público: solo se excluyen secretos reales.
+# El resto del laboratorio (PHP portable, ZIPs, SQLite, logs, cache) sí se versiona.
 .env
-*.zip
-*.log
+wordpress/wp-config.php
 .DS_Store
 Thumbs.db
-logs/.debug-offset
-logs/.seen-hashes
-logs/api-tail.txt
-logs/*
-!logs/watch-debug.py
-!logs/watch-debug.sh

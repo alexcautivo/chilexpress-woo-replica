@@ -1,0 +1,90 @@
+﻿**********************
+Inicio de la transcripción de Windows PowerShell
+Hora de inicio: 20260820134320
+Nombre de usuario: DESKTOP-MTVA6F3\ntltam
+Usuario RunAs: DESKTOP-MTVA6F3\ntltam
+Nombre de la configuración: 
+Máquina: DESKTOP-MTVA6F3 (Microsoft Windows NT 10.0.19045.0)
+Aplicación host: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\HP\Desktop\wirdscrepss\enable-wsl.ps1
+Id. de proceso: 7544
+PSVersion: 5.1.19041.6456
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.6456
+BuildVersion: 10.0.19041.6456
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+La transcripción ha comenzado. El archivo de salida es C:\Users\HP\Desktop\wirdscrepss\dism-enable.log
+Enabling Microsoft-Windows-Subsystem-Linux...
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Habilitando características
+[==========================100.0%==========================]
+La operación se completó correctamente.
+Enabling VirtualMachinePlatform...
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Habilitando características
+[==========================100.0%==========================]
+La operación se completó correctamente.
+---- STATUS WSL ----
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Información de característica:
+
+Nombre de característica : Microsoft-Windows-Subsystem-Linux
+Nombre para mostrar : Subsistema de Windows para Linux
+Descripción : Proporciona servicios y entornos para ejecutar shells y herramientas nativos de Linux en modo de usuario e
+n Windows.
+Se necesita reiniciar : Possible
+Estado : Habilitado
+
+Propiedades personalizadas:
+
+ServerComponent\Description : Proporciona servicios y entornos para ejecutar shells y herramientas nativos de Linux en m
+odo de usuario en Windows.
+ServerComponent\DisplayName : Subsistema de Windows para Linux
+ServerComponent\Id : 1033
+ServerComponent\Type : Feature
+ServerComponent\UniqueName : Microsoft-Windows-Subsystem-Linux
+ServerComponent\Deploys\Update\Name : Microsoft-Windows-Subsystem-Linux
+
+La operación se completó correctamente.
+---- STATUS VMP ----
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Información de característica:
+
+Nombre de característica : VirtualMachinePlatform
+Nombre para mostrar : Plataforma de máquina virtual
+Descripción : Habilita la compatibilidad con plataformas para máquinas virtuales
+Se necesita reiniciar : Possible
+Estado : Habilitado
+
+Propiedades personalizadas:
+
+(No se encontraron propiedades personalizadas)
+
+La operación se completó correctamente.
+**********************
+Fin de la transcripción de Windows PowerShell
+Hora de finalización: 20260820134323
+**********************

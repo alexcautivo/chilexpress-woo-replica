@@ -1,0 +1,34 @@
+{
+  "remote_wp": {
+    "url": "https://chilexpress-woo-test.5-78-137-25.sslip.io",
+    "admin": "https://chilexpress-woo-test.5-78-137-25.sslip.io/wp-admin/",
+    "user": "admin",
+    "password": "OxFpjdVhI35Aq9d1eHK"
+  },
+  "modules": {
+    "api_key_georeferencia_value": "a6979b4160c6465f85776f43b6c40ffb",
+    "api_key_generacion_ot_value": "5a77a19b76a24297ba01c158286641b7",
+    "api_key_cotizador_value": "6a144300d4a54800ad354078c1a536d4",
+    "ambiente": "staging",
+    "api_key_georeferencia_enabled": true,
+    "api_key_generacion_ot_enabled": true,
+    "api_key_cotizador_enabled": true
+  },
+  "general": {
+    "numero_tcc_origen": "",
+    "nombre_remitente": "",
+    "telefono_remitente": "",
+    "email_remitente": "",
+    "rut_seller_remitente": "",
+    "rut_marketplace_remitente": "",
+    "region_origen": "",
+    "comuna_origen": "",
+    "calle_devolucion": "",
+    "numero_calle_devolucion": "",
+    "complemento_devolucion": "",
+    "ancho_producto_defecto": "",
+    "alto_producto_defecto": "",
+    "largo_producto_defecto": "",
+    "peso_producto_defecto": ""
+  }
+}

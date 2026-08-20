@@ -67,10 +67,15 @@ function cxp_chilexpress_seed_apply() {
 	$modules['api_key_generacion_ot_enabled']  = '1';
 	$modules['api_key_cotizador_enabled']      = '1';
 	$modules['api_key_cotizacion_enabled']     = '1';
-	if ( function_exists( 'cxp_chilexpress_published_shop_api_keys' ) ) {
-		$modules = array_merge( $modules, cxp_chilexpress_published_shop_api_keys() );
+	$from_env = function_exists( 'cxp_chilexpress_env_api_keys' ) ? cxp_chilexpress_env_api_keys() : array();
+	if ( $from_env ) {
+		$modules = array_merge( $modules, $from_env );
 	} elseif ( function_exists( 'cxp_chilexpress_official_api_keys' ) ) {
-		$modules = array_merge( $modules, cxp_chilexpress_official_api_keys() );
+		foreach ( cxp_chilexpress_official_api_keys() as $key => $value ) {
+			if ( empty( $modules[ $key ] ) ) {
+				$modules[ $key ] = $value;
+			}
+		}
 	}
 	update_option( 'chilexpress_woo_oficial', $modules, false );
 

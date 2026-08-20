@@ -1,23 +1,47 @@
-# Réplica local — Chilexpress Oficial + WooCommerce — ticket **SR-108688**
+# Laboratorio WordPress + WooCommerce + Chilexpress Oficial
 
-Tienda de producción: **celularesenventa.cl**  
-Error: `Class "Automattic\WooCommerce\Enums\ProductTaxStatus" not found`  
-Este repo **no parchea** el PHP de Chilexpress Oficial 1.4.0.
+Réplica de prueba del ticket **SR-108688** (tienda de producción [celularesenventa.cl](https://celularesenventa.cl)).
 
-Documentos listos para el cliente (también se generan desde la consola inferior):
+Fatal:
 
-- [Identificación](docs/cliente-identificacion.md)
-- [Diagnóstico técnico](docs/cliente-diagnostico.md)
-- [Respuesta al cliente](docs/cliente-respuesta.md)
-- [Instrucciones detalladas](docs/cliente-instrucciones.md)
-- [FAQ de la réplica](docs/faq-replica.md)
-- [Credenciales](CREDENTIALS.md)
+```
+Class "Automattic\WooCommerce\Enums\ProductTaxStatus" not found
+```
 
-GitHub: https://github.com/alexcautivo/chilexpress-woo-replica
+Este repositorio **no parchea** el PHP de Chilexpress Oficial 1.4.0. Es un laboratorio para reproducir el update a medias, cotizar en staging, generar OT y redactar la respuesta al cliente.
 
 ---
 
-## Pila que pidió el cliente (esta réplica la usa)
+<p align="center">
+  <strong>Autor y desarrollador</strong><br>
+  Alexander Alejandro Cautivo Ramos<br>
+  Aeolabs · <a href="mailto:alexander.cautivo@aeolabs.io">alexander.cautivo@aeolabs.io</a>
+</p>
+
+Repo: https://github.com/alexcautivo/chilexpress-woo-replica
+
+---
+
+## Documentación
+
+| Documento | Contenido |
+|---|---|
+| [Guía de uso](docs/guia-de-uso.md) | Cómo se usa esta app de pruebas, de punta a punta |
+| [Consola réplica](docs/consola-replica.md) | Cada botón de la barra inferior |
+| [Dokploy](docs/dokploy.md) | Deploy manual del contenedor |
+| [Identificación](docs/cliente-identificacion.md) | Texto para el ticket |
+| [Diagnóstico](docs/cliente-diagnostico.md) | Causa técnica |
+| [Respuesta al cliente](docs/cliente-respuesta.md) | Carta |
+| [Instrucciones](docs/cliente-instrucciones.md) | Qué hacer en producción |
+| [FAQ](docs/faq-replica.md) | Situaciones que salieron al montar la réplica |
+| [Autores](AUTHORS.md) | Créditos |
+| [Credenciales de laboratorio](CREDENTIALS.md) | `admin` / `admin` (sin secretos de APIs) |
+
+Los mismos Markdown se generan desde la consola (panel **Documentos**).
+
+---
+
+## Pila del cliente (default)
 
 | Componente | Versión |
 |---|---|
@@ -27,15 +51,13 @@ GitHub: https://github.com/alexcautivo/chilexpress-woo-replica
 | Chilexpress Oficial | **1.4.0** (ZIP intacto) |
 | Tema | **Woodmart Child 1.0.0** (padre Woodmart 8.5.7) |
 | Idioma / moneda | es_CL / CLP |
-| Unidades tienda | kg / cm |
+| Unidades | kg / cm |
 
-Si la consola muestra otra WP o Woo, pulsa **Volver a versiones del cliente (default)**.
+Si la consola muestra otra WP o Woo: **Volver a versiones del cliente**.
 
 ---
 
-## Accesos
-
-### Local
+## Acceso local
 
 | | |
 |---|---|
@@ -43,32 +65,11 @@ Si la consola muestra otra WP o Woo, pulsa **Volver a versiones del cliente (def
 | Admin | http://127.0.0.1:8080/wp-admin/ |
 | Usuario | `admin` |
 | Contraseña | `admin` |
-| Email | `alexander.cautivo+testwordpress@aeolabs.io` |
-| Auto-login wp-admin | sí |
+| Auto-login | solo en localhost, o si `CXP_AUTO_LOGIN=1` |
 
-### WordPress publicado (clon de prueba, no es producción)
+Checkout de prueba: Juan Espoz · RM · **LA REINA** · Avenida Larrain **5862** · tarjeta `4242…4242` / 12/34 / 123. Botón **Llenar datos válidos**.
 
-| | |
-|---|---|
-| Sitio | https://chilexpress-woo-test.5-78-137-25.sslip.io/ |
-| Admin | https://chilexpress-woo-test.5-78-137-25.sslip.io/wp-admin/ |
-| Usuario | `admin` |
-| Contraseña | `OxFpjdVhI35Aq9d1eHK` |
-
-### APIs Chilexpress (staging, las que usa el local)
-
-Portal: https://developers.wschilexpress.com/new-products  
-Header: `Ocp-Apim-Subscription-Key` · base `https://qaservices.wschilexpress.com/`
-
-| Producto | API KEY |
-|---|---|
-| Cobertura | `a6979b4160c6465f85776f43b6c40ffb` |
-| Cotizador | `6a144300d4a54800ad354078c1a536d4` |
-| Envíos / OT | `5a77a19b76a24297ba01c158286641b7` |
-
-TCC `18578680` · RUT `96756430` · origen Providencia (`PROV`).
-
-Checkout de prueba: Juan Espoz · RM · **LA REINA** · Avenida Larrain **5862** · tarjeta `4242 4242 4242 4242` / 12/34 / 123. Botón **Llenar datos válidos** en `/checkout/`.
+Las subscription keys de Chilexpress **no van en el repo**. Pégalas en la consola o en variables `CXP_API_KEY_GEO`, `CXP_API_KEY_RATE`, `CXP_API_KEY_OT`.
 
 ---
 
@@ -76,38 +77,28 @@ Checkout de prueba: Juan Espoz · RM · **LA REINA** · Avenida Larrain **5862**
 
 Chilexpress Oficial 1.4.0, en `admin/class-chilexpress-woo-oficial-admin.php` líneas 30–38, hace `require_once` de `abstract-wc-shipping-method.php` al arrancar en **`plugins_loaded`**.
 
-WooCommerce **11** en esa clase (línea 84) usa `ProductTaxStatus::TAXABLE`. El enum está en `woocommerce/src/Enums/ProductTaxStatus.php` y lo carga el autoloader de Woo **cuando Woo ya inicializó**.
+WooCommerce **11** en esa clase (línea 84) usa `ProductTaxStatus::TAXABLE`. El enum vive en `woocommerce/src/Enums/ProductTaxStatus.php` y lo carga el autoloader **cuando Woo ya inicializó**.
 
-Durante un **update in-place** de WooCommerce los archivos se copian a medias. Chilexpress sigue activo, abre la clase abstracta nueva, el enum aún no está, y PHP muere:
+Durante un **update in-place** los archivos se copian a medias. Chilexpress sigue activo, abre la clase abstracta nueva, el enum aún no está, y PHP muere en `/wp-admin/admin-ajax.php`.
 
-```
-E_ERROR …/abstract-wc-shipping-method.php:84
-Uncaught Error: Class "Automattic\WooCommerce\Enums\ProductTaxStatus" not found
-```
+Con Woo 11.0.1 **completo**, el mismo Chilexpress **no cae**.
 
-La petición del correo fue `/wp-admin/admin-ajax.php`. Con Woo 11.0.1 **completo**, el mismo Chilexpress **no cae**.
+Fix de una línea (para Chilexpress, **no aplicado** aquí): arrancar en `woocommerce_loaded`. Mitigación: **desactivar Chilexpress, actualizar Woo, reactivar**.
 
-Fix de una línea (para Chilexpress, **no aplicado** aquí): arrancar en `woocommerce_loaded` en vez de `plugins_loaded`. Mitigación operativa: **desactivar Chilexpress, actualizar Woo, reactivar**.
-
-Cómo reproducirlo en la réplica: consola inferior → **SR-108688** → Replicar caída exacta. Emergencia: http://127.0.0.1:8080/__sr108688/restore
+En la réplica: consola → **SR-108688** → Replicar caída exacta. Emergencia: `/__sr108688/restore`
 
 ---
 
 ## Cómo correr en local (sin Docker)
 
-Hace falta PHP **8.4.19** (en Windows este repo usa `runtime/php-8.4.19/`, no versionado: es el binario portable). Git Bash:
-
 ```bash
 git clone https://github.com/alexcautivo/chilexpress-woo-replica.git
 cd chilexpress-woo-replica
 cp wordpress/wp-config.sample.php wordpress/wp-config.php
-# Si no tienes runtime/php-8.4.19, instala PHP 8.4.19 NTS y úsalo en start.sh
 bash start.sh
 ```
 
-`start.sh` instala WP si hace falta y sirve en http://127.0.0.1:8080 (`php -S` + `wordpress/router.php`).
-
-Linux/macOS con PHP 8.4.19 del sistema:
+`start.sh` espera PHP 8.4.19 en `runtime/php-8.4.19/` (Windows). En Linux/macOS:
 
 ```bash
 cp wordpress/wp-config.sample.php wordpress/wp-config.php
@@ -119,65 +110,46 @@ Admin: `/wp-admin/` **con barra final**.
 
 ---
 
-## Cómo correr con Docker (configurable)
+## Docker local
 
 ```bash
 cp .env.example .env
-# Edita PHP_VERSION, WORDPRESS_PORT, WP_HOME, DB_ENGINE
 docker compose up --build
 ```
-
-`.env` relevante:
 
 | Variable | Default | Qué hace |
 |---|---|---|
 | `PHP_VERSION` | `8.4.19` | Tag `php:{versión}-apache` |
 | `WORDPRESS_PORT` | `8080` | Puerto host |
-| `WP_HOME` | `http://127.0.0.1:8080` | URL pública del contenedor |
+| `WP_HOME` | `http://127.0.0.1:8080` | URL pública |
 | `DB_ENGINE` | `sqlite` | `sqlite` o `mysql` |
+| `CXP_AUTO_LOGIN` | `1` | Auto-login admin (apaga en Internet) |
 
-MySQL/MariaDB:
+MySQL: `DB_ENGINE=mysql` y `docker compose --profile mysql up --build`.
 
-```bash
-# en .env: DB_ENGINE=mysql
-docker compose --profile mysql up --build
-```
+---
 
-El contenedor monta `./wordpress` (core 7.0.3 + plugins + temas + MU-plugins). La copia intacta de Chilexpress 1.4.0 está en `./chilexpress-oficial`.
+## Dokploy (manual)
 
-Parar: `docker compose down`. Datos SQLite quedan en `wordpress/wp-content/database/`.
+Usa **`docker-compose.dokploy.yml`**. Puerto interno **80**. `WP_HOME=https://tu-dominio`. `CXP_AUTO_LOGIN=0`.
+
+Guía completa: [docs/dokploy.md](docs/dokploy.md).
 
 ---
 
 ## Consola réplica (barra inferior)
 
-Se abre desde abajo en front y admin.
+Clic en la barra negra de abajo. Manual: [docs/consola-replica.md](docs/consola-replica.md).
 
 | Panel | Para qué |
 |---|---|
-| **Documentos para el cliente** | Identificación, diagnóstico, respuesta, instrucciones, FAQ. Copia o descarga `.md` con las versiones actuales |
-| **Pila / versiones** | Instalar otra WP o Woo (wordpress.org), restaurar Chilexpress 1.4.0, **Volver a versiones del cliente** (WP 7.0.3 + Woo 11.0.1 + CXP 1.4.0 + Woodmart Child). Recarga al terminar. PHP se cambia en Docker/runtime |
-| **SR-108688** | Replicar el fatal, dejar el sitio caído, restaurar el enum |
-| **Laboratorio de plugins** | ZIP, snapshot, rollback Woo/Chilexpress |
-| Pedidos | Borrar, Generar OT, links locales/remotos |
-
----
-
-## Situaciones de la réplica (resumen)
-
-Detalle en [docs/faq-replica.md](docs/faq-replica.md).
-
-| Qué se vio | Causa | Solución en la réplica |
-|---|---|---|
-| PREX $11.745 / CHEX $8.747 | Método fake `cxp_debug_cxp` | Solo método oficial; cotizador staging real |
-| Checkout bloques sin comunas | JS oficial = campos clásicos | `[woocommerce_checkout]` |
-| Arica + La Reina / Benito Juárez | Sesión + default R1 | Prefill + **Llenar datos válidos** |
-| Sin Generar OT en HPOS | UI oficial de listado clásico | MU-plugin en editar pedido |
-| Mail local | `php -S` sin MTA | Documentado |
-| Stock hold SQLite | SQL de Woo incompatible | Hold = 0 |
-| Look Chilexpress antiguo | Overlay + Woodmart | Storefront CSS/JS sin volver a bloques |
-
-Productos wiki (kg/cm): audífonos, teclado, monitor, notebook, silla. Shop: http://127.0.0.1:8080/shop/
+| **Documentos** | Identificación, diagnóstico, respuesta, instrucciones, FAQ, guía, consola, Dokploy |
+| **Pila / versiones** | Instalar otra WP/Woo, restaurar Chilexpress 1.4.0, pila del cliente |
+| **SR-108688** | Replicar el fatal y restaurar el enum |
+| **Laboratorio de plugins** | ZIP, snapshot, rollback |
+| **APIs Chilexpress** | Keys por entorno o pegadas (no se imprimen en el HTML) |
+| **Pedidos** | Borrar, Generar OT |
+| **Créditos** | Autor del laboratorio |
 
 ---
 
@@ -186,11 +158,16 @@ Productos wiki (kg/cm): audífonos, teclado, monitor, notebook, silla. Shop: htt
 - `runtime/` (PHP portable Windows)
 - `wordpress/wp-content/database/` (SQLite generado)
 - `wordpress/wp-config.php` (copia el sample)
-- `debug.log`, cache, upgrade, snapshots
+- `.env`, `debug.log`, cache, upgrade, snapshots, `*.zip`
 
-El resto (WordPress 7.0.3, Woo 11.0.1, Chilexpress 1.4.0, Woodmart, MU-plugins, docs, Docker) va en el repo.
+Las API keys y contraseñas de tiendas reales **no pertenecen** a este repo público.
 
 ## Reglas
 
 - No modificar PHP de `chilexpress-oficial` hasta que se pida.
-- El README y `CREDENTIALS.md` incluyen claves del WP publicado a pedido; el repo es privado.
+- Checkout clásico: no volver a Woo Blocks.
+- En un dominio público: `CXP_AUTO_LOGIN=0` y cambia la clave `admin`.
+
+## Licencia
+
+MIT para el laboratorio (MU-plugins, Docker, docs). WordPress, Woo, Woodmart y Chilexpress conservan las suyas. Ver [LICENSE](LICENSE) y [AUTHORS.md](AUTHORS.md).

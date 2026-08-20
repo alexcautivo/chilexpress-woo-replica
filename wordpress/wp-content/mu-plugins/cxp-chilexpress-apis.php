@@ -11,21 +11,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 function cxp_chilexpress_official_api_keys() {
 	return array(
-		'api_key_georeferencia_value'   => '134b01b545bc4fb29a994cddedca9379',
-		'api_key_generacion_ot_value'   => '5a77a19b76a24297ba01c158286641b7',
-		'api_key_cotizador_value'       => 'fd46aa18a9fe44c6b49626692605a2e8',
-		'api_key_cotizacion_value'      => 'fd46aa18a9fe44c6b49626692605a2e8',
+		'api_key_georeferencia_value' => '134b01b545bc4fb29a994cddedca9379',
+		'api_key_generacion_ot_value' => '5a77a19b76a24297ba01c158286641b7',
+		'api_key_cotizador_value'     => 'fd46aa18a9fe44c6b49626692605a2e8',
+		'api_key_cotizacion_value'    => 'fd46aa18a9fe44c6b49626692605a2e8',
 	);
 }
 
-/** Keys copiadas el 2026-08-20 desde chilexpress-woo-test (Habilitación de Módulos, staging). */
-function cxp_chilexpress_published_shop_api_keys() {
-	return array(
-		'api_key_georeferencia_value'   => 'a6979b4160c6465f85776f43b6c40ffb',
-		'api_key_generacion_ot_value'   => '5a77a19b76a24297ba01c158286641b7',
-		'api_key_cotizador_value'       => '6a144300d4a54800ad354078c1a536d4',
-		'api_key_cotizacion_value'      => '6a144300d4a54800ad354078c1a536d4',
-	);
+/** Keys desde Dokploy/Docker (.env). Vacío si no están definidas. */
+function cxp_chilexpress_env_api_keys() {
+	$geo  = function_exists( 'cxp_env' ) ? cxp_env( 'CXP_API_KEY_GEO', '' ) : (string) getenv( 'CXP_API_KEY_GEO' );
+	$rate = function_exists( 'cxp_env' ) ? cxp_env( 'CXP_API_KEY_RATE', '' ) : (string) getenv( 'CXP_API_KEY_RATE' );
+	$ot   = function_exists( 'cxp_env' ) ? cxp_env( 'CXP_API_KEY_OT', '' ) : (string) getenv( 'CXP_API_KEY_OT' );
+	$out  = array();
+	if ( $geo !== '' ) {
+		$out['api_key_georeferencia_value'] = $geo;
+	}
+	if ( $rate !== '' ) {
+		$out['api_key_cotizador_value']  = $rate;
+		$out['api_key_cotizacion_value'] = $rate;
+	}
+	if ( $ot !== '' ) {
+		$out['api_key_generacion_ot_value'] = $ot;
+	}
+	return $out;
 }
 
 add_action( 'http_api_debug', 'cxp_chilexpress_log_http', 10, 5 );
@@ -51,12 +60,12 @@ function cxp_chilexpress_apis_ensure() {
 	if ( ! is_array( $opt ) ) {
 		$opt = array();
 	}
-	$changed   = false;
-	$published = cxp_chilexpress_published_shop_api_keys();
-	if ( get_option( 'cxp_remote_wp_copied' ) !== '1' ) {
-		$opt     = array_merge( $opt, $published );
+	$changed = false;
+	$from_env = cxp_chilexpress_env_api_keys();
+	if ( $from_env && get_option( 'cxp_env_keys_applied' ) !== '1' ) {
+		$opt     = array_merge( $opt, $from_env );
 		$changed = true;
-		update_option( 'cxp_remote_wp_copied', '1', false );
+		update_option( 'cxp_env_keys_applied', '1', false );
 	}
 	$official = cxp_chilexpress_official_api_keys();
 	foreach ( $official as $key => $value ) {
@@ -120,15 +129,16 @@ function cxp_chilexpress_apis_status() {
 	);
 }
 
+add_action( 'init', 'cxp_chilexpress_apis_ensure', 5 );
+
 function cxp_chilexpress_apis_console() {
-	$status  = cxp_chilexpress_apis_status();
-	$save    = admin_url( 'admin-post.php' );
-	$local   = admin_url( 'admin.php?page=chilexpress_woo_oficial_menu' );
-	$remote  = 'https://chilexpress-woo-test.5-78-137-25.sslip.io/wp-admin/admin.php?page=chilexpress_woo_oficial_menu';
-	$portal  = 'https://developers.wschilexpress.com/new-products';
+	$status = cxp_chilexpress_apis_status();
+	$save   = admin_url( 'admin-post.php' );
+	$local  = admin_url( 'admin.php?page=chilexpress_woo_oficial_menu' );
+	$portal = 'https://developers.wschilexpress.com/new-products';
 	$profile = 'https://developers.wschilexpress.com/developer';
-	$official  = cxp_chilexpress_official_api_keys();
-	$published = cxp_chilexpress_published_shop_api_keys();
+	$remote = function_exists( 'cxp_remote_shop_url' ) ? cxp_remote_shop_url() : '';
+	$has_env = (bool) cxp_chilexpress_env_api_keys();
 	?>
 	<style>
 		#cxp-dbg-apis{margin:0 0 12px;padding:10px 12px;border:1px solid #3d4d66;border-radius:8px;background:#111827}
@@ -171,28 +181,30 @@ function cxp_chilexpress_apis_console() {
 			</tbody>
 		</table>
 		<p>Pantalla de keys:
-			<a href="<?php echo esc_url( $local ); ?>">local Habilitación de Módulos</a>
-			·
-			<a href="<?php echo esc_url( $remote ); ?>" target="_blank" rel="noopener noreferrer">WordPress oficial publicado</a>
+			<a href="<?php echo esc_url( $local ); ?>">Habilitación de Módulos</a>
+			<?php if ( $remote ) : ?>
+				· <a href="<?php echo esc_url( $remote . '/wp-admin/admin.php?page=chilexpress_woo_oficial_menu' ); ?>" target="_blank" rel="noopener noreferrer">tienda remota (CXP_REMOTE_SHOP_URL)</a>
+			<?php endif; ?>
 			·
 			<a href="<?php echo esc_url( $profile ); ?>" target="_blank" rel="noopener noreferrer">perfil developers</a>
 		</p>
 		<form method="post" action="<?php echo esc_url( $save ); ?>">
 			<input type="hidden" name="action" value="cxp_cxp_save_keys">
 			<?php wp_nonce_field( 'cxp_cxp_keys' ); ?>
-			<p>Pegar keys (local o del sitio publicado). Si dejas un campo vacío se usa la key por defecto del plugin 1.4.0.</p>
+			<p>Pega las subscription keys de staging (no se publican en el repo). Vacío = defaults del ZIP 1.4.0 o variables <code>CXP_API_KEY_*</code>.
+				<?php echo $has_env ? ' Este contenedor tiene keys por entorno.' : ''; ?></p>
 			<table>
 				<tr>
 					<td>Georeferencia / Cobertura</td>
-					<td><input type="text" name="geo" value="<?php echo esc_attr( $status['rows'][0]['value'] ); ?>" autocomplete="off"></td>
+					<td><input type="password" name="geo" value="" placeholder="dejar vacío para no cambiar" autocomplete="off"></td>
 				</tr>
 				<tr>
 					<td>Cotizador</td>
-					<td><input type="text" name="rate" value="<?php echo esc_attr( $status['rows'][1]['value'] ); ?>" autocomplete="off"></td>
+					<td><input type="password" name="rate" value="" placeholder="dejar vacío para no cambiar" autocomplete="off"></td>
 				</tr>
 				<tr>
 					<td>Envíos / OT</td>
-					<td><input type="text" name="ot" value="<?php echo esc_attr( $status['rows'][2]['value'] ); ?>" autocomplete="off"></td>
+					<td><input type="password" name="ot" value="" placeholder="dejar vacío para no cambiar" autocomplete="off"></td>
 				</tr>
 			</table>
 			<div class="cxp-lab-row">
@@ -203,26 +215,11 @@ function cxp_chilexpress_apis_console() {
 					</select>
 				</label>
 				<button type="submit" class="cxp-dbg-copy-one" name="mode" value="save">Guardar keys pegadas</button>
-				<button type="submit" class="cxp-dbg-copy-one" name="mode" value="published">Cargar keys del WordPress publicado</button>
+				<button type="submit" class="cxp-dbg-copy-one" name="mode" value="env">Cargar keys del entorno (Dokploy)</button>
 				<button type="submit" class="cxp-dbg-copy-one" name="mode" value="official">Cargar defaults del plugin 1.4.0</button>
 			</div>
 		</form>
-		<pre style="color:#93c5fd;white-space:pre-wrap">Keys del WP publicado (chilexpress-woo-test, staging):
-Cobertura  <?php echo esc_html( $published['api_key_georeferencia_value'] ); ?>
-
-Cotizador  <?php echo esc_html( $published['api_key_cotizador_value'] ); ?>
-
-Envíos/OT  <?php echo esc_html( $published['api_key_generacion_ot_value'] ); ?>
-
-Defaults del ZIP chilexpress-oficial 1.4.0:
-Cobertura  <?php echo esc_html( $official['api_key_georeferencia_value'] ); ?>
-
-Cotizador  <?php echo esc_html( $official['api_key_cotizador_value'] ); ?>
-
-Envíos/OT  <?php echo esc_html( $official['api_key_generacion_ot_value'] ); ?>
-
-TCC prueba 18578680 · RUT prueba 96756430
-WP publicado: admin / ver CREDENTIALS.md</pre>
+		<p>TCC de prueba del plugin: <code>18578680</code> · RUT de prueba: <code>96756430</code> · origen Providencia (<code>PROV</code>).</p>
 	</div>
 	<?php
 }
@@ -242,30 +239,30 @@ function cxp_chilexpress_apis_save() {
 	if ( ! is_array( $opt ) ) {
 		$opt = array();
 	}
-	$official  = cxp_chilexpress_official_api_keys();
-	$published = cxp_chilexpress_published_shop_api_keys();
-	$mode      = sanitize_key( wp_unslash( $_POST['mode'] ?? 'save' ) );
+	$official = cxp_chilexpress_official_api_keys();
+	$from_env = cxp_chilexpress_env_api_keys();
+	$mode     = sanitize_key( wp_unslash( $_POST['mode'] ?? 'save' ) );
 
 	if ( 'official' === $mode ) {
 		$geo  = $official['api_key_georeferencia_value'];
 		$rate = $official['api_key_cotizador_value'];
 		$ot   = $official['api_key_generacion_ot_value'];
-	} elseif ( 'published' === $mode ) {
-		$geo  = $published['api_key_georeferencia_value'];
-		$rate = $published['api_key_cotizador_value'];
-		$ot   = $published['api_key_generacion_ot_value'];
+	} elseif ( 'env' === $mode ) {
+		$geo  = $from_env['api_key_georeferencia_value'] ?? $official['api_key_georeferencia_value'];
+		$rate = $from_env['api_key_cotizador_value'] ?? $official['api_key_cotizador_value'];
+		$ot   = $from_env['api_key_generacion_ot_value'] ?? $official['api_key_generacion_ot_value'];
 	} else {
 		$geo  = sanitize_text_field( wp_unslash( $_POST['geo'] ?? '' ) );
 		$rate = sanitize_text_field( wp_unslash( $_POST['rate'] ?? '' ) );
 		$ot   = sanitize_text_field( wp_unslash( $_POST['ot'] ?? '' ) );
 		if ( $geo === '' ) {
-			$geo = $official['api_key_georeferencia_value'];
+			$geo = $opt['api_key_georeferencia_value'] ?? $official['api_key_georeferencia_value'];
 		}
 		if ( $rate === '' ) {
-			$rate = $official['api_key_cotizador_value'];
+			$rate = $opt['api_key_cotizador_value'] ?? $official['api_key_cotizador_value'];
 		}
 		if ( $ot === '' ) {
-			$ot = $official['api_key_generacion_ot_value'];
+			$ot = $opt['api_key_generacion_ot_value'] ?? $official['api_key_generacion_ot_value'];
 		}
 	}
 

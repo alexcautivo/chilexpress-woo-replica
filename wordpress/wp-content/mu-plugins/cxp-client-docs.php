@@ -38,6 +38,21 @@ final class Cxp_Client_Docs {
 			'title' => 'FAQ / situaciones de la réplica',
 			'download' => 'SR-108688-faq-replica.md',
 		),
+		'guia'           => array(
+			'file'  => 'guia-de-uso.md',
+			'title' => 'Guía de uso del laboratorio',
+			'download' => 'guia-laboratorio.md',
+		),
+		'consola'        => array(
+			'file'  => 'consola-replica.md',
+			'title' => 'Manual de la consola réplica',
+			'download' => 'manual-consola-replica.md',
+		),
+		'dokploy'        => array(
+			'file'  => 'dokploy.md',
+			'title' => 'Despliegue en Dokploy',
+			'download' => 'dokploy.md',
+		),
 	);
 
 	public static function boot() {
@@ -49,6 +64,9 @@ final class Cxp_Client_Docs {
 	}
 
 	public static function docs_dir() {
+		if ( function_exists( 'cxp_docs_dir' ) ) {
+			return cxp_docs_dir();
+		}
 		return dirname( ABSPATH ) . '/docs';
 	}
 
@@ -214,6 +232,9 @@ final class Cxp_Client_Docs {
 		}
 		if ( function_exists( 'cxp_auto_login_user' ) ) {
 			cxp_auto_login_user();
+		}
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( 'Sin permiso' );
 		}
 	}
 }

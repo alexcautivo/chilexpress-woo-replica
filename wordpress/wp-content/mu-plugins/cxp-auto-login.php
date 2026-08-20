@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action( 'login_init', 'cxp_auto_login_on_wp_login', 1 );
 
 function cxp_auto_login_user() {
+	if ( function_exists( 'cxp_auto_login_enabled' ) && ! cxp_auto_login_enabled() ) {
+		return false;
+	}
 	if ( is_user_logged_in() ) {
 		return false;
 	}

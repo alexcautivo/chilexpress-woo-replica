@@ -30,11 +30,22 @@ $table_prefix = 'wp_';
 
 define( 'WP_DEBUG', true );
 define( 'WP_DEBUG_LOG', true );
-define( 'WP_DEBUG_DISPLAY', true );
+define( 'WP_DEBUG_DISPLAY', false );
 define( 'SCRIPT_DEBUG', false );
 
-define( 'WP_HOME', 'http://127.0.0.1:8080' );
-define( 'WP_SITEURL', 'http://127.0.0.1:8080' );
+$cxp_home = getenv( 'WP_HOME' );
+if ( is_string( $cxp_home ) && $cxp_home !== '' ) {
+	define( 'WP_HOME', $cxp_home );
+	define( 'WP_SITEURL', $cxp_home );
+} else {
+	define( 'WP_HOME', 'http://127.0.0.1:8080' );
+	define( 'WP_SITEURL', 'http://127.0.0.1:8080' );
+}
+
+$cxp_auto = getenv( 'CXP_AUTO_LOGIN' );
+if ( is_string( $cxp_auto ) && $cxp_auto !== '' ) {
+	define( 'CXP_AUTO_LOGIN', in_array( strtolower( $cxp_auto ), array( '1', 'true', 'yes', 'on' ), true ) );
+}
 define( 'WPLANG', 'es_CL' );
 
 define( 'AUTOMATIC_UPDATER_DISABLED', true );

@@ -1,0 +1,16 @@
+.git
+.github
+.env
+*.zip
+runtime/
+downloads/
+logs/
+wordpress/wp-content/database/
+wordpress/wp-content/debug.log
+wordpress/wp-content/cache/
+wordpress/wp-content/upgrade/
+wordpress/wp-content/upgrade-temp-backup/
+wordpress/wp-content/cxp-snapshots/
+wordpress/wp-config.php
+Thumbs.db
+.DS_Store

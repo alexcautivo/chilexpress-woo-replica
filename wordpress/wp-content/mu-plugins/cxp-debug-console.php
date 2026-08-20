@@ -74,7 +74,8 @@ final class Cxp_Debug_Console {
 		$inventory     = self::collect_inventory();
 		$orders        = self::list_shop_orders();
 		$orders_local  = admin_url( 'admin.php?page=wc-orders' );
-		$orders_remote = 'https://chilexpress-woo-test.5-78-137-25.sslip.io/wp-admin/admin.php?page=wc-orders';
+		$remote_base   = function_exists( 'cxp_remote_shop_url' ) ? cxp_remote_shop_url() : '';
+		$orders_remote = $remote_base ? ( $remote_base . '/wp-admin/admin.php?page=wc-orders' ) : '';
 		$checkout_url  = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : home_url( '/checkout/' );
 		$shop_url      = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 		?>
@@ -83,6 +84,7 @@ final class Cxp_Debug_Console {
 			#cxp-dbg *{box-sizing:border-box}
 			#cxp-dbg-bar{display:flex;gap:10px;align-items:center;min-height:36px;padding:6px 12px;border-top:1px solid #3d4d66;background:#111827;cursor:pointer;user-select:none}
 			#cxp-dbg-bar strong{color:#fff200;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+			#cxp-dbg-credit{color:#93c5fd;font-size:11px;white-space:nowrap}
 			#cxp-dbg-meta{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#9fb0c7}
 			#cxp-dbg-count{padding:2px 8px;border-radius:999px;background:#7f1d1d;color:#fecaca;font-weight:700}
 			#cxp-dbg-count.is-ok{background:#14532d;color:#bbf7d0}
@@ -118,6 +120,7 @@ final class Cxp_Debug_Console {
 		<div id="cxp-dbg">
 			<div id="cxp-dbg-bar" role="button" tabindex="0" aria-expanded="false">
 				<strong>Consola réplica</strong>
+				<span id="cxp-dbg-credit">Aeolabs · Alexander Cautivo</span>
 				<span id="cxp-dbg-meta"><?php echo esc_html( $report['summary'] ); ?></span>
 				<span id="cxp-dbg-count" class="<?php echo $errors_n ? '' : 'is-ok'; ?>">
 					<?php echo $errors_n ? esc_html( $errors_n . ' error(es) esta petición' ) : 'sin errores esta petición'; ?>
@@ -129,7 +132,9 @@ final class Cxp_Debug_Console {
 					<p><strong>Generar OTs</strong> — No uses Acciones masivas sin marcar el checkbox. Entra al pedido (Editar) y pulsa <em>Generar OT</em>, o marca #29 y luego Generar Multiples OT.</p>
 					<div id="cxp-dbg-actions">
 						<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_local ); ?>">Pedidos locales (Generar OTs)</a>
-						<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_remote ); ?>" target="_blank" rel="noopener noreferrer">Pedidos tienda remota</a>
+						<?php if ( $orders_remote ) : ?>
+							<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_remote ); ?>" target="_blank" rel="noopener noreferrer">Pedidos tienda remota</a>
+						<?php endif; ?>
 						<a class="cxp-dbg-btn" href="<?php echo esc_url( $checkout_url ); ?>">Checkout</a>
 						<a class="cxp-dbg-btn" href="<?php echo esc_url( $shop_url ); ?>">Tienda</a>
 						<button type="button" id="cxp-dbg-copy">Copiar todo</button>
@@ -635,7 +640,7 @@ final class Cxp_Debug_Console {
 				'Moneda WC:          ' . get_option( 'woocommerce_currency', '' ),
 				'Peso / medidas:     ' . get_option( 'woocommerce_weight_unit', '' ) . ' / ' . get_option( 'woocommerce_dimension_unit', '' ),
 				'Pedidos locales:    ' . admin_url( 'admin.php?page=wc-orders' ),
-				'Pedidos remotos:    https://chilexpress-woo-test.5-78-137-25.sslip.io/wp-admin/admin.php?page=wc-orders',
+				'Pedidos remotos:    ' . ( function_exists( 'cxp_remote_shop_url' ) && cxp_remote_shop_url() ? cxp_remote_shop_url() . '/wp-admin/admin.php?page=wc-orders' : '(CXP_REMOTE_SHOP_URL no definido)' ),
 				'memory_limit:       ' . ini_get( 'memory_limit' ),
 				'max_execution_time: ' . ini_get( 'max_execution_time' ),
 				'WP_DEBUG:           ' . ( WP_DEBUG ? 'true' : 'false' ),

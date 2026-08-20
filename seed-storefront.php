@@ -1,7 +1,6 @@
 <?php
 /**
- * Clona diseño, ajustes WooCommerce y productos de
- * https://chilexpress-woo-test.5-78-137-25.sslip.io/
+ * Clona diseño, ajustes WooCommerce y productos de una tienda de prueba Chilexpress.
  */
 
 $_SERVER['HTTP_HOST']       = '127.0.0.1:8080';

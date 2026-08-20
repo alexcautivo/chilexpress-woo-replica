@@ -4,7 +4,7 @@ Estas dudas salieron al montar la réplica de **celularesenventa.cl** / SR-10868
 
 ## ¿Por qué el correo decía WordPress 7.0.3 y el shop de prueba público a veces muestra 7.1?
 
-El **ticket de producción** es WP **7.0.3**. El clon publicado `chilexpress-woo-test.5-78-137-25.sslip.io` puede estar en 7.1. Esta réplica local se fija en **7.0.3** como pidió el cliente. En la consola, **Volver a versiones del cliente** reinstala 7.0.3 + Woo 11.0.1 + Chilexpress 1.4.0.
+El **ticket de producción** es WP **7.0.3**. Un clon de prueba aparte puede estar en 7.1. Esta réplica se fija en **7.0.3** como pidió el cliente. En la consola, **Volver a versiones del cliente** reinstala 7.0.3 + Woo 11.0.1 + Chilexpress 1.4.0.
 
 ## ¿El tema Woodmart causa el fatal?
 

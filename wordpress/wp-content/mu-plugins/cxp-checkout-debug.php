@@ -320,11 +320,14 @@ function cxp_checkout_debug_prefill_customer() {
 	}
 	$customer = WC()->customer;
 	$city     = strtoupper( (string) $customer->get_shipping_city() );
+	$city     = str_replace( array( 'Á', 'É', 'Í', 'Ó', 'Ú' ), array( 'A', 'E', 'I', 'O', 'U' ), $city );
 	$state    = (string) $customer->get_shipping_state();
 	$street   = (string) $customer->get_billing_address_1();
-	$broken   = false !== stripos( $street, 'benito' )
+	$broken   = '' === $city
+		|| in_array( $city, array( 'ALHUE', 'ALHU', 'SANTIAGO' ), true )
+		|| false !== stripos( $street, 'benito' )
 		|| false !== stripos( $city, 'ARICA' )
-		|| ( '' !== $city && 'LA REINA' !== $city && 'RM' === $state && false !== stripos( $city, 'PEDRO' ) );
+		|| ( 'LA REINA' !== $city && 'RM' === $state && false !== stripos( $city, 'PEDRO' ) );
 	if ( ! $broken ) {
 		return;
 	}
@@ -346,9 +349,37 @@ function cxp_checkout_debug_prefill_customer() {
 	$customer->save();
 
 	if ( WC()->session ) {
-		WC()->session->set( 'cxp_addr_prefilled_v5', '1' );
+		WC()->session->set( 'cxp_addr_prefilled_v6', '1' );
 		WC()->session->set( 'chosen_shipping_methods', array() );
+		if ( method_exists( WC()->session, 'get_session_data' ) ) {
+			foreach ( array_keys( (array) WC()->session->get_session_data() ) as $key ) {
+				if ( 0 === strpos( (string) $key, 'shipping_for_package' ) ) {
+					WC()->session->set( $key, null );
+				}
+			}
+		}
 	}
+	if ( WC()->shipping() ) {
+		WC()->shipping()->reset_shipping();
+	}
+}
+
+add_filter( 'default_checkout_billing_city', 'cxp_checkout_debug_default_city' );
+add_filter( 'default_checkout_shipping_city', 'cxp_checkout_debug_default_city' );
+add_filter( 'default_checkout_billing_state', 'cxp_checkout_debug_default_state' );
+add_filter( 'default_checkout_shipping_state', 'cxp_checkout_debug_default_state' );
+
+function cxp_checkout_debug_default_city( $value ) {
+	$city = strtoupper( (string) $value );
+	$city = str_replace( array( 'Á', 'É', 'Í', 'Ó', 'Ú' ), array( 'A', 'E', 'I', 'O', 'U' ), $city );
+	if ( '' === $city || in_array( $city, array( 'ALHUE', 'ALHU' ), true ) ) {
+		return 'LA REINA';
+	}
+	return $value;
+}
+
+function cxp_checkout_debug_default_state( $value ) {
+	return $value ? $value : 'RM';
 }
 
 function cxp_checkout_debug_ensure_cart_item() {

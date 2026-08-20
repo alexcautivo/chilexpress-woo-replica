@@ -1,0 +1,21 @@
+{
+  "ticket": "SR-108688",
+  "site": "celularesenventa.cl",
+  "client_stack": {
+    "php": "8.4.19",
+    "wordpress": "7.0.3",
+    "woocommerce": "11.0.1",
+    "chilexpress": "1.4.0",
+    "theme": "Woodmart Child",
+    "theme_version": "1.0.0",
+    "parent_theme": "Woodmart",
+    "parent_theme_version": "8.5.7",
+    "locale": "es_CL",
+    "currency": "CLP"
+  },
+  "error": "Class \"Automattic\\WooCommerce\\Enums\\ProductTaxStatus\" not found",
+  "file": "woocommerce/includes/abstracts/abstract-wc-shipping-method.php",
+  "line": 84,
+  "trigger": "wp-admin/admin-ajax.php",
+  "chilexpress_require": "admin/class-chilexpress-woo-oficial-admin.php lines 30-38 on plugins_loaded"
+}

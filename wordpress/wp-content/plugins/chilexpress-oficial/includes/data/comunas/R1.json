@@ -1,0 +1,33 @@
+{
+    "coverageAreas": [
+        {
+            "countyCode": "AHOS",
+            "coverageName": "ALTO HOSPICIO"
+        },
+        {
+            "countyCode": "CAMI",
+            "coverageName": "CAMINA"
+        },
+        {
+            "countyCode": "COLC",
+            "coverageName": "COLCHANE"
+        },
+        {
+            "countyCode": "HUAR",
+            "coverageName": "HUARA"
+        },
+        {
+            "countyCode": "IQUI",
+            "coverageName": "IQUIQUE"
+        },
+        {
+            "countyCode": "PICA",
+            "coverageName": "PICA"
+        },
+        {
+            "countyCode": "POZO",
+            "coverageName": "POZO ALMONTE"
+        }
+    ],
+    "dateUpdated": "2026-08-20 20:06:19"
+}

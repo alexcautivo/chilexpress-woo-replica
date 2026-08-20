@@ -41,8 +41,8 @@ if ( file_exists( WP_PLUGIN_DIR . '/' . $chilexpress ) && is_plugin_inactive( $c
 	}
 }
 
-switch_theme( 'twentytwentyfive' );
-update_option( 'blogname', 'Chilexpress Woo Test' );
+switch_theme( 'woodmart-child' );
+update_option( 'blogname', 'Celulares, Tablets Rugged y Notebooks Resistentes en Chile' );
 update_option( 'blogdescription', '' );
 update_option( 'timezone_string', 'America/Santiago' );
 update_option( 'WPLANG', 'es_CL' );
@@ -61,8 +61,11 @@ update_option( 'woocommerce_currency', 'CLP' );
 update_option( 'woocommerce_price_thousand_sep', ',' );
 update_option( 'woocommerce_price_decimal_sep', '.' );
 update_option( 'woocommerce_price_num_decimals', '2' );
-update_option( 'woocommerce_weight_unit', 'lbs' );
-update_option( 'woocommerce_dimension_unit', 'in' );
+update_option( 'woocommerce_weight_unit', 'kg' );
+update_option( 'woocommerce_dimension_unit', 'cm' );
+update_option( 'woocommerce_price_thousand_sep', '.' );
+update_option( 'woocommerce_price_decimal_sep', ',' );
+update_option( 'woocommerce_price_num_decimals', '0' );
 update_option( 'woocommerce_calc_taxes', 'no' );
 update_option( 'woocommerce_enable_coupons', 'yes' );
 update_option( 'woocommerce_ship_to_countries', 'specific' );
@@ -86,7 +89,7 @@ update_option(
 );
 
 flush_rewrite_rules( false );
-seed_log( 'Tema Twenty Twenty-Five, locale es_CL, moneda CLP, unidades lbs/in (como la tienda remota).' );
+seed_log( 'Tema Woodmart Child 1.0.0, locale es_CL, moneda CLP, unidades kg/cm (wiki WooCommerce).' );
 
 $image_dir = __DIR__ . '/storefront-assets/products';
 $products  = array(
@@ -212,7 +215,7 @@ foreach ( $products as $data ) {
 	}
 
 	seed_log( sprintf(
-		'Producto %s  $%s  %s lbs  %s×%s×%s in  stock %d  id %d',
+		'Producto %s  $%s  %s kg  %s×%s×%s cm  stock %d  id %d',
 		$data['name'],
 		number_format( (float) $data['price'], 2, '.', ',' ),
 		$data['weight'],

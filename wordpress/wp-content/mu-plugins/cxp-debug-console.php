@@ -29,6 +29,7 @@ final class Cxp_Debug_Console {
 		add_action( 'admin_post_cxp_dbg_delete_all', array( __CLASS__, 'admin_delete_all' ) );
 		add_filter( 'bulk_actions-woocommerce_page_wc-orders', array( __CLASS__, 'bulk_actions' ) );
 		add_filter( 'handle_bulk_actions-woocommerce_page_wc-orders', array( __CLASS__, 'handle_bulk_actions' ), 10, 3 );
+		add_filter( 'woocommerce_bulk_action_ids', array( __CLASS__, 'filter_bulk_order_ids' ), 10, 3 );
 		add_filter( 'woocommerce_admin_order_actions', array( __CLASS__, 'order_row_actions' ), 20, 2 );
 		add_action( 'woocommerce_order_list_table_extra_tablenav', array( __CLASS__, 'orders_table_button' ), 20, 2 );
 		add_action( 'admin_head', array( __CLASS__, 'admin_styles' ) );
@@ -91,13 +92,16 @@ final class Cxp_Debug_Console {
 			#cxp-dbg-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
 			#cxp-dbg-actions button,#cxp-dbg-actions a.cxp-dbg-btn,#cxp-dbg .cxp-dbg-copy-one,#cxp-dbg .cxp-dbg-del-one{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}
 			#cxp-dbg-actions button:hover,#cxp-dbg-actions a.cxp-dbg-btn:hover,#cxp-dbg .cxp-dbg-copy-one:hover,#cxp-dbg .cxp-dbg-del-one:hover{background:#334155}
-			#cxp-dbg-actions a.cxp-dbg-btn-ot{border-color:#ca8a04;background:#854d0e;color:#fef08a;font-weight:700}
-			#cxp-dbg-actions a.cxp-dbg-btn-ot:hover{background:#a16207;color:#fff}
-			#cxp-dbg-shortcuts,#cxp-dbg-plugins,#cxp-dbg-orders{margin:0 0 12px;padding:10px 12px;border:1px solid #3d4d66;border-radius:8px;background:#111827}
-			#cxp-dbg-shortcuts p,#cxp-dbg-plugins p,#cxp-dbg-orders p{margin:0 0 8px;color:#9fb0c7}
-			#cxp-dbg-shortcuts p strong,#cxp-dbg-plugins p strong,#cxp-dbg-orders p strong{color:#fff200;font-weight:700}
+			#cxp-dbg-actions a.cxp-dbg-btn-ot,#cxp-dbg-ot a.cxp-dbg-btn-ot{border-color:#ca8a04;background:#854d0e;color:#fef08a;font-weight:700}
+			#cxp-dbg-actions a.cxp-dbg-btn-ot:hover,#cxp-dbg-ot a.cxp-dbg-btn-ot:hover{background:#a16207;color:#fff}
+			#cxp-dbg-ot a.cxp-dbg-btn{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}
+			#cxp-dbg-shortcuts,#cxp-dbg-plugins,#cxp-dbg-orders,#cxp-dbg-ot{margin:0 0 12px;padding:10px 12px;border:1px solid #3d4d66;border-radius:8px;background:#111827}
+			#cxp-dbg-shortcuts p,#cxp-dbg-plugins p,#cxp-dbg-orders p,#cxp-dbg-ot p{margin:0 0 8px;color:#9fb0c7}
+			#cxp-dbg-shortcuts p strong,#cxp-dbg-plugins p strong,#cxp-dbg-orders p strong,#cxp-dbg-ot p strong{color:#fff200;font-weight:700}
+			#cxp-dbg-ot .cxp-dbg-ot-actions,#cxp-dbg-ot .cxp-ot-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 			#cxp-dbg-plugins table,#cxp-dbg-orders table{width:100%;border-collapse:collapse}
 			#cxp-dbg-plugins th,#cxp-dbg-plugins td,#cxp-dbg-orders th,#cxp-dbg-orders td{padding:6px 8px;border-bottom:1px solid #243044;text-align:left;vertical-align:middle}
+			#cxp-dbg-orders a.cxp-dbg-btn{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5;padding:3px 8px;margin:0 4px 0 0;cursor:pointer;font:inherit;text-decoration:none;font-size:11px}
 			#cxp-dbg-plugins th,#cxp-dbg-orders th{color:#fff200;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 			#cxp-dbg-actions a.cxp-dbg-btn-del,#cxp-dbg .cxp-dbg-del-one,#cxp-dbg #cxp-dbg-del-all{border-color:#7f1d1d;background:#7f1d1d;color:#fecaca}
 			#cxp-dbg-actions a.cxp-dbg-btn-del:hover,#cxp-dbg .cxp-dbg-del-one:hover,#cxp-dbg #cxp-dbg-del-all:hover{background:#991b1b;color:#fff}
@@ -122,7 +126,7 @@ final class Cxp_Debug_Console {
 			</div>
 			<div id="cxp-dbg-panel">
 				<div id="cxp-dbg-shortcuts">
-					<p><strong>Generar OTs</strong> — Pedidos → acciones masivas → <em>Generar Multiples OT</em>. Login local: automático como admin.</p>
+					<p><strong>Generar OTs</strong> — No uses Acciones masivas sin marcar el checkbox. Entra al pedido (Editar) y pulsa <em>Generar OT</em>, o marca #29 y luego Generar Multiples OT.</p>
 					<div id="cxp-dbg-actions">
 						<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_local ); ?>">Pedidos locales (Generar OTs)</a>
 						<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_remote ); ?>" target="_blank" rel="noopener noreferrer">Pedidos tienda remota</a>
@@ -147,11 +151,12 @@ final class Cxp_Debug_Console {
 								<th>Total</th>
 								<th>Cliente</th>
 								<th></th>
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php if ( ! $orders ) : ?>
-								<tr><td colspan="6">No hay pedidos.</td></tr>
+								<tr><td colspan="7">No hay pedidos.</td></tr>
 							<?php else : ?>
 								<?php foreach ( $orders as $row ) : ?>
 									<tr>
@@ -161,6 +166,10 @@ final class Cxp_Debug_Console {
 										<td><?php echo esc_html( $row['total'] ); ?></td>
 										<td><?php echo esc_html( $row['name'] ); ?></td>
 										<td>
+											<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( admin_url( 'admin.php?page=wc-orders&action=edit&id=' . $row['id'] ) ); ?>">Detalle</a>
+											<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=chilexpress_woo_oficial_generar_ot&action=generar_ot&order_id=' . $row['id'] ), 'generar-ot' ) ); ?>">Generar OT</a>
+										</td>
+										<td>
 											<button type="button" class="cxp-dbg-del-one" data-id="<?php echo esc_attr( (string) $row['id'] ); ?>">Borrar</button>
 										</td>
 									</tr>
@@ -169,6 +178,7 @@ final class Cxp_Debug_Console {
 						</tbody>
 					</table>
 				</div>
+				<?php do_action( 'cxp_debug_console_panels' ); ?>
 				<div id="cxp-dbg-plugins">
 					<p><strong>Plugins instalados</strong> — <?php echo esc_html( (string) count( $inventory['rows'] ) ); ?> ítems. Copia la lista completa o cada uno con su versión.</p>
 					<table>
@@ -266,7 +276,7 @@ final class Cxp_Debug_Console {
 					return;
 				}
 				var btn = e.target.closest('.cxp-dbg-copy-one');
-				if (!btn) return;
+				if (!btn || !btn.getAttribute('data-copy')) return;
 				e.stopPropagation();
 				try {
 					copy(decodeURIComponent(btn.getAttribute('data-copy') || ''));
@@ -346,6 +356,20 @@ final class Cxp_Debug_Console {
 	public static function bulk_actions( $actions ) {
 		$actions['cxp_force_delete'] = 'Borrar definitivo';
 		return $actions;
+	}
+
+	public static function filter_bulk_order_ids( $ids, $action, $type ) {
+		if ( 'order' !== $type ) {
+			return $ids;
+		}
+		$keep = array();
+		foreach ( (array) $ids as $id ) {
+			$id = absint( $id );
+			if ( $id && wc_get_order( $id ) instanceof WC_Order ) {
+				$keep[] = $id;
+			}
+		}
+		return $keep;
 	}
 
 	public static function handle_bulk_actions( $redirect, $action, $ids ) {
@@ -586,6 +610,14 @@ final class Cxp_Debug_Console {
 				'URL:                ' . home_url( '/' ),
 				'Request:            ' . ( $_SERVER['REQUEST_METHOD'] ?? '' ) . ' ' . ( $_SERVER['REQUEST_URI'] ?? '' ),
 				'Tiempo petición:    ' . $elapsed . ' ms',
+				'Título del sitio:   ' . get_option( 'blogname' ),
+				'',
+				'--- COMO EN EL CORREO DE WORDPRESS ---',
+				'Tema activo: ' . $theme->get( 'Name' ) . ' (versión ' . $theme->get( 'Version' ) . ')',
+				'Plugin actual: WooCommerce (versión ' . ( defined( 'WC_VERSION' ) ? WC_VERSION : 'n/d' ) . ')',
+				'PHP versión ' . PHP_VERSION,
+				'WordPress ' . get_bloginfo( 'version' ),
+				'Chilexpress Oficial ' . ( defined( 'CHILEXPRESS_WOO_OFICIAL_VERSION' ) ? CHILEXPRESS_WOO_OFICIAL_VERSION : 'n/d' ),
 				'',
 				'--- VERSIONES ---',
 				'PHP:                ' . PHP_VERSION . ' (' . PHP_SAPI . ', ' . PHP_OS_FAMILY . ' ' . php_uname( 'r' ) . ')',

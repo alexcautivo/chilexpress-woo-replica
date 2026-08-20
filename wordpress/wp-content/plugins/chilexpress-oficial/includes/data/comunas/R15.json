@@ -1,0 +1,29 @@
+{
+    "coverageAreas": [
+        {
+            "countyCode": "ARIC",
+            "coverageName": "ARICA"
+        },
+        {
+            "countyCode": "VIFR",
+            "coverageName": "ARICA - VILLA FRONTERA"
+        },
+        {
+            "countyCode": "CAMA",
+            "coverageName": "CAMARONES"
+        },
+        {
+            "countyCode": "GLAG",
+            "coverageName": "GENERAL LAGOS"
+        },
+        {
+            "countyCode": "VISV",
+            "coverageName": "GENERAL LAGOS - VISVIRI"
+        },
+        {
+            "countyCode": "PUTR",
+            "coverageName": "PUTRE"
+        }
+    ],
+    "dateUpdated": "2026-08-20 19:57:56"
+}

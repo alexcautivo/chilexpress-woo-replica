@@ -19,6 +19,9 @@ add_filter(
 		if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || is_front_page() || is_home() ) ) {
 			$classes[] = 'cxp-storefront-catalog';
 		}
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+			$classes[] = 'cxp-storefront-checkout';
+		}
 		return $classes;
 	}
 );
@@ -66,6 +69,50 @@ add_action(
 				),
 			)
 		);
+
+		wp_enqueue_style(
+			'cxp-checkout-cxp',
+			content_url( 'mu-plugins/cxp-checkout-debug/checkout-cxp.css' ),
+			array( 'chilexpress-woo-oficial-storefront' ),
+			'1.0.0'
+		);
+
+		wp_add_inline_script(
+			'chilexpress-woo-oficial-storefront',
+			<<<'JS'
+(function () {
+  function brandWoodmart() {
+    if (document.querySelector('.cxp-storefront-logo')) {
+      document.body.classList.add('cxp-storefront-branded');
+      return;
+    }
+    var slot = document.querySelector('.whb-general-header .site-logo') || document.querySelector('.site-logo');
+    if (!slot || typeof chilexpressStorefront === 'undefined' || !chilexpressStorefront.logoUrl) {
+      return;
+    }
+    var labels = chilexpressStorefront.labels || {};
+    var anchor = document.createElement('a');
+    anchor.className = 'cxp-storefront-logo';
+    anchor.href = chilexpressStorefront.homeUrl || '/';
+    anchor.setAttribute('aria-label', labels.logoAria || 'Chilexpress');
+    var img = document.createElement('img');
+    img.src = chilexpressStorefront.logoUrl;
+    img.alt = labels.logoAria || 'Chilexpress';
+    img.width = 180;
+    img.height = 29;
+    img.decoding = 'async';
+    anchor.appendChild(img);
+    slot.parentNode.insertBefore(anchor, slot);
+    document.body.classList.add('cxp-storefront-branded');
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', brandWoodmart);
+  } else {
+    brandWoodmart();
+  }
+})();
+JS
+		);
 	},
 	20
 );
@@ -74,6 +121,15 @@ add_action(
 	'wp_body_open',
 	static function () {
 		if ( is_admin() ) {
+			return;
+		}
+		if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+			return;
+		}
+		if ( function_exists( 'is_cart' ) && is_cart() ) {
+			return;
+		}
+		if ( ! function_exists( 'is_shop' ) || ! ( is_shop() || is_front_page() || is_home() ) ) {
 			return;
 		}
 		$shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );

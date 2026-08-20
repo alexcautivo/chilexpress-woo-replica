@@ -1,0 +1,154 @@
+:root {
+	--wd-text-font: "Lato", Arial, Helvetica, sans-serif;
+	--wd-text-font-weight: 400;
+	--wd-text-color: #777777;
+	--wd-text-font-size: 14px;
+	--wd-title-font: "Poppins", Arial, Helvetica, sans-serif;
+	--wd-title-font-weight: 600;
+	--wd-title-color: #242424;
+	--wd-entities-title-font: "Poppins", Arial, Helvetica, sans-serif;
+	--wd-entities-title-font-weight: 500;
+	--wd-entities-title-color: #333333;
+	--wd-entities-title-color-hover: rgb(51 51 51 / 65%);
+	--wd-alternative-font: "Lato", Arial, Helvetica, sans-serif;
+	--wd-widget-title-font: "Poppins", Arial, Helvetica, sans-serif;
+	--wd-widget-title-font-weight: 600;
+	--wd-widget-title-transform: uppercase;
+	--wd-widget-title-color: #333;
+	--wd-widget-title-font-size: 16px;
+	--wd-header-el-font: "Lato", Arial, Helvetica, sans-serif;
+	--wd-header-el-font-weight: 700;
+	--wd-header-el-transform: uppercase;
+	--wd-header-el-font-size: 13px;
+	--wd-otl-style: dotted;
+	--wd-otl-width: 2px;
+	--wd-primary-color: rgb(0,123,196);
+	--wd-alternative-color: #fbbc34;
+	--btn-default-bgcolor: rgb(247,247,247);
+	--btn-default-bgcolor-hover: #efefef;
+	--btn-accented-bgcolor: rgb(0,123,196);
+	--btn-accented-bgcolor-hover: rgb(0,106,169);
+	--wd-form-brd-width: 1px;
+	--notices-success-bg: #459647;
+	--notices-success-color: #fff;
+	--notices-warning-bg: #E0B252;
+	--notices-warning-color: #fff;
+	--wd-link-color: #333333;
+	--wd-link-color-hover: #242424;
+}
+.wd-age-verify-wrap {
+	--wd-popup-width: 500px;
+}
+.wd-popup.wd-promo-popup {
+	background-color: #111111;
+	background-image: url(https://celularesenventa.cl/wp-content/uploads/2021/08/promo-popup.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center center;
+}
+.wd-promo-popup-wrap {
+	--wd-popup-width: 800px;
+}
+:is(.woodmart-woocommerce-layered-nav, .wd-product-category-filter) .wd-scroll-content {
+	max-height: 223px;
+}
+.wd-page-title .wd-page-title-bg img {
+	object-fit: cover;
+	object-position: center center;
+}
+.wd-footer {
+	background-color: rgb(10,10,10);
+	background-image: none;
+}
+.wd .product-label.onsale {
+	color: rgb(255,255,255);
+}
+.wd .product-label.out-of-stock {
+	color: rgb(221,51,51);
+}
+.wd .product-label.attribute-label:not(.label-with-img) {
+	background-color: rgb(242,242,242);
+}
+.mfp-wrap.wd-popup-quick-view-wrap {
+	--wd-popup-width: 920px;
+}
+.woocommerce-product-gallery {
+	--wd-gallery-gap: 6px;
+}
+:root{
+--wd-container-w: 1222px;
+--wd-form-brd-radius: 35px;
+--btn-default-color: #333;
+--btn-default-color-hover: #333;
+--btn-accented-color: #fff;
+--btn-accented-color-hover: #fff;
+--btn-default-brd-radius: 35px;
+--btn-default-box-shadow: none;
+--btn-default-box-shadow-hover: none;
+--btn-accented-brd-radius: 35px;
+--btn-accented-box-shadow: none;
+--btn-accented-box-shadow-hover: none;
+--wd-brd-radius: 0px;
+}
+
+@media (min-width: 1222px) {
+section.elementor-section.wd-section-stretch > .elementor-container {
+margin-left: auto;
+margin-right: auto;
+}
+}
+
+
+.wd-page-title {
+background-color: #0a0a0a;
+}
+
+.product-label.onsale {
+	display: none !important;
+}
+
+.orderby {
+	display:none !important;
+}
+
+.wd-active-filters {
+	display:none !important;
+}
+
+.tabs-layout-accordion .wc-tab-inner.wd-scroll-content{
+    max-height: 100%;
+}
+
+.grecaptcha-badge {
+visibility: hidden;
+}
+
+.wd-action-btn.wd-style-icon-bg-text>a {
+    background-color: white;
+    color: red;
+}
+
+@keyframes brillo {
+    0% { box-shadow: 0 0 5px #ff0000; }
+    50% { box-shadow: 0 0 20px #ffd700; } /* Amarillo dorado para resaltar */
+    100% { box-shadow: 0 0 5px #ff0000; }
+}
+
+/* Ocultar cápsula de íconos solo en celulares y tablets */
+@media (max-width: 1024px) {
+    .wd-products-element .wd-buttons,
+    .product-grid-item .wd-buttons,
+    .wd-product .wd-buttons {
+        display: none !important;
+    }
+}
+@media (max-width: 576px) {
+	/* Resetear el transform y levantar el botón con margen seguro */
+body .chaty-widget, 
+body #chaty-widget-0 {
+    transform: none !important;
+    -webkit-transform: none !important;
+    margin-bottom: 90px !important; /* Lo sube exactamente 70px desde su base */
+}
+
+}

@@ -182,75 +182,44 @@ add_action(
 	}
 );
 
-add_filter(
-	'woocommerce_shipping_methods',
-	static function ( $methods ) {
-		$methods['cxp_debug_cxp'] = 'CXP_Debug_Chilexpress_Shipping';
-		return $methods;
-	}
-);
-
-add_action(
-	'woocommerce_shipping_init',
-	static function () {
-		if ( ! class_exists( 'WC_Shipping_Method' ) ) {
-			return;
-		}
-
-		class CXP_Debug_Chilexpress_Shipping extends WC_Shipping_Method {
-			public function __construct( $instance_id = 0 ) {
-				$this->id                 = 'cxp_debug_cxp';
-				$this->instance_id        = absint( $instance_id );
-				$this->method_title       = 'Chilexpress (réplica debug)';
-				$this->method_description = 'Tarifas PREX/CHEX de la tienda de prueba.';
-				$this->supports           = array( 'shipping-zones', 'instance-settings' );
-				$this->enabled            = 'yes';
-				$this->title              = 'Chilexpress';
-				$this->init();
-			}
-
-			public function init() {
-				$this->init_form_fields();
-				$this->init_settings();
-			}
-
-			public function init_form_fields() {
-				$this->instance_form_fields = array(
-					'title' => array(
-						'title'   => 'Título',
-						'type'    => 'text',
-						'default' => 'Chilexpress',
-					),
-				);
-			}
-
-			public function calculate_shipping( $package = array() ) {
-				$this->add_rate(
-					array(
-						'id'    => $this->get_rate_id( 'prex' ),
-						'label' => 'Chilexpress – PREX día sig. AM',
-						'cost'  => 11745,
-					)
-				);
-				$this->add_rate(
-					array(
-						'id'    => $this->get_rate_id( 'chex' ),
-						'label' => 'Chilexpress – CHEX día sig. PM',
-						'cost'  => 8747,
-					)
-				);
-			}
-		}
-	}
-);
-
 add_action( 'init', 'cxp_checkout_debug_configure', 30 );
+add_action( 'init', 'cxp_checkout_force_oficial_shipping', 35 );
 add_action( 'woocommerce_init', 'cxp_checkout_debug_prefill_customer', 30 );
 add_action( 'woocommerce_cart_loaded_from_session', 'cxp_checkout_debug_prefill_customer', 20 );
 add_action( 'template_redirect', 'cxp_checkout_debug_ensure_cart_item', 5 );
 
 // SQLite cannot run WooCommerce reserved-stock SQL (FOR UPDATE / INTERVAL). Skip holds locally.
 add_filter( 'woocommerce_order_hold_stock_minutes', '__return_zero' );
+
+add_filter(
+	'woocommerce_checkout_fields',
+	static function ( $fields ) {
+		$defaults = cxp_checkout_debug_customer_data();
+		foreach ( array( 'billing', 'shipping' ) as $group ) {
+			$state_key = $group . '_state';
+			$city_key  = $group . '_city';
+			if ( isset( $fields[ $group ][ $state_key ] ) ) {
+				$fields[ $group ][ $state_key ]['default'] = $defaults['state'];
+			}
+			if ( isset( $fields[ $group ][ $city_key ] ) && class_exists( 'Chilexpress_Woo_Oficial_Coverage' ) ) {
+				$state   = WC()->checkout ? WC()->checkout->get_value( $state_key ) : '';
+				$state   = $state ? $state : $defaults['state'];
+				$coverage = new Chilexpress_Woo_Oficial_Coverage();
+				$comunas  = $coverage->obtener_comunas( $state );
+				$options  = array();
+				foreach ( (array) $comunas as $name => $code ) {
+					$options[ $name ] = $name;
+				}
+				if ( $options ) {
+					$fields[ $group ][ $city_key ]['options'] = $options;
+					$fields[ $group ][ $city_key ]['default'] = isset( $options[ $defaults['city'] ] ) ? $defaults['city'] : array_key_first( $options );
+				}
+			}
+		}
+		return $fields;
+	},
+	40
+);
 
 add_filter(
 	'woocommerce_checkout_get_value',
@@ -267,6 +236,7 @@ add_filter(
 			'billing_address_2'   => $data['address_2'],
 			'billing_postcode'    => $data['postcode'],
 			'billing_phone'       => $data['phone'],
+			'billing_address_3'   => $data['complement'] ?? 'Casa',
 			'shipping_first_name' => $data['first_name'],
 			'shipping_last_name'  => $data['last_name'],
 			'shipping_country'    => $data['country'],
@@ -276,6 +246,7 @@ add_filter(
 			'shipping_address_2'  => $data['address_2'],
 			'shipping_postcode'   => $data['postcode'],
 			'shipping_phone'      => $data['phone'],
+			'shipping_address_3'  => $data['complement'] ?? 'Casa',
 		);
 		if ( isset( $map[ $input ] ) && ( $value === null || $value === '' ) ) {
 			return $map[ $input ];
@@ -293,18 +264,53 @@ add_filter(
 	}
 );
 
+add_action(
+	'woocommerce_before_checkout_form',
+	static function () {
+		$data = cxp_checkout_debug_customer_data();
+		?>
+		<div class="cxp-fill-valid" role="region" aria-label="Datos de prueba Chilexpress">
+			<p>Llena el checkout con datos válidos para cotizar Chilexpress: <?php echo esc_html( $data['first_name'] . ' ' . $data['last_name'] ); ?>, <?php echo esc_html( $data['state'] ); ?> / <?php echo esc_html( $data['city'] ); ?>, <?php echo esc_html( $data['address_1'] . ' ' . $data['address_2'] ); ?>.</p>
+			<button type="button" id="cxp-fill-valid">Llenar datos válidos</button>
+		</div>
+		<?php
+	},
+	5
+);
+
+add_action(
+	'wp_enqueue_scripts',
+	static function () {
+		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_order_received_page() ) {
+			return;
+		}
+		wp_enqueue_script(
+			'cxp-fill-valid',
+			content_url( 'mu-plugins/cxp-checkout-debug/fill.js' ),
+			array( 'jquery' ),
+			'1.0.0',
+			true
+		);
+		wp_localize_script( 'cxp-fill-valid', 'cxpFillAddress', cxp_checkout_debug_customer_data() );
+	},
+	30
+);
+
 function cxp_checkout_debug_customer_data() {
+	if ( function_exists( 'cxp_chilexpress_seed_destination' ) ) {
+		return cxp_chilexpress_seed_destination();
+	}
 	return array(
 		'first_name' => 'Juan',
 		'last_name'  => 'Espoz',
-		'email'      => 'juan.espoz@aeolabs.io',
+		'email'      => 'alexander.cautivo+testwordpress@aeolabs.io',
 		'country'    => 'CL',
 		'state'      => 'RM',
-		'city'       => 'pedro aguirre cerda',
-		'address_1'  => 'benito juarez 4244',
-		'address_2'  => '4244',
+		'city'       => 'LA REINA',
+		'address_1'  => 'Avenida Larrain',
+		'address_2'  => '5862',
 		'postcode'   => '',
-		'phone'      => '',
+		'phone'      => '912345678',
 	);
 }
 
@@ -312,12 +318,18 @@ function cxp_checkout_debug_prefill_customer() {
 	if ( ! function_exists( 'WC' ) || ! WC()->customer ) {
 		return;
 	}
-	if ( WC()->session && WC()->session->get( 'cxp_addr_prefilled_v2' ) ) {
+	$customer = WC()->customer;
+	$city     = strtoupper( (string) $customer->get_shipping_city() );
+	$state    = (string) $customer->get_shipping_state();
+	$street   = (string) $customer->get_billing_address_1();
+	$broken   = false !== stripos( $street, 'benito' )
+		|| false !== stripos( $city, 'ARICA' )
+		|| ( '' !== $city && 'LA REINA' !== $city && 'RM' === $state && false !== stripos( $city, 'PEDRO' ) );
+	if ( ! $broken ) {
 		return;
 	}
 
-	$data     = cxp_checkout_debug_customer_data();
-	$customer = WC()->customer;
+	$data = cxp_checkout_debug_customer_data();
 	foreach ( array( 'billing', 'shipping' ) as $group ) {
 		$customer->{"set_{$group}_first_name"}( $data['first_name'] );
 		$customer->{"set_{$group}_last_name"}( $data['last_name'] );
@@ -330,11 +342,12 @@ function cxp_checkout_debug_prefill_customer() {
 		$customer->{"set_{$group}_phone"}( $data['phone'] );
 	}
 	$customer->set_billing_email( $data['email'] );
-	$customer->set_calculated_shipping( true );
+	$customer->set_calculated_shipping( false );
 	$customer->save();
 
 	if ( WC()->session ) {
-		WC()->session->set( 'cxp_addr_prefilled_v2', '1' );
+		WC()->session->set( 'cxp_addr_prefilled_v5', '1' );
+		WC()->session->set( 'chosen_shipping_methods', array() );
 	}
 }
 
@@ -378,6 +391,50 @@ function cxp_checkout_debug_page( $title, $content ) {
 	);
 }
 
+function cxp_checkout_use_classic_pages() {
+	if ( ! function_exists( 'wc_get_page_id' ) ) {
+		return;
+	}
+	$map = array(
+		'cart'     => '[woocommerce_cart]',
+		'checkout' => '[woocommerce_checkout]',
+	);
+	foreach ( $map as $which => $shortcode ) {
+		$id = wc_get_page_id( $which );
+		if ( $id <= 0 ) {
+			continue;
+		}
+		$page = get_post( $id );
+		if ( ! $page ) {
+			continue;
+		}
+		if ( false !== strpos( (string) $page->post_content, $shortcode ) && false === strpos( (string) $page->post_content, 'wp:woocommerce/checkout' ) && false === strpos( (string) $page->post_content, 'wp:woocommerce/cart' ) ) {
+			continue;
+		}
+		wp_update_post(
+			array(
+				'ID'           => $id,
+				'post_content' => $shortcode,
+			)
+		);
+	}
+}
+
+function cxp_checkout_force_oficial_shipping() {
+	if ( ! class_exists( 'WooCommerce' ) ) {
+		return;
+	}
+
+	cxp_checkout_use_classic_pages();
+
+	global $wpdb;
+	$wpdb->query( "DELETE FROM {$wpdb->prefix}woocommerce_shipping_zone_methods WHERE method_id = 'cxp_debug_cxp'" );
+
+	if ( class_exists( 'WC_Shipping_Zones' ) ) {
+		cxp_checkout_debug_ensure_zone();
+	}
+}
+
 function cxp_checkout_debug_ensure_zone() {
 	if ( ! class_exists( 'WC_Shipping_Zones' ) ) {
 		return;
@@ -398,24 +455,57 @@ function cxp_checkout_debug_ensure_zone() {
 		$zone->add_location( 'CL', 'country' );
 	}
 
-	$has_debug = false;
+	$has_oficial = false;
 	foreach ( $zone->get_shipping_methods( true ) as $method ) {
-		if ( 'cxp_debug_cxp' === $method->id ) {
-			$has_debug = true;
+		if ( 'chilexpress_woo_oficial' === $method->id || 'Chilexpress_Woo_Oficial_Shipping_Method' === get_class( $method ) ) {
+			$has_oficial = true;
 			break;
 		}
 	}
-	if ( ! $has_debug ) {
-		$zone->add_shipping_method( 'cxp_debug_cxp' );
+	if ( ! $has_oficial ) {
+		$zone->add_shipping_method( 'chilexpress_woo_oficial' );
 	}
 }
 
+add_filter(
+	'woocommerce_shipping_methods',
+	static function ( $methods ) {
+		if ( class_exists( 'Chilexpress_Woo_Oficial_Shipping_Method' ) ) {
+			$methods['chilexpress_woo_oficial'] = 'Chilexpress_Woo_Oficial_Shipping_Method';
+		}
+		unset( $methods['cxp_debug_cxp'] );
+		return $methods;
+	},
+	30
+);
+
 function cxp_checkout_debug_configure() {
-	if ( get_option( 'cxp_checkout_debug_configured' ) === '3' ) {
+	if ( get_option( 'cxp_checkout_debug_configured' ) === '5' ) {
 		return;
 	}
 	if ( ! class_exists( 'WooCommerce' ) ) {
 		return;
+	}
+
+	$email = 'alexander.cautivo+testwordpress@aeolabs.io';
+	update_option( 'admin_email', $email );
+	$user = get_user_by( 'login', 'admin' );
+	if ( $user ) {
+		wp_update_user(
+			array(
+				'ID'         => $user->ID,
+				'user_email' => $email,
+			)
+		);
+	}
+	foreach ( array( 'woocommerce_new_order_settings', 'woocommerce_cancelled_order_settings', 'woocommerce_failed_order_settings' ) as $opt ) {
+		$settings = get_option( $opt, array() );
+		if ( ! is_array( $settings ) ) {
+			$settings = array();
+		}
+		$settings['enabled']   = $settings['enabled'] ?? 'yes';
+		$settings['recipient'] = $email;
+		update_option( $opt, $settings );
 	}
 
 	$terms_id   = cxp_checkout_debug_page(
@@ -432,9 +522,10 @@ function cxp_checkout_debug_configure() {
 	update_option( 'woocommerce_enable_order_comments', 'yes' );
 	update_option( 'woocommerce_enable_guest_checkout', 'yes' );
 	update_option( 'woocommerce_enable_checkout_login_reminder', 'no' );
-	update_option( 'woocommerce_ship_to_destination', 'shipping' );
+	update_option( 'woocommerce_ship_to_destination', 'billing' );
 	update_option( 'woocommerce_calc_shipping', 'yes' );
-	update_option( 'woocommerce_shipping_cost_requires_address', 'no' );
+	update_option( 'woocommerce_enable_shipping_calc', 'yes' );
+	update_option( 'woocommerce_shipping_cost_requires_address', 'yes' );
 
 	update_option(
 		'woocommerce_cod_settings',
@@ -456,6 +547,7 @@ function cxp_checkout_debug_configure() {
 		)
 	);
 
+	cxp_checkout_use_classic_pages();
 	cxp_checkout_debug_ensure_zone();
-	update_option( 'cxp_checkout_debug_configured', '3' );
+	update_option( 'cxp_checkout_debug_configured', '5' );
 }

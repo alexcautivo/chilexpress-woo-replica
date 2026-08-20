@@ -1,0 +1,90 @@
+/* Woodmart + look de la tienda de prueba Chilexpress */
+.cxp-storefront-enhanced .whb-header,
+.cxp-storefront-enhanced .whb-main-header,
+.cxp-storefront-enhanced .whb-general-header,
+.cxp-storefront-enhanced .whb-header-bottom {
+	background: #fff200 !important;
+	color: #000 !important;
+	border: 0 !important;
+}
+.cxp-storefront-enhanced .whb-top-bar {
+	display: none !important;
+}
+.cxp-storefront-enhanced .whb-header-bottom {
+	background: #000 !important;
+}
+.cxp-storefront-enhanced .whb-header-bottom a,
+.cxp-storefront-enhanced .whb-header-bottom .nav-link-text {
+	color: #fff200 !important;
+}
+.cxp-storefront-enhanced .whb-general-header a,
+.cxp-storefront-enhanced .wd-header-cart a {
+	color: #000 !important;
+}
+.cxp-storefront-enhanced.cxp-storefront-branded .site-logo,
+.cxp-storefront-enhanced.cxp-storefront-branded .wd-logo {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+}
+.cxp-storefront-enhanced .whb-general-header .cxp-storefront-logo {
+	display: inline-flex;
+	align-items: center;
+}
+.cxp-storefront-enhanced .wd-footer {
+	background: #000 !important;
+	color: #fff !important;
+}
+.cxp-storefront-enhanced .wd-footer a {
+	color: #fff200 !important;
+}
+
+.cxp-storefront-checkout .woocommerce {
+	background: #f5f5f2;
+	padding: 24px;
+	border-radius: 18px;
+}
+.cxp-fill-valid {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px 16px;
+	margin: 0 0 22px;
+	padding: 14px 18px;
+	border: 2px solid #000;
+	border-radius: 14px;
+	background: #fff200;
+	color: #000;
+}
+.cxp-fill-valid p {
+	margin: 0;
+	flex: 1 1 220px;
+	font-size: 14px;
+	font-weight: 600;
+}
+.cxp-fill-valid button {
+	cursor: pointer;
+	border: 2px solid #000;
+	border-radius: 999px;
+	padding: 10px 18px;
+	background: #000;
+	color: #fff200;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.cxp-fill-valid button:hover {
+	background: #fff;
+	color: #000;
+}
+.cxp-storefront-checkout #place_order,
+.cxp-storefront-checkout .woocommerce-button,
+.cxp-storefront-checkout button[name="woocommerce_checkout_place_order"] {
+	background: #fff200 !important;
+	color: #000 !important;
+	border: 2px solid #000 !important;
+	border-radius: 999px !important;
+	font-weight: 800 !important;
+}

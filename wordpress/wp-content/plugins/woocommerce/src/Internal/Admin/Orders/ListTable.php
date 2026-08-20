@@ -1585,10 +1585,14 @@ class ListTable extends WP_List_Table {
 
 		foreach ( $ids as $id ) {
 			$order = wc_get_order( $id );
+			if ( ! $order instanceof \WC_Order ) {
+				continue;
+			}
+
 			$order->delete( $force_delete );
 			$updated_order = wc_get_order( $id );
 
-			if ( ( $force_delete && false === $updated_order ) || ( ! $force_delete && $updated_order->get_status() === 'trash' ) ) {
+			if ( ( $force_delete && false === $updated_order ) || ( ! $force_delete && $updated_order instanceof \WC_Order && $updated_order->get_status() === 'trash' ) ) {
 				++$changed;
 			}
 		}
@@ -1608,7 +1612,11 @@ class ListTable extends WP_List_Table {
 		$changed      = 0;
 
 		foreach ( $ids as $id ) {
-			if ( $orders_store->untrash_order( wc_get_order( $id ) ) ) {
+			$order = wc_get_order( $id );
+			if ( ! $order instanceof \WC_Order ) {
+				continue;
+			}
+			if ( $orders_store->untrash_order( $order ) ) {
 				++$changed;
 			}
 		}

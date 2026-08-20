@@ -80,26 +80,27 @@ final class Cxp_Debug_Console {
 		$shop_url      = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 		?>
 		<style id="cxp-debug-console-css">
-			#cxp-dbg{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#e8edf5;text-align:left}
-			#cxp-dbg *{box-sizing:border-box}
+			#cxp-dbg{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5;text-align:left;color-scheme:dark}
+			#cxp-dbg *{box-sizing:border-box;color:inherit}
+			#cxp-dbg a,#cxp-dbg button,#cxp-dbg p,#cxp-dbg td,#cxp-dbg th,#cxp-dbg span,#cxp-dbg label,#cxp-dbg strong,#cxp-dbg pre,#cxp-dbg h3{color:#e8edf5;-webkit-text-fill-color:#e8edf5}
 			#cxp-dbg-bar{display:flex;gap:10px;align-items:center;min-height:36px;padding:6px 12px;border-top:1px solid #3d4d66;background:#111827;cursor:pointer;user-select:none}
-			#cxp-dbg-bar strong{color:#fff200;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-			#cxp-dbg-credit{color:#93c5fd;font-size:11px;white-space:nowrap}
-			#cxp-dbg-meta{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#9fb0c7}
-			#cxp-dbg-count{padding:2px 8px;border-radius:999px;background:#7f1d1d;color:#fecaca;font-weight:700}
-			#cxp-dbg-count.is-ok{background:#14532d;color:#bbf7d0}
+			#cxp-dbg-bar strong{color:#fff200 !important;-webkit-text-fill-color:#fff200;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+			#cxp-dbg-credit{color:#93c5fd !important;-webkit-text-fill-color:#93c5fd;font-size:11px;white-space:nowrap}
+			#cxp-dbg-meta{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#9fb0c7 !important;-webkit-text-fill-color:#9fb0c7}
+			#cxp-dbg-count{padding:2px 8px;border-radius:999px;background:#7f1d1d;color:#fecaca !important;-webkit-text-fill-color:#fecaca;font-weight:700}
+			#cxp-dbg-count.is-ok{background:#14532d;color:#bbf7d0 !important;-webkit-text-fill-color:#bbf7d0}
 			#cxp-dbg-panel{display:none;max-height:min(70vh,760px);overflow:auto;padding:12px;border-top:1px solid #243044;background:#0b1220}
 			#cxp-dbg.is-open #cxp-dbg-panel{display:block}
 			#cxp-dbg.is-open #cxp-dbg-bar{cursor:default}
 			#cxp-dbg-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
-			#cxp-dbg-actions button,#cxp-dbg-actions a.cxp-dbg-btn,#cxp-dbg .cxp-dbg-copy-one,#cxp-dbg .cxp-dbg-del-one{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}
-			#cxp-dbg-actions button:hover,#cxp-dbg-actions a.cxp-dbg-btn:hover,#cxp-dbg .cxp-dbg-copy-one:hover,#cxp-dbg .cxp-dbg-del-one:hover{background:#334155}
-			#cxp-dbg-actions a.cxp-dbg-btn-ot,#cxp-dbg-ot a.cxp-dbg-btn-ot{border-color:#ca8a04;background:#854d0e;color:#fef08a;font-weight:700}
-			#cxp-dbg-actions a.cxp-dbg-btn-ot:hover,#cxp-dbg-ot a.cxp-dbg-btn-ot:hover{background:#a16207;color:#fff}
+			#cxp-dbg-actions button,#cxp-dbg-actions a.cxp-dbg-btn,#cxp-dbg a.cxp-dbg-btn,#cxp-dbg .cxp-dbg-copy-one,#cxp-dbg .cxp-dbg-del-one,#cxp-dbg button.cxp-dbg-copy-one{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}
+			#cxp-dbg-actions button:hover,#cxp-dbg-actions a.cxp-dbg-btn:hover,#cxp-dbg a.cxp-dbg-btn:hover,#cxp-dbg .cxp-dbg-copy-one:hover,#cxp-dbg .cxp-dbg-del-one:hover{background:#334155}
+			#cxp-dbg-actions a.cxp-dbg-btn-ot,#cxp-dbg-ot a.cxp-dbg-btn-ot,#cxp-dbg a.cxp-dbg-btn-ot{border-color:#ca8a04;background:#854d0e;color:#fef08a !important;-webkit-text-fill-color:#fef08a;font-weight:700}
+			#cxp-dbg-actions a.cxp-dbg-btn-ot:hover,#cxp-dbg-ot a.cxp-dbg-btn-ot:hover,#cxp-dbg a.cxp-dbg-btn-ot:hover{background:#a16207;color:#fff !important;-webkit-text-fill-color:#fff}
 			#cxp-dbg-ot a.cxp-dbg-btn{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}
 			#cxp-dbg-shortcuts,#cxp-dbg-plugins,#cxp-dbg-orders,#cxp-dbg-ot{margin:0 0 12px;padding:10px 12px;border:1px solid #3d4d66;border-radius:8px;background:#111827}
-			#cxp-dbg-shortcuts p,#cxp-dbg-plugins p,#cxp-dbg-orders p,#cxp-dbg-ot p{margin:0 0 8px;color:#9fb0c7}
-			#cxp-dbg-shortcuts p strong,#cxp-dbg-plugins p strong,#cxp-dbg-orders p strong,#cxp-dbg-ot p strong{color:#fff200;font-weight:700}
+			#cxp-dbg-shortcuts p,#cxp-dbg-plugins p,#cxp-dbg-orders p,#cxp-dbg-ot p{margin:0 0 8px;color:#9fb0c7 !important;-webkit-text-fill-color:#9fb0c7}
+			#cxp-dbg-shortcuts p strong,#cxp-dbg-plugins p strong,#cxp-dbg-orders p strong,#cxp-dbg-ot p strong{color:#fff200 !important;-webkit-text-fill-color:#fff200;font-weight:700}
 			#cxp-dbg-ot .cxp-dbg-ot-actions,#cxp-dbg-ot .cxp-ot-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 			#cxp-dbg-plugins table,#cxp-dbg-orders table{width:100%;border-collapse:collapse}
 			#cxp-dbg-plugins th,#cxp-dbg-plugins td,#cxp-dbg-orders th,#cxp-dbg-orders td{padding:6px 8px;border-bottom:1px solid #243044;text-align:left;vertical-align:middle}
@@ -111,10 +112,11 @@ final class Cxp_Debug_Console {
 			#cxp-dbg-plugins td.cxp-file{color:#93c5fd}
 			#cxp-dbg-plugins .is-off{color:#fca5a5}
 			#cxp-dbg .cxp-dbg-copy-one{padding:3px 8px;font-size:11px}
-			#cxp-dbg pre{margin:0;white-space:pre-wrap;word-break:break-word;color:#dbeafe}
-			#cxp-dbg h3{margin:14px 0 6px;color:#fff200;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
-			#cxp-dbg .cxp-err{color:#fca5a5}
-			#cxp-dbg-copied{color:#86efac;font-weight:700}
+			#cxp-dbg pre,#cxp-dbg #cxp-dbg-copy-all,#cxp-dbg #cxp-docs-out{margin:0;white-space:pre-wrap;word-break:break-word;color:#f8fafc !important;-webkit-text-fill-color:#f8fafc !important;background:#020617 !important;border:1px solid #334155;padding:10px;border-radius:6px;max-height:min(40vh,420px);overflow:auto}
+			#cxp-dbg h3{margin:14px 0 6px;color:#fff200 !important;-webkit-text-fill-color:#fff200;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+			#cxp-dbg .cxp-err{color:#fca5a5 !important;-webkit-text-fill-color:#fca5a5}
+			#cxp-dbg-copied{color:#86efac !important;-webkit-text-fill-color:#86efac;font-weight:700}
+			#cxp-dbg a.cxp-dbg-btn-export{border-color:#1d4ed8;background:#1e3a8a;color:#dbeafe !important;-webkit-text-fill-color:#dbeafe;font-weight:700}
 			body.cxp-dbg-pad{padding-bottom:40px}
 		</style>
 		<div id="cxp-dbg">

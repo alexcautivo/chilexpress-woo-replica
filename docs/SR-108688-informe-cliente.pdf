@@ -1,0 +1,141 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 4 0 R /Resources << /Font << /F1  7 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 5190 >>
+stream
+BT /F1 8.00 Tf 0 g 48.00 793.89 Td (SR-108688  |  Informe tecnico para el cliente  |  celularesenventa.cl) Tj ET
+0.7 G 48 779.89 m 547 779.89 l S
+0 G
+0.7 G 48 765.89 m 547 765.89 l S
+0 G
+BT /F1 16.00 Tf 0 g 48.00 759.89 Td (Por que el sitio cayo al actualizar WooCommerce \(y por que una replica con las mismas versiones no cae\)) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 729.89 Td (Ticket SR-108688 � Fecha del correo WordPress: 11 de agosto de 2026 � Informe: 20 de agosto de 2026) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 714.89 Td (Autor del laboratorio: Alexander Alejandro Cautivo Ramos � Aeolabs � alexander.cautivo@aeolabs.io) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 693.89 Td (1. Resumen ejecutivo) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 668.89 Td (El error critico no significa que Chilexpress Oficial 1.4.0 sea incompatible con WooCommerce) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 655.89 Td (11.0.1, ni que PHP 8.4.19 o Woodmart esten rotos. Significa que, durante unos segundos, WooCommerce) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 642.89 Td (se estaba actualizando archivo por archivo y Chilexpress Oficial cargo una clase interna de Woo) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 629.89 Td (demasiado pronto, cuando todavia faltaba un archivo \(el enum ProductTaxStatus\).) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 612.89 Td (Una replica con WordPress 7.0.3, WooCommerce 11.0.1 COMPLETO, PHP 8.4.19 y el mismo Chilexpress) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 599.89 Td (1.4.0 NO reproduce el fatal: ahi el archivo del enum ya esta en disco. El escenario del cliente es) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 586.89 Td (la ventana del update, no el estado estable posterior.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 569.89 Td (2. Error exacto \(correo de WordPress\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 544.89 Td (Se ha producido un error del tipo E_ERROR en la linea 84 del archivo) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 531.89 Td (woocommerce/includes/abstracts/abstract-wc-shipping-method.php.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 514.89 Td (Uncaught Error: Class "Automattic\\WooCommerce\\Enums\\ProductTaxStatus" not found) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 497.89 Td (Peticion que fallo: /wp-admin/admin-ajax.php) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 484.89 Td (Sitio: celularesenventa.cl) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 471.89 Td (Titulo del sitio: Celulares, Tablets Rugged y Notebooks Resistentes en Chile) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 454.89 Td (3. Pila informada \(y usada en la replica\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 429.89 Td (PHP: 8.4.19) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 416.89 Td (WordPress: 7.0.3) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 403.89 Td (WooCommerce: 11.0.1) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 390.89 Td (Chilexpress Oficial: 1.4.0 \(ZIP intacto; no se parchea en el laboratorio\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 377.89 Td (Tema: Woodmart Child 1.0.0 / padre Woodmart 8.5.7) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 360.89 Td (4. Causa tecnica) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 335.89 Td (Chilexpress Oficial 1.4.0 arranca en el hook plugins_loaded. En) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 322.89 Td (admin/class-chilexpress-woo-oficial-admin.php, lineas 30-38, hace require_once hardcoded de) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 309.89 Td (abstract-wc-settings-api.php y abstract-wc-shipping-method.php, sin esperar a que WooCommerce) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 296.89 Td (termine de inicializarse.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 279.89 Td (El propio plugin SI espera el hook correcto \(woocommerce_shipping_init\) para registrar el metodo de) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 266.89 Td (envio. El problema es este require prematuro en la clase de administracion.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 249.89 Td (En WooCommerce 11 esa clase abstracta declara: public $tax_status = ProductTaxStatus::TAXABLE; y) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 236.89 Td (importa Automattic\\WooCommerce\\Enums\\ProductTaxStatus. El enum vive en) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 223.89 Td (woocommerce/src/Enums/ProductTaxStatus.php y lo carga el autoloader de Woo cuando Woo YA arranco.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 206.89 Td (Al forzar el require_once en plugins_loaded, PHP evalua ProductTaxStatus::TAXABLE sin que el) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 193.89 Td (autoloader haya registrado la clase. Si ademas el archivo del enum no esta en disco \(update a) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 180.89 Td (medias\), el resultado es exactamente el E_ERROR del correo.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 163.89 Td (5. Por que al cliente le daba error y a la replica no) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 138.89 Td (El actualizador de WordPress no reemplaza un plugin de forma atomica: borra y copia cientos de) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 125.89 Td (archivos mientras el sitio sigue recibiendo visitas \(admin-ajax.php del escritorio, del tema,) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 112.89 Td (etc.\).) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 95.89 Td (o En produccion, durante el update: Chilexpress sigue activo. Ya se copio) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 82.89 Td (abstract-wc-shipping-method.php NUEVO \(con el enum\). Todavia NO esta ProductTaxStatus.php. Llega) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 69.89 Td (un hit a admin-ajax.php. PHP muere.) Tj ET
+BT /F1 8.00 Tf 0 g 277.64 28.00 Td (Pagina 1) Tj ET
+
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 6 0 R /Resources << /Font << /F1  7 0 R >> >> >>
+endobj
+6 0 obj
+<< /Length 5342 >>
+stream
+BT /F1 8.00 Tf 0 g 48.00 793.89 Td (SR-108688  |  Informe tecnico para el cliente  |  celularesenventa.cl) Tj ET
+0.7 G 48 779.89 m 547 779.89 l S
+0 G
+BT /F1 10.00 Tf 0 g 60.00 765.89 Td (o En la replica de laboratorio: WooCommerce 11.0.1 se instalo completo de una vez.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 752.89 Td (ProductTaxStatus.php existe y contiene class ProductTaxStatus. El mismo require_once de) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 739.89 Td (Chilexpress encuentra la clase. El sitio no cae.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 724.89 Td (Por eso mismas versiones \(WP 7.0.3 + Woo 11.0.1 + Chilexpress 1.4.0 + PHP 8.4.19\) pueden verse) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 711.89 Td ("bien" en un entorno ya actualizado y "caidas" en el instante del update. No hay contradiccion.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 694.89 Td (Esto tambien explica por que a veces "despues vuelve": cuando el actualizador termina de copiar el) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 681.89 Td (enum, el fatal desaparece solo. El riesgo es cualquier peticion que ocurra en esa ventana, y un) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 668.89 Td (sitio que quede con archivos a medias si el update se interrumpe.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 651.89 Td (6. Que NO es este error) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 626.89 Td (o No es el tema Woodmart. Chilexpress carga en plugins_loaded, antes del tema.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 611.89 Td (o No son las API keys de Chilexpress ni el cotizador/OT.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 596.89 Td (o No es que PHP 8.4 "no sirva": es la version de produccion.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 581.89 Td (o No es que WooCommerce 11 no tenga ProductTaxStatus: el archivo existe en 11.0.1 intacto. Falta) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 568.89 Td (DURANTE el recambio de archivos.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 553.89 Td (7. Como se confirmo en laboratorio \(sin parchear Chilexpress\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 528.89 Td (No se modifico el PHP de chilexpress-oficial. Con Woo intacto el sitio no fataliza. El boton) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 515.89 Td ("Replicar caida exacta" oculta o vacia solo ProductTaxStatus.php \(simula la ventana del) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 502.89 Td (actualizador\), llama admin-ajax.php y captura el mismo E_ERROR. Luego restaura el archivo.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 489.89 Td (Emergencia del laboratorio: /__sr108688/restore.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 472.89 Td (8. Que hacer ahora en produccion \(sin esperar un parche\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 447.89 Td (Antes de actualizar WooCommerce:) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 430.89 Td (o 1. Desactivar el plugin Chilexpress Oficial.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 415.89 Td (o 2. Actualizar WooCommerce hasta el final.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 400.89 Td (o 3. Comprobar que existe wp-content/plugins/woocommerce/src/Enums/ProductTaxStatus.php y que) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 387.89 Td (contiene "class ProductTaxStatus".) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 372.89 Td (o 4. Volver a activar Chilexpress Oficial.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 357.89 Td (o 5. Probar checkout \(region + comuna Chilexpress\) y, si aplica, generar una OT en staging.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 342.89 Td (Si el sitio ya muestra "Ha habido un error critico":) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 325.89 Td (o Por FTP o el administrador de archivos, renombrar la carpeta) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 312.89 Td (wp-content/plugins/chilexpress-oficial \(queda desactivado\).) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 297.89 Td (o Completar o reinstalar WooCommerce 11.0.1 hasta que el enum exista.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 282.89 Td (o Devolver el nombre a la carpeta chilexpress-oficial y activar el plugin.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 267.89 Td (9. Arreglo permanente \(para Chilexpress, no aplicado aqui\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 242.89 Td (Cambiar el arranque de plugins_loaded a woocommerce_loaded, o no hacer require_once de las clases) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 229.89 Td (abstractas de Woo hasta woocommerce_shipping_init. Es un cambio de una linea en el plugin oficial.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 216.89 Td (Hasta que Chilexpress lo publique, no se parchea el ZIP 1.4.0 en este laboratorio: el diagnostico) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 203.89 Td (usa el mismo codigo que produccion.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 186.89 Td (10. Cierre) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 161.89 Td (Conclusion: Chilexpress 1.4.0 y WooCommerce 11.0.1 pueden convivir cuando Woo esta completo. El) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 148.89 Td (fatal del 11 de agosto es el cruce de un require_once prematuro con un update in-place incompleto.) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 135.89 Td (Mitigacion inmediata: desactivar Chilexpress, actualizar Woo, reactivar. Correccion de fondo: que) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 122.89 Td (Chilexpress no cargue WC_Shipping_Method antes de que Woo haya inicializado su autoloader.) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 95.89 Td (Informe elaborado por Alexander Alejandro Cautivo Ramos \(Aeolabs\) a partir de replica controlada SR-108688.) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 83.89 Td (Chilexpress Oficial 1.4.0 se mantuvo intacto.) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 68.89 Td (Contacto: alexander.cautivo@aeolabs.io) Tj ET
+BT /F1 8.00 Tf 0 g 277.64 28.00 Td (Pagina 2) Tj ET
+
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000254 00000 n 
+0000005496 00000 n 
+0000005629 00000 n 
+0000011023 00000 n 
+trailer << /Size 8 /Root 1 0 R >>
+startxref
+11120
+%%EOF

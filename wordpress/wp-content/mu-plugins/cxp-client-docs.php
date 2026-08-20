@@ -53,6 +53,11 @@ final class Cxp_Client_Docs {
 			'title' => 'Despliegue en Dokploy',
 			'download' => 'dokploy.md',
 		),
+		'informe_pdf'    => array(
+			'file'  => 'SR-108688-informe-cliente.pdf',
+			'title' => 'Informe PDF (por qué cae en producción)',
+			'download' => 'SR-108688-informe-cliente.pdf',
+		),
 	);
 
 	public static function boot() {
@@ -77,6 +82,9 @@ final class Cxp_Client_Docs {
 		$path = self::docs_dir() . '/' . self::$docs[ $id ]['file'];
 		if ( ! is_readable( $path ) ) {
 			return new WP_Error( 'cxp_docs', 'No está ' . self::$docs[ $id ]['file'] );
+		}
+		if ( preg_match( '/\.pdf$/i', self::$docs[ $id ]['file'] ) ) {
+			return new WP_Error( 'cxp_docs', 'Este es un PDF: usa Descargar, no copiar texto.' );
 		}
 		$theme  = wp_get_theme();
 		$parent = $theme->parent();
@@ -109,25 +117,62 @@ final class Cxp_Client_Docs {
 	public static function console_panel() {
 		$ajax  = admin_url( 'admin-ajax.php' );
 		$nonce = wp_create_nonce( self::NONCE );
+		$exports = array(
+			'identificacion' => array(
+				'title' => '1. Identificar el error',
+				'hint'  => 'Qué falló (ProductTaxStatus) y cómo reconocerlo.',
+			),
+			'diagnostico'    => array(
+				'title' => '2. Diagnóstico / por qué',
+				'hint'  => 'Causa: require en plugins_loaded durante el update.',
+			),
+			'respuesta'      => array(
+				'title' => '3. Solución (texto al cliente)',
+				'hint'  => 'Carta: desactivar Chilexpress, actualizar Woo, reactivar.',
+			),
+			'instrucciones'  => array(
+				'title' => '4. Instrucciones para arreglarlo',
+				'hint'  => 'Pasos en producción, FTP y cómo comprobar el enum.',
+			),
+		);
+		$pdf_url = wp_nonce_url( admin_url( 'admin-post.php?action=cxp_docs_download&doc=informe_pdf' ), self::NONCE );
+		$pack_url = wp_nonce_url( admin_url( 'admin-post.php?action=cxp_docs_download&doc=all' ), self::NONCE );
 		?>
 		<style>
-			#cxp-dbg-docs{margin:0 0 12px;padding:10px 12px;border:1px solid #3d4d66;border-radius:8px;background:#111827}
-			#cxp-dbg-docs p{margin:0 0 8px;color:#9fb0c7}
-			#cxp-dbg-docs p strong{color:#fff200}
+			#cxp-dbg-docs{margin:0 0 12px;padding:10px 12px;border:1px solid #ca8a04;border-radius:8px;background:#111827}
+			#cxp-dbg-docs p{margin:0 0 8px;color:#9fb0c7 !important;-webkit-text-fill-color:#9fb0c7}
+			#cxp-dbg-docs p strong{color:#fff200 !important;-webkit-text-fill-color:#fff200}
+			#cxp-dbg-docs .cxp-docs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:8px 0}
+			#cxp-dbg-docs .cxp-docs-card{border:1px solid #3d4d66;border-radius:8px;padding:8px;background:#0b1220}
+			#cxp-dbg-docs .cxp-docs-card h4{margin:0 0 4px;color:#fef08a !important;-webkit-text-fill-color:#fef08a;font-size:12px}
+			#cxp-dbg-docs .cxp-docs-card span{display:block;margin:0 0 8px;color:#9fb0c7 !important;-webkit-text-fill-color:#9fb0c7;font-size:11px}
+			#cxp-dbg-docs .cxp-docs-card .cxp-lab-row{display:flex;flex-wrap:wrap;gap:6px}
 			#cxp-dbg-docs .cxp-lab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
-			#cxp-dbg-docs pre{margin:8px 0 0;max-height:240px;overflow:auto;white-space:pre-wrap;color:#dbeafe;background:#0b1220;padding:8px;border-radius:6px}
+			#cxp-dbg-docs pre,#cxp-dbg-docs #cxp-docs-out{margin:8px 0 0;max-height:240px;overflow:auto;white-space:pre-wrap;color:#f8fafc !important;-webkit-text-fill-color:#f8fafc !important;background:#020617 !important;padding:8px;border-radius:6px;border:1px solid #334155}
+			#cxp-dbg-docs a.cxp-dbg-btn-export{border-color:#ca8a04;background:#854d0e;color:#fef08a !important;-webkit-text-fill-color:#fef08a;font-weight:700}
 		</style>
 		<div id="cxp-dbg-docs">
-			<p><strong>Documentos para el cliente / diagnóstico</strong> — genera el texto con las versiones actuales de esta réplica. Copia o descarga .md para el ticket.</p>
-			<div class="cxp-lab-row">
-				<?php foreach ( self::$docs as $id => $meta ) : ?>
-					<button type="button" class="cxp-dbg-copy-one cxp-docs-btn" data-id="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $meta['title'] ); ?></button>
-					<a class="cxp-dbg-btn" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=cxp_docs_download&doc=' . rawurlencode( $id ) ), self::NONCE ) ); ?>">Descargar</a>
+			<p><strong>Exportar para el cliente (SR-108688)</strong> — copiar al chat o descargar. El texto lleva las versiones de este sitio. El PDF explica por qué en producción cae y en la réplica (Woo completo) no.</p>
+			<div class="cxp-docs-grid">
+				<?php foreach ( $exports as $id => $card ) : ?>
+					<div class="cxp-docs-card">
+						<h4><?php echo esc_html( $card['title'] ); ?></h4>
+						<span><?php echo esc_html( $card['hint'] ); ?></span>
+						<div class="cxp-lab-row">
+							<button type="button" class="cxp-dbg-copy-one cxp-docs-btn" data-id="<?php echo esc_attr( $id ); ?>">Copiar</button>
+							<a class="cxp-dbg-btn" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=cxp_docs_download&doc=' . rawurlencode( $id ) ), self::NONCE ) ); ?>">Descargar .md</a>
+						</div>
+					</div>
 				<?php endforeach; ?>
-				<button type="button" class="cxp-dbg-copy-one" id="cxp-docs-all">Copiar pack completo</button>
-				<a class="cxp-dbg-btn" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=cxp_docs_download&doc=all' ), self::NONCE ) ); ?>">Descargar pack</a>
 			</div>
-			<pre id="cxp-docs-out">Pulsa un botón. El texto usa PHP/WP/Woo/Chilexpress que hay ahora mismo en este sitio.</pre>
+			<div class="cxp-lab-row">
+				<a class="cxp-dbg-btn cxp-dbg-btn-export" href="<?php echo esc_url( $pdf_url ); ?>">Descargar informe PDF</a>
+				<button type="button" class="cxp-dbg-copy-one" id="cxp-docs-all">Copiar pack (identificación + diagnóstico + solución + instrucciones)</button>
+				<a class="cxp-dbg-btn" href="<?php echo esc_url( $pack_url ); ?>">Descargar pack .md</a>
+				<button type="button" class="cxp-dbg-copy-one cxp-docs-btn" data-id="faq">FAQ réplica</button>
+				<button type="button" class="cxp-dbg-copy-one cxp-docs-btn" data-id="guia">Guía de uso</button>
+			</div>
+			<pre id="cxp-docs-out">Pulsa Copiar o Descargar. Aquí aparece el texto (fondo oscuro, letras claras) y se copia al portapapeles.</pre>
 		</div>
 		<script>
 		(function () {
@@ -196,10 +241,30 @@ final class Cxp_Client_Docs {
 		if ( 'all' === $id ) {
 			$body = self::render_bundle();
 			$name = 'SR-108688-pack-cliente.md';
-		} else {
-			$body = self::render_doc( $id );
-			$name = self::$docs[ $id ]['download'] ?? ( 'SR-108688-' . $id . '.md' );
+			if ( is_wp_error( $body ) ) {
+				wp_die( $body->get_error_message() );
+			}
+			nocache_headers();
+			header( 'Content-Type: text/markdown; charset=utf-8' );
+			header( 'Content-Disposition: attachment; filename="' . $name . '"' );
+			echo $body;
+			exit;
 		}
+		if ( isset( self::$docs[ $id ] ) && preg_match( '/\.pdf$/i', self::$docs[ $id ]['file'] ) ) {
+			$path = self::docs_dir() . '/' . self::$docs[ $id ]['file'];
+			if ( ! is_readable( $path ) ) {
+				wp_die( 'No está el PDF' );
+			}
+			$name = self::$docs[ $id ]['download'];
+			nocache_headers();
+			header( 'Content-Type: application/pdf' );
+			header( 'Content-Disposition: attachment; filename="' . $name . '"' );
+			header( 'Content-Length: ' . (string) filesize( $path ) );
+			readfile( $path );
+			exit;
+		}
+		$body = self::render_doc( $id );
+		$name = self::$docs[ $id ]['download'] ?? ( 'SR-108688-' . $id . '.md' );
 		if ( is_wp_error( $body ) ) {
 			wp_die( $body->get_error_message() );
 		}

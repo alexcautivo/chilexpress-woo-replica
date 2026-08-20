@@ -56,7 +56,23 @@ final class Cxp_Simple_Pdf {
 		$this->y -= $n;
 	}
 
+	public function save( $path ) {
+		$pdf = $this->build_pdf();
+		file_put_contents( $path, $pdf );
+		return $path;
+	}
+
 	public function output( $filename ) {
+		$pdf = $this->build_pdf();
+		nocache_headers();
+		header( 'Content-Type: application/pdf' );
+		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
+		header( 'Content-Length: ' . strlen( $pdf ) );
+		echo $pdf;
+		exit;
+	}
+
+	private function build_pdf() {
 		$this->flush_page();
 		$objects = array();
 		$objects[] = '<< /Type /Catalog /Pages 2 0 R >>';
@@ -92,13 +108,7 @@ final class Cxp_Simple_Pdf {
 		}
 		$pdf .= 'trailer << /Size ' . ( count( $objects ) + 1 ) . ' /Root 1 0 R >>' . "\n";
 		$pdf .= "startxref\n" . $start . "\n%%EOF";
-
-		nocache_headers();
-		header( 'Content-Type: application/pdf' );
-		header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
-		header( 'Content-Length: ' . strlen( $pdf ) );
-		echo $pdf;
-		exit;
+		return $pdf;
 	}
 
 	private function new_page() {

@@ -36,3 +36,6 @@ STATUS listening
 
 ## 2026-08-20T16:30:33
 [20-Aug-2026 20:30:33 UTC] PHP Parse error:  syntax error, unexpected single-quoted string "title", expecting ")" in C:\Users\HP\Desktop\wirdscrepss\wordpress\wp-content\mu-plugins\cxp-client-docs.php on line 23
+
+## 2026-08-20T16:49:55
+[20-Aug-2026 20:49:54 UTC] PHP Fatal error:  Uncaught Error: Class "Automattic\WooCommerce\Enums\ProductTaxStatus" not found in C:\Users\HP\Desktop\wirdscrepss\wordpress\wp-content\plugins\woocommerce\includes\abstracts\abstract-wc-shipping-method.php:84

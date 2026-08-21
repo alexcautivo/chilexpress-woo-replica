@@ -310,8 +310,8 @@ final class Cxp_Sr108688_Repro {
 			self::restore_enum();
 		}
 
-		$match = self::match_production( $output );
 		$log   = self::debug_log_fatal();
+		$match = self::match_production( $output . "\n" . $log );
 		$lines = array(
 			'Ticket SR-108688 · réplica local de la ventana de update WooCommerce 11.0.1',
 			'Sitio cliente: celularesenventa.cl · correo WordPress 11 ago 2026 · Juan Espoz 19 ago',
@@ -598,7 +598,7 @@ final class Cxp_Sr108688_Repro {
 		}
 		$start = strrpos( substr( $raw, 0, $pos ), '[' );
 		$chunk = false === $start ? substr( $raw, max( 0, $pos - 200 ) ) : substr( $raw, $start );
-		return trim( substr( $chunk, 0, 2500 ) );
+		return trim( substr( $chunk, 0, 4000 ) );
 	}
 
 	private static function chilexpress_version() {

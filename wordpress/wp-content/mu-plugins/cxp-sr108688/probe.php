@@ -41,4 +41,18 @@ if ( ! defined( 'WP_DISABLE_FATAL_ERROR_HANDLER' ) ) {
 	define( 'WP_DISABLE_FATAL_ERROR_HANDLER', true );
 }
 
+register_shutdown_function(
+	static function () {
+		$e = error_get_last();
+		if ( ! is_array( $e ) || empty( $e['message'] ) ) {
+			return;
+		}
+		$line = $e['message'];
+		if ( ! empty( $e['file'] ) ) {
+			$line .= ' in ' . $e['file'] . ':' . ( $e['line'] ?? 0 );
+		}
+		fwrite( STDERR, $line . "\n" );
+	}
+);
+
 require dirname( __DIR__, 3 ) . '/wp-admin/admin-ajax.php';

@@ -6,6 +6,7 @@ runtime/
 downloads/
 logs/
 wordpress/wp-content/database/
+!wordpress/wp-content/database/.ht.sqlite
 wordpress/wp-content/debug.log
 wordpress/wp-content/cache/
 wordpress/wp-content/upgrade/

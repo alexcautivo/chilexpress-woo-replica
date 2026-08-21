@@ -189,6 +189,22 @@ Incidencias: variable `CXP_INCIDENTS_DIR=/var/www/incidents`.
 
 Dokploy usa tres volúmenes persistentes: SQLite, uploads e incidencias. Un redeploy actualiza código, documentos y contrato JSON sin borrar tickets/runs creados desde la consola.
 
+URL pública actual: `http://chilexpress-woo.5-78-137-25.sslip.io`
+
+---
+
+## Otras plataformas (solo plan)
+
+Magento, PrestaShop y Shopify **no están implementados** en este repo. Hay un plan por tienda, con la misma semilla (5 productos wiki, CLP, kg/cm, LA REINA, Larrain 5862, tarjeta `4242`) y el mismo flujo de incidencias JSON. No se escribe código de esas tiendas hasta que lo indiques.
+
+Carpeta: [incidents/planes/laboratorio-multiplataforma/](incidents/planes/laboratorio-multiplataforma/).
+
+| Plan | Activar con |
+|---|---|
+| [Magento](incidents/planes/laboratorio-multiplataforma/PLAN-magento.md) | *ejecuta el plan Magento* |
+| [PrestaShop](incidents/planes/laboratorio-multiplataforma/PLAN-prestashop.md) | *ejecuta el plan PrestaShop* |
+| [Shopify](incidents/planes/laboratorio-multiplataforma/PLAN-shopify.md) | *ejecuta el plan Shopify* |
+
 ---
 
 ## Documentación
@@ -199,6 +215,7 @@ Dokploy usa tres volúmenes persistentes: SQLite, uploads e incidencias. Un rede
 | [Consola réplica](docs/consola-replica.md) | Cada botón |
 | [Incidencias](incidents/README.md) | JSON 1.1, apply, runs, PDF |
 | [Guía de incidencias para clientes](docs/guia-incidencias-clientes.md) | Correo, JSON, versiones, ejecución e informes |
+| [Plan Magento / PrestaShop / Shopify](incidents/planes/laboratorio-multiplataforma/) | Solo especificación; no ejecutar aún |
 | [Dokploy](docs/dokploy.md) | Deploy |
 | [Identificación / diagnóstico / respuesta](docs/cliente-identificacion.md) | Textos SR-108688 |
 | [FAQ](docs/faq-replica.md) | Montaje de la réplica |

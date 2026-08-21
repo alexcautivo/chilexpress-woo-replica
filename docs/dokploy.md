@@ -65,6 +65,8 @@ Dominio, `WP_HOME`, `CXP_AUTO_LOGIN=0` y etiquetas Traefik **ya están** en `doc
 
 Los volúmenes conservan pedidos, uploads e incidencias. El código, README, docs, schema y plantilla se actualizan desde la imagen nueva.
 
+Tras un Redeploy correcto, la home debe mostrar la consola con **Incidencias**, **Copiar JSON para el cliente** y **Vista previa**. Magento/PrestaShop/Shopify **no** se despliegan desde este compose: son planes aparte.
+
 Si el deploy falla por puerto 80 ocupado, el compose **no** publica `80:80` en el host: Traefik es quien abre la URL.
 
 ---

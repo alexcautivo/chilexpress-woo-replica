@@ -8,6 +8,8 @@ Autor: **Alexander Alejandro Cautivo Ramos** · desarrollador full stack · [Aeo
 
 Guía fácil con correo listo para copiar, ejemplos JSON y operación completa: [`../docs/guia-incidencias-clientes.md`](../docs/guia-incidencias-clientes.md).
 
+Otras tiendas (Magento, PrestaShop, Shopify): **solo plan**, en [`planes/laboratorio-multiplataforma/`](planes/laboratorio-multiplataforma/). No implementar hasta que Alexander active cada plan.
+
 ---
 
 ## Para qué existe

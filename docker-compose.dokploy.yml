@@ -1,14 +1,12 @@
-# Compose para Dokploy (despliegue manual desde GitHub).
-# No monta el código desde el host: la imagen ya trae WordPress 7.0.3.
-# Persistencia: SQLite + uploads en volúmenes nombrados.
+# Compose para Dokploy (despliegue desde GitHub).
+# Traefik de Dokploy enruta el dominio → servicio wordpress:80.
+# No publiques 80:80 en el host: ese puerto ya lo usa Dokploy.
 #
-# En Dokploy:
-#   1. Tipo de aplicación: Docker Compose
-#   2. Archivo: docker-compose.dokploy.yml
-#   3. Puerto interno: 80
-#   4. Env: WP_HOME=https://TU-DOMINIO  (obligatorio)
-#   5. CXP_AUTO_LOGIN=0  (recomendado en Internet)
-#   6. Pega CXP_API_KEY_GEO / RATE / OT (staging Chilexpress)
+# 1. Tipo: Compose
+# 2. Archivo: docker-compose.dokploy.yml
+# 3. Dominio → servicio wordpress, puerto 80
+# 4. Env: WP_HOME=https://TU-DOMINIO  (sin barra final)
+# 5. CXP_AUTO_LOGIN=0
 
 name: chilexpress-woo-replica
 
@@ -21,8 +19,6 @@ services:
         PHP_VERSION: ${PHP_VERSION:-8.4.19}
     expose:
       - "80"
-    ports:
-      - "${WORDPRESS_PORT:-80}:80"
     environment:
       WP_HOME: ${WP_HOME:-http://127.0.0.1}
       WP_SITEURL: ${WP_HOME:-http://127.0.0.1}
@@ -46,6 +42,9 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    networks:
+      - default
+      - dokploy-network
     restart: unless-stopped
 
   db:
@@ -64,3 +63,7 @@ volumes:
   wp_database:
   wp_uploads:
   db_data:
+
+networks:
+  dokploy-network:
+    external: true

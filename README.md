@@ -148,9 +148,10 @@ MySQL: `DB_ENGINE=mysql` y `docker compose --profile mysql up --build`.
 
 ## Dokploy (manual)
 
-Usa **`docker-compose.dokploy.yml`**. Puerto interno **80**. `WP_HOME=https://tu-dominio`. `CXP_AUTO_LOGIN=0`.
+Usa **`docker-compose.dokploy.yml`** (sin publicar puerto 80 en el host). Traefik abre la URL.
 
-Guía completa: [docs/dokploy.md](docs/dokploy.md).
+En el VPS Aeolabs: [docs/dokploy.md](docs/dokploy.md) → clics +  
+`http://chilexpress-woo.5.78.137.25.sslip.io`
 
 ---
 

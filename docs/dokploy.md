@@ -29,6 +29,47 @@ Si recreas el deploy **sin** esos volúmenes, la tienda vuelve a la **semilla** 
 
 ---
 
+## Rápido en el VPS Aeolabs (`5.78.137.25`)
+
+Panel: [http://5.78.137.25:3000/](http://5.78.137.25:3000/) · Dokploy **v0.30.2**
+
+URL pública (sin DNS propio; sslip.io apunta solo a esa IP):
+
+`http://chilexpress-woo.5.78.137.25.sslip.io`
+
+### Clics
+
+1. **Projects** → **Create Project** → nombre `Chilexpress replica` → Create.
+2. Entra al proyecto → **Add Service** → **Compose**.
+3. Nombre: `chilexpress-woo`.
+4. Provider: **Git** (el repo es público; no hace falta GitHub App).
+   - Repository: `https://github.com/alexcautivo/chilexpress-woo-replica.git`
+   - Branch: `main`
+   - Compose path: `./docker-compose.dokploy.yml`
+5. **Environment**:
+
+```env
+WP_HOME=http://chilexpress-woo.5.78.137.25.sslip.io
+CXP_AUTO_LOGIN=0
+DB_ENGINE=sqlite
+PHP_VERSION=8.4.19
+```
+
+6. **Domains** → Add Domain:
+   - Host: `chilexpress-woo.5.78.137.25.sslip.io`
+   - Service / container: **wordpress**
+   - Port: **80**
+   - Path: `/`
+   - HTTPS: déjalo apagado la primera vez (sslip.io a veces falla Let's Encrypt). Si el certificado sale, cambia `WP_HOME` a `https://...` y Redeploy.
+7. **Deploy**. El build tarda varios minutos (imagen PHP + WordPress).
+8. Abre `http://chilexpress-woo.5.78.137.25.sslip.io`
+   - Admin: `/wp-admin/` · usuario `admin` · clave `admin`
+   - La barra de abajo es la **Consola réplica** (Tienda, Checkout, Incidencias, etc.)
+
+Si el deploy falla por puerto 80 ocupado, el compose **ya no** publica `80:80` en el host: Traefik es quien abre la URL.
+
+---
+
 ## Paso a paso (Compose)
 
 1. En Dokploy: **Create Service** → **Compose**.

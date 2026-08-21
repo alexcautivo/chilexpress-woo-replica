@@ -81,7 +81,7 @@ Clic en la barra inferior. En tienda y wp-admin las pestañas cambian. Cada bot�
 | **Pedidos y OT** | Lista HPOS, generar OT, borrar |
 | **Documentos** | Markdown y pack para el cliente |
 | **APIs** | Keys Cobertura / Cotizador / Envíos |
-| **Laboratorio** | PHP, WordPress y **cualquier plugin** a la versión que elijas; ZIP local; snapshot; **Recargar WordPress completo**; utilidad **latest** (no usar para reproducir un ticket) |
+| **Laboratorio** | Seis pasos: elegir versiones de WordPress y plugins y **Aplicar cambios** en bloque; instalar por slug; **subir un ZIP**; acciones de pila; PHP; correo |
 | **Sistema** | Inventario de plugins y créditos |
 
 ### Incidencias (cualquier cliente)
@@ -113,7 +113,7 @@ Correo listo para copiar, ejemplos de plugins públicos/privados y operación pa
 
 - **Fiel al cliente (recomendado):** importa el JSON y pulsa **▶ Probar ticket completo**.
 - **Paso a paso:** usa Vista previa → Crear flujo → Aplicar pila → Ejecutar flujo → Resultado.
-- **Manual:** en **Laboratorio / Versiones** elige WordPress y cada plugin, carga ZIP privados autorizados y pulsa **Recargar WordPress completo**.
+- **Manual:** en **Laboratorio** cambia WordPress y la versión de cada plugin en la tabla, marca cuáles quedan activos y pulsa **Aplicar cambios**. Para plugins premium, súbelos con **Subir e instalar ZIP**.
 - **Actualización general:** **Actualizar a latest**. Sirve para explorar, no para reproducir fielmente un ticket antiguo.
 
 Después, **Ejecutar flujo** compara el fallo y genera:

@@ -63,6 +63,23 @@ Crear un ticket no cambia WordPress. **Aplicar pila** es una acción distinta, c
 
 Para saber exactamente qué correo enviar, cómo pedir cada versión y qué PDF entregar: `docs/guia-incidencias-clientes.md`.
 
+---
+
+## Pestaña Laboratorio — versiones
+
+Seis pasos numerados, de arriba abajo:
+
+| Paso | Qué hace |
+|---|---|
+| **1. Elige las versiones que quieres** | Tabla con WordPress y cada plugin: versión instalada, versión nueva y casilla **Activo**. Las filas modificadas se marcan y el contador indica cuántos cambios hay. **Aplicar cambios** los ejecuta todos juntos; **Descartar cambios** recarga sin tocar nada |
+| **2. Instalar un plugin que no está en la tabla** | Slug de wordpress.org + versión opcional |
+| **3. Instalar un plugin desde un archivo ZIP** | Sube un `.zip` de hasta 64 MB, con opción de activarlo. Queda guardado en `drop-plugins/` para repetir la instalación |
+| **4. Acciones sobre toda la pila** | Reinstalar WordPress y los plugins de la tabla, actualizar todo a latest, o volver a la pila del cliente |
+| **5. Cambiar PHP** | Prepara el runtime; exige reiniciar `start.sh` o reconstruir Docker |
+| **6. Correo del laboratorio** | Aplica un correo a admin, WooCommerce, Chilexpress y checkout |
+
+Cada instalación descarga el ZIP oficial desde wordpress.org. Chilexpress Oficial no se descarga: se restaura la copia 1.4.0 intacta del repo. SQLite no se reinstala en caliente porque rompería la base de datos.
+
 Abajo, la tabla **Pedidos** lista hasta 100 órdenes con **Detalle**, **Generar OT** y **Borrar**.
 
 Para OT: entra a **Editar** el pedido o marca el checkbox y usa el flujo oficial «Generar Multiples OT». No uses Acciones masivas de Woo sin marcar filas.

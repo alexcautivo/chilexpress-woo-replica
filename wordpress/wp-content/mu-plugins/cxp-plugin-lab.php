@@ -545,7 +545,18 @@ final class Cxp_Plugin_Lab {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
+		if ( ! defined( 'FS_METHOD' ) ) {
+			define( 'FS_METHOD', 'direct' );
+		}
 		WP_Filesystem();
+		// unzip_file() usa estas constantes; si WP_Filesystem() no las define,
+		// la instalacion muere con un fatal.
+		if ( ! defined( 'FS_CHMOD_DIR' ) ) {
+			define( 'FS_CHMOD_DIR', ( fileperms( ABSPATH ) & 0777 ) | 0755 );
+		}
+		if ( ! defined( 'FS_CHMOD_FILE' ) ) {
+			define( 'FS_CHMOD_FILE', ( fileperms( ABSPATH . 'index.php' ) & 0777 ) | 0644 );
+		}
 	}
 
 	private static function rmdir( $dir ) {

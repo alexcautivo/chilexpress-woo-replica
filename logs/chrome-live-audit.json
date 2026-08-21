@@ -1,0 +1,232 @@
+{
+  "started": "2026-08-21T16:58:37.586Z",
+  "ended": "2026-08-21T16:59:52.581Z",
+  "counts": {
+    "info": 8,
+    "nav": 7,
+    "php-api": 10,
+    "console": 2,
+    "php": 3,
+    "netfail": 7
+  },
+  "findings": [
+    {
+      "t": "2026-08-21T16:58:37.586Z",
+      "kind": "info",
+      "message": "Chrome headed contra http://127.0.0.1:8080 (php log offset 996918)"
+    },
+    {
+      "t": "2026-08-21T16:58:38.352Z",
+      "kind": "nav",
+      "message": "→ http://127.0.0.1:8080/"
+    },
+    {
+      "t": "2026-08-21T16:58:47.765Z",
+      "kind": "nav",
+      "message": "→ http://127.0.0.1:8080/shop/"
+    },
+    {
+      "t": "2026-08-21T16:58:52.426Z",
+      "kind": "info",
+      "message": "Clic en Agregar al carrito (primer producto)"
+    },
+    {
+      "t": "2026-08-21T16:58:55.004Z",
+      "kind": "php-api",
+      "page": "add-to-cart",
+      "message": "[21-Aug-2026 16:58:54 UTC] [CXP HTTP] GET https://qaservices.wschilexpress.com/georeference/v2/api/V1.0/coverage-areas?RegionCode=R1&type=0 → 200 body="
+    },
+    {
+      "t": "2026-08-21T16:58:55.005Z",
+      "kind": "nav",
+      "message": "→ http://127.0.0.1:8080/checkout/"
+    },
+    {
+      "t": "2026-08-21T16:59:03.093Z",
+      "kind": "console",
+      "level": "error",
+      "message": "The select2('data') method was called on an element that is not using Select2.",
+      "url": "http://127.0.0.1:8080/wp-content/plugins/woocommerce/assets/js/selectWoo/selectWoo.full.min.js?ver=1.0.9-wc.11.0.1",
+      "line": 15
+    },
+    {
+      "t": "2026-08-21T16:59:03.095Z",
+      "kind": "console",
+      "level": "error",
+      "message": "The select2('data') method was called on an element that is not using Select2.",
+      "url": "http://127.0.0.1:8080/wp-content/plugins/woocommerce/assets/js/selectWoo/selectWoo.full.min.js?ver=1.0.9-wc.11.0.1",
+      "line": 15
+    },
+    {
+      "t": "2026-08-21T16:59:04.282Z",
+      "kind": "php-api",
+      "page": "checkout",
+      "message": "[21-Aug-2026 16:58:55 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"LARE\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:04.282Z",
+      "kind": "php-api",
+      "page": "checkout",
+      "message": "[21-Aug-2026 16:58:56 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"LARE\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:04.283Z",
+      "kind": "php",
+      "page": "checkout",
+      "message": "[21-Aug-2026 16:59:01 UTC] PHP Deprecated:  La función !wc_enqueue_js está <strong>descontinuado</strong> desde la versión 10.4.0! Reemplázalo con wp_add_inline_script. in /var/www/html/wp-includes/functions.php on line 6170"
+    },
+    {
+      "t": "2026-08-21T16:59:04.312Z",
+      "kind": "info",
+      "message": "Clic en Usar dirección (primera tarjeta RM)"
+    },
+    {
+      "t": "2026-08-21T16:59:04.439Z",
+      "kind": "netfail",
+      "url": "http://127.0.0.1:8080/?wc-ajax=update_order_review",
+      "method": "POST",
+      "message": "POST FAIL http://127.0.0.1:8080/?wc-ajax=update_order_review — net::ERR_ABORTED"
+    },
+    {
+      "t": "2026-08-21T16:59:05.282Z",
+      "kind": "netfail",
+      "url": "http://127.0.0.1:8080/?wc-ajax=update_order_review",
+      "method": "POST",
+      "message": "POST FAIL http://127.0.0.1:8080/?wc-ajax=update_order_review — net::ERR_ABORTED"
+    },
+    {
+      "t": "2026-08-21T16:59:05.450Z",
+      "kind": "netfail",
+      "url": "http://127.0.0.1:8080/?wc-ajax=update_order_review",
+      "method": "POST",
+      "message": "POST FAIL http://127.0.0.1:8080/?wc-ajax=update_order_review — net::ERR_ABORTED"
+    },
+    {
+      "t": "2026-08-21T16:59:05.665Z",
+      "kind": "netfail",
+      "url": "http://127.0.0.1:8080/?wc-ajax=update_order_review",
+      "method": "POST",
+      "message": "POST FAIL http://127.0.0.1:8080/?wc-ajax=update_order_review — net::ERR_ABORTED"
+    },
+    {
+      "t": "2026-08-21T16:59:07.946Z",
+      "kind": "php-api",
+      "page": "fill-address",
+      "message": "[21-Aug-2026 16:59:07 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"ALHU\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:07.946Z",
+      "kind": "php-api",
+      "page": "fill-address",
+      "message": "[21-Aug-2026 16:59:07 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"LARE\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:07.953Z",
+      "kind": "info",
+      "message": "Formulario: state=RM city=LA REINA"
+    },
+    {
+      "t": "2026-08-21T16:59:07.957Z",
+      "kind": "info",
+      "message": "Clic en Cotizar envío"
+    },
+    {
+      "t": "2026-08-21T16:59:09.908Z",
+      "kind": "netfail",
+      "url": "http://127.0.0.1:8080/?wc-ajax=update_order_review",
+      "method": "POST",
+      "message": "POST FAIL http://127.0.0.1:8080/?wc-ajax=update_order_review — net::ERR_ABORTED"
+    },
+    {
+      "t": "2026-08-21T16:59:10.043Z",
+      "kind": "netfail",
+      "url": "http://127.0.0.1:8080/?wc-ajax=update_order_review",
+      "method": "POST",
+      "message": "POST FAIL http://127.0.0.1:8080/?wc-ajax=update_order_review — net::ERR_ABORTED"
+    },
+    {
+      "t": "2026-08-21T16:59:10.259Z",
+      "kind": "netfail",
+      "url": "http://127.0.0.1:8080/?wc-ajax=update_order_review",
+      "method": "POST",
+      "message": "POST FAIL http://127.0.0.1:8080/?wc-ajax=update_order_review — net::ERR_ABORTED"
+    },
+    {
+      "t": "2026-08-21T16:59:11.834Z",
+      "kind": "info",
+      "message": "Cotizador: Consultando cotizador Chilexpress…"
+    },
+    {
+      "t": "2026-08-21T16:59:11.847Z",
+      "kind": "php-api",
+      "page": "probe-rate",
+      "message": "[21-Aug-2026 16:59:08 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"ALHU\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:11.848Z",
+      "kind": "php-api",
+      "page": "probe-rate",
+      "message": "[21-Aug-2026 16:59:09 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"LARE\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:11.848Z",
+      "kind": "php-api",
+      "page": "probe-rate",
+      "message": "[21-Aug-2026 16:59:10 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"LARE\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:11.854Z",
+      "kind": "info",
+      "message": "Métodos de envío: Envío Elige el envío Chilexpress - PREX día sig. AM: $8.650[ 2 días hábiles (hasta las 11 hrs) ] - CHEX día sig. PM: $5.800[ 2 días hábiles (hasta las 19 hrs) ]"
+    },
+    {
+      "t": "2026-08-21T16:59:11.854Z",
+      "kind": "nav",
+      "message": "→ http://127.0.0.1:8080/cart/"
+    },
+    {
+      "t": "2026-08-21T16:59:16.789Z",
+      "kind": "php",
+      "page": "cart",
+      "message": "[21-Aug-2026 16:59:14 UTC] PHP Deprecated:  La función !wc_enqueue_js está <strong>descontinuado</strong> desde la versión 10.4.0! Reemplázalo con wp_add_inline_script. in /var/www/html/wp-includes/functions.php on line 6170"
+    },
+    {
+      "t": "2026-08-21T16:59:16.821Z",
+      "kind": "nav",
+      "message": "→ http://127.0.0.1:8080/wp-admin/"
+    },
+    {
+      "t": "2026-08-21T16:59:33.322Z",
+      "kind": "php-api",
+      "page": "wp-admin",
+      "message": "[21-Aug-2026 16:59:18 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"LARE\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:33.323Z",
+      "kind": "php-api",
+      "page": "wp-admin",
+      "message": "[21-Aug-2026 16:59:19 UTC] [CXP HTTP] POST https://qaservices.wschilexpress.com/rating/api/v1.0/rates/business → 200 body={\"originCountyCode\":\"PROV\",\"destinationCountyCode\":\"LARE\",\"package\":{\"weight\":0.2,\"height\":\"5\",\"width\":\"10\",\"length\":\"15\"},\"productType\":3,\"contentType\":1,\"declaredWorth\":19990,\"deliveryTime\":2,\"customerCardNumber\":\"18578680\"}"
+    },
+    {
+      "t": "2026-08-21T16:59:33.359Z",
+      "kind": "nav",
+      "message": "→ http://127.0.0.1:8080/wp-admin/admin.php?page=wc-orders"
+    },
+    {
+      "t": "2026-08-21T16:59:41.884Z",
+      "kind": "php",
+      "page": "wc-orders",
+      "message": "[21-Aug-2026 16:59:38 UTC] WordPress database error <div style=\"clear:both\">&nbsp;</div>"
+    },
+    {
+      "t": "2026-08-21T16:59:41.913Z",
+      "kind": "nav",
+      "message": "→ http://127.0.0.1:8080/wp-admin/admin.php?page=chilexpress_woo_oficial_menu"
+    },
+    {
+      "t": "2026-08-21T16:59:48.571Z",
+      "kind": "info",
+      "message": "Pausa 4s en Chrome para ver la última pantalla"
+    }
+  ]
+}

@@ -83,14 +83,14 @@ add_action(
 			'cxp-checkout-cxp',
 			content_url( 'mu-plugins/cxp-checkout-debug/checkout-cxp.css' ),
 			array( 'chilexpress-woo-oficial-storefront' ),
-			'1.8.4'
+			'1.8.6'
 		);
 
 		wp_enqueue_script(
 			'cxp-storefront-qty',
 			content_url( 'mu-plugins/cxp-checkout-debug/storefront.js' ),
 			array( 'jquery' ),
-			'1.8.0',
+			'1.8.6',
 			true
 		);
 		wp_localize_script(

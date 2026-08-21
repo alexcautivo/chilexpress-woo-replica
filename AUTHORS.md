@@ -5,12 +5,13 @@
 | | |
 |---|---|
 | Autor y desarrollador | **Alexander Alejandro Cautivo Ramos** |
-| Organización | Aeolabs |
+| Rol | Desarrollador full stack |
+| Organización | [Aeolabs.io](https://aeolabs.io) |
 | Correo | [alexander.cautivo@aeolabs.io](mailto:alexander.cautivo@aeolabs.io) |
 | Año | 2026 |
 | Repositorio | https://github.com/alexcautivo/chilexpress-woo-replica |
 
-Todo el entorno de réplica — consola inferior, MU-plugins `cxp-*`, Docker/Dokploy, semilla de tienda, documentos de diagnóstico y la orquestación de WordPress + WooCommerce + Chilexpress — fue diseñado y desarrollado por Alexander Alejandro Cautivo Ramos.
+Todo el entorno de réplica — consola inferior, MU-plugins `cxp-*`, Docker/Dokploy, semilla de tienda, documentos de diagnóstico y la orquestación de WordPress + WooCommerce + Chilexpress — fue diseñado y desarrollado por **Alexander Alejandro Cautivo Ramos**, desarrollador full stack de [Aeolabs.io](https://aeolabs.io).
 
 ## Software de terceros incluido (sin modificación de Chilexpress)
 

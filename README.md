@@ -13,9 +13,10 @@ Este repositorio **no parchea** el PHP de Chilexpress Oficial 1.4.0. Es un labor
 ---
 
 <p align="center">
-  <strong>Autor y desarrollador</strong><br>
+  <strong>Todo este desarrollo</strong><br>
   Alexander Alejandro Cautivo Ramos<br>
-  Aeolabs · <a href="mailto:alexander.cautivo@aeolabs.io">alexander.cautivo@aeolabs.io</a>
+  Desarrollador full stack · <a href="https://aeolabs.io">Aeolabs.io</a><br>
+  <a href="mailto:alexander.cautivo@aeolabs.io">alexander.cautivo@aeolabs.io</a>
 </p>
 
 Repo: https://github.com/alexcautivo/chilexpress-woo-replica

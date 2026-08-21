@@ -25,7 +25,7 @@
 						</div>
 					</div>
 					<div class="whb-column whb-col-right whb-visible-lg-only">
-						<div class="wd-header-text">¡Envío gratis, rapido y seguro a todo Chile!</div>
+						<div class="wd-header-text">Desarrollado por <strong>Alexander Alejandro Cautivo Ramos</strong> · Full stack · <a href="https://aeolabs.io" target="_blank" rel="noopener noreferrer">Aeolabs.io</a></div>
 					</div>
 				</div>
 			</div>

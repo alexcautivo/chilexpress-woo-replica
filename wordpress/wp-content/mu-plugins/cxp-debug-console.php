@@ -40,9 +40,9 @@ final class Cxp_Debug_Console {
 
 	public static function enqueue_ui() {
 		$base = content_url( 'mu-plugins/cxp-debug-console' );
-		wp_enqueue_style( 'cxp-console-ui', $base . '/console-ui.css', array(), '1.8.5' );
+		wp_enqueue_style( 'cxp-console-ui', $base . '/console-ui.css', array(), '1.8.7' );
 		wp_enqueue_script( 'cxp-lucide', $base . '/lucide.min.js', array(), '0.469.0', true );
-		wp_enqueue_script( 'cxp-console-ui', $base . '/console-ui.js', array( 'cxp-lucide' ), '1.8.5', true );
+		wp_enqueue_script( 'cxp-console-ui', $base . '/console-ui.js', array( 'cxp-lucide' ), '1.8.7', true );
 	}
 
 	public static function capture_error( $errno, $errstr, $errfile = '', $errline = 0 ) {
@@ -122,7 +122,7 @@ final class Cxp_Debug_Console {
 			#cxp-dbg input[type=checkbox],#cxp-dbg input[type=radio]{accent-color:#38bdf8;background:#1e293b !important;width:auto;height:auto}
 			#cxp-dbg-bar{display:flex;gap:10px;align-items:center;min-height:36px;padding:6px 12px;border-top:1px solid #3d4d66;background:#111827;cursor:pointer;user-select:none}
 			#cxp-dbg-bar strong{color:#fff200 !important;-webkit-text-fill-color:#fff200;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-			#cxp-dbg-credit{color:#93c5fd !important;-webkit-text-fill-color:#93c5fd;font-size:11px;white-space:nowrap}
+			#cxp-dbg-credit{color:#111 !important;-webkit-text-fill-color:#111;background:#fff200;font-size:11px;font-weight:800;white-space:nowrap;padding:2px 8px;border-radius:999px}
 			#cxp-dbg-meta{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#9fb0c7 !important;-webkit-text-fill-color:#9fb0c7}
 			#cxp-dbg-count{padding:2px 8px;border-radius:999px;background:#7f1d1d;color:#fecaca !important;-webkit-text-fill-color:#fecaca;font-weight:700}
 			#cxp-dbg-count.is-ok{background:#14532d;color:#bbf7d0 !important;-webkit-text-fill-color:#bbf7d0}
@@ -160,7 +160,7 @@ final class Cxp_Debug_Console {
 			<div id="cxp-dbg-bar" role="button" tabindex="0" aria-expanded="false">
 				<strong>Consola réplica</strong>
 				<span class="cxp-dbg-place"><?php echo $is_admin_ui ? 'WP Admin' : 'Tienda'; ?></span>
-				<span id="cxp-dbg-credit">Aeolabs · Alexander Cautivo</span>
+				<span id="cxp-dbg-credit">Alexander Alejandro Cautivo Ramos · Full stack · Aeolabs.io</span>
 				<span id="cxp-dbg-meta"><?php echo esc_html( $report['summary'] ); ?></span>
 				<span id="cxp-dbg-count" class="<?php echo $errors_n ? '' : 'is-ok'; ?>">
 					<?php echo $errors_n ? esc_html( $errors_n . ' error(es) esta petición' ) : 'sin errores esta petición'; ?>

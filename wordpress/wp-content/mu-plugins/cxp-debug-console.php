@@ -40,9 +40,9 @@ final class Cxp_Debug_Console {
 
 	public static function enqueue_ui() {
 		$base = content_url( 'mu-plugins/cxp-debug-console' );
-		wp_enqueue_style( 'cxp-console-ui', $base . '/console-ui.css', array(), '1.8.2' );
+		wp_enqueue_style( 'cxp-console-ui', $base . '/console-ui.css', array(), '1.8.5' );
 		wp_enqueue_script( 'cxp-lucide', $base . '/lucide.min.js', array(), '0.469.0', true );
-		wp_enqueue_script( 'cxp-console-ui', $base . '/console-ui.js', array( 'cxp-lucide' ), '1.8.2', true );
+		wp_enqueue_script( 'cxp-console-ui', $base . '/console-ui.js', array( 'cxp-lucide' ), '1.8.5', true );
 	}
 
 	public static function capture_error( $errno, $errstr, $errfile = '', $errline = 0 ) {
@@ -130,8 +130,8 @@ final class Cxp_Debug_Console {
 			#cxp-dbg.is-open #cxp-dbg-panel{display:block}
 			#cxp-dbg.is-open #cxp-dbg-bar{cursor:default}
 			#cxp-dbg-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
-			#cxp-dbg-actions button,#cxp-dbg-actions a.cxp-dbg-btn,#cxp-dbg a.cxp-dbg-btn,#cxp-dbg .cxp-dbg-copy-one,#cxp-dbg .cxp-dbg-del-one,#cxp-dbg button.cxp-dbg-copy-one{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}
-			#cxp-dbg-actions button:hover,#cxp-dbg-actions a.cxp-dbg-btn:hover,#cxp-dbg a.cxp-dbg-btn:hover,#cxp-dbg .cxp-dbg-copy-one:hover,#cxp-dbg .cxp-dbg-del-one:hover{background:#334155}
+			#cxp-dbg-actions button:not(.cxp-dbg-info),#cxp-dbg-actions a.cxp-dbg-btn,#cxp-dbg a.cxp-dbg-btn,#cxp-dbg .cxp-dbg-copy-one,#cxp-dbg .cxp-dbg-del-one,#cxp-dbg button.cxp-dbg-copy-one{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}
+			#cxp-dbg-actions button:not(.cxp-dbg-info):hover,#cxp-dbg-actions a.cxp-dbg-btn:hover,#cxp-dbg a.cxp-dbg-btn:hover,#cxp-dbg .cxp-dbg-copy-one:hover,#cxp-dbg .cxp-dbg-del-one:hover{background:#334155}
 			#cxp-dbg-actions a.cxp-dbg-btn-ot,#cxp-dbg-ot a.cxp-dbg-btn-ot,#cxp-dbg a.cxp-dbg-btn-ot{border-color:#ca8a04;background:#854d0e;color:#fef08a !important;-webkit-text-fill-color:#fef08a;font-weight:700}
 			#cxp-dbg-actions a.cxp-dbg-btn-ot:hover,#cxp-dbg-ot a.cxp-dbg-btn-ot:hover,#cxp-dbg a.cxp-dbg-btn-ot:hover{background:#a16207;color:#fff !important;-webkit-text-fill-color:#fff}
 			#cxp-dbg-ot a.cxp-dbg-btn{appearance:none;display:inline-flex;align-items:center;border:1px solid #3d4d66;border-radius:6px;background:#1e293b;color:#e8edf5;padding:6px 10px;cursor:pointer;font:inherit;text-decoration:none}

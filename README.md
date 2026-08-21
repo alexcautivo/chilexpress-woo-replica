@@ -69,7 +69,7 @@ Si la consola muestra otra WP o Woo: **Volver a versiones del cliente**.
 
 Checkout de prueba: destinos **reales** de la RM (calle + comuna oficial Chilexpress: `LA REINA`/`LARE`, `NUNOA`/`NUNO`, `SANTIAGO CENTRO`/`STGO`, `MAIPU`/`MIPU`, etc.). Juan Espoz · Av. Larrain **5862**. Tarjeta `4242…4242` / 12/34 / 123. **Usar dirección** llena el form; **Cotizar envío** llama al cotizador.
 
-El **carrito** no se abre hasta pasar por el checkout. Cada producto admite cantidad **1–10**. El buscador del header tiene una **i** que explica qué hace; en la consola el atajo **Buscar** enfoca ese campo.
+El **carrito** no se abre hasta pasar por el checkout y **no se rellena solo**. Si ves productos que no agregaste, usa **Vaciar carrito** (checkout, carrito o la barra inferior). Cada producto admite cantidad **1–10**. El buscador del header tiene una **i** que explica qué hace; en la consola el atajo **Buscar** enfoca ese campo.
 
 Las subscription keys de Chilexpress **no van en el repo**. Pégalas en la consola o en variables `CXP_API_KEY_GEO`, `CXP_API_KEY_RATE`, `CXP_API_KEY_OT`.
 
@@ -150,7 +150,7 @@ Guía completa: [docs/dokploy.md](docs/dokploy.md).
 
 ## Consola réplica (barra inferior)
 
-Clic en la barra negra de abajo. En **tienda** y **wp-admin** las pestañas cambian. Cada botón tiene un círculo **i**: al pasar el mouse dice qué hace. Manual: [docs/consola-replica.md](docs/consola-replica.md).
+Clic en la barra negra de abajo. En **tienda** y **wp-admin** las pestañas cambian. Cada control tiene un círculo **i** chico: al pasar el mouse dice qué hace. Manual: [docs/consola-replica.md](docs/consola-replica.md).
 
 | Pestaña / panel | Para qué |
 |---|---|

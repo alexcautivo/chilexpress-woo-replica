@@ -83,7 +83,7 @@ add_action(
 			'cxp-checkout-cxp',
 			content_url( 'mu-plugins/cxp-checkout-debug/checkout-cxp.css' ),
 			array( 'chilexpress-woo-oficial-storefront' ),
-			'1.8.3'
+			'1.8.4'
 		);
 
 		wp_enqueue_script(
@@ -329,6 +329,71 @@ add_action(
 	}
 );
 
+function cxp_storefront_empty_cart_url() {
+	return wp_nonce_url(
+		add_query_arg( 'cxp_empty_cart', '1' ),
+		'cxp_empty_cart'
+	);
+}
+
+function cxp_storefront_empty_cart_button_html( $context = 'checkout' ) {
+	if ( ! function_exists( 'WC' ) || ! WC()->cart || WC()->cart->is_empty() ) {
+		return '';
+	}
+	$count = (int) WC()->cart->get_cart_contents_count();
+	ob_start();
+	?>
+	<div class="cxp-empty-cart" data-context="<?php echo esc_attr( $context ); ?>">
+		<p>Si ves productos que no agregaste, vacía el carrito y elige de nuevo en la tienda.</p>
+		<a class="cxp-empty-cart__btn" href="<?php echo esc_url( cxp_storefront_empty_cart_url() ); ?>">
+			<?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'trash-2' ) : ''; ?>
+			Vaciar carrito (<?php echo esc_html( (string) $count ); ?>)
+		</a>
+	</div>
+	<?php
+	return ob_get_clean();
+}
+
+add_action(
+	'template_redirect',
+	static function () {
+		if ( empty( $_GET['cxp_empty_cart'] ) ) {
+			return;
+		}
+		if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'cxp_empty_cart' ) ) {
+			return;
+		}
+		if ( function_exists( 'WC' ) && WC()->cart ) {
+			WC()->cart->empty_cart();
+		}
+		if ( function_exists( 'WC' ) && WC()->session ) {
+			WC()->session->set( 'cxp_cart_cleared', 1 );
+			WC()->session->set( 'cart', array() );
+		}
+		wc_add_notice( 'Carrito vacío. Elige productos en la tienda.', 'notice' );
+		$shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+		wp_safe_redirect( $shop );
+		exit;
+	},
+	3
+);
+
+add_action(
+	'woocommerce_before_checkout_form',
+	static function () {
+		echo cxp_storefront_empty_cart_button_html( 'checkout' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	},
+	3
+);
+
+add_action(
+	'woocommerce_before_cart',
+	static function () {
+		echo cxp_storefront_empty_cart_button_html( 'cart' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	},
+	5
+);
+
 function cxp_storefront_cart_count_html() {
 	$count = function_exists( 'WC' ) && WC()->cart ? (int) WC()->cart->get_cart_contents_count() : 0;
 	return '<span class="wd-tools-count">' . esc_html( (string) $count ) . '</span>';
@@ -352,6 +417,9 @@ function cxp_storefront_checkout_bar_html() {
 				<a class="cxp-checkout-bar__cart" href="<?php echo esc_url( $cart ); ?>"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'shopping-cart' ) : ''; ?> Ver carrito</a>
 			<?php else : ?>
 				<span class="cxp-checkout-bar__locked" title="El carrito se habilita después de pasar por el checkout"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'lock' ) : ''; ?> Carrito después del checkout</span>
+			<?php endif; ?>
+			<?php if ( $count > 0 ) : ?>
+				<a class="cxp-checkout-bar__clear" href="<?php echo esc_url( cxp_storefront_empty_cart_url() ); ?>"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'trash-2' ) : ''; ?> Vaciar</a>
 			<?php endif; ?>
 			<a class="cxp-checkout-bar__go" href="<?php echo esc_url( $checkout ); ?>"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'credit-card' ) : ''; ?> Ir al checkout</a>
 		</div>

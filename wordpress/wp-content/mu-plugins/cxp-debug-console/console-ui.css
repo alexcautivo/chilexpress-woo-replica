@@ -42,7 +42,7 @@
 	margin: 0 0 12px;
 }
 
-#cxp-dbg-tabs button {
+#cxp-dbg-tabs button[data-tab] {
 	appearance: none;
 	display: inline-flex;
 	align-items: center;
@@ -57,7 +57,7 @@
 	font: 12px/1.3 inherit;
 }
 
-#cxp-dbg-tabs button.is-on {
+#cxp-dbg-tabs button[data-tab].is-on {
 	background: #fff200;
 	border-color: #fff200;
 	color: #111 !important;
@@ -79,38 +79,59 @@
 #cxp-dbg .cxp-dbg-with-info {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
 	max-width: 100%;
 }
 
-#cxp-dbg .cxp-dbg-info {
-	appearance: none;
+#cxp-dbg .cxp-dbg-info,
+#cxp-dbg-tabs button.cxp-dbg-info,
+#cxp-dbg-actions button.cxp-dbg-info,
+#cxp-dbg button.cxp-dbg-info {
+	appearance: none !important;
 	position: relative;
-	width: 20px;
-	height: 20px;
-	padding: 0;
-	border: 1px solid #38bdf8;
-	border-radius: 50%;
-	background: #0c4a6e;
-	color: #7dd3fc !important;
-	-webkit-text-fill-color: #7dd3fc;
-	display: inline-flex;
+	width: 14px !important;
+	height: 14px !important;
+	min-width: 14px !important;
+	min-height: 14px !important;
+	max-width: 14px !important;
+	max-height: 14px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	border: 1px solid #64748b !important;
+	border-radius: 50% !important;
+	background: #0f172a !important;
+	box-shadow: none !important;
+	color: #94a3b8 !important;
+	-webkit-text-fill-color: #94a3b8 !important;
+	display: inline-flex !important;
 	align-items: center;
 	justify-content: center;
+	align-self: center;
 	cursor: help;
-	flex: 0 0 20px;
+	flex: 0 0 14px !important;
+	line-height: 0 !important;
+	font-size: 0 !important;
+	gap: 0 !important;
+	opacity: 0.75;
 }
 
 #cxp-dbg .cxp-dbg-info:hover,
-#cxp-dbg .cxp-dbg-info:focus {
-	background: #0369a1;
-	color: #fff !important;
-	-webkit-text-fill-color: #fff;
+#cxp-dbg .cxp-dbg-info:focus,
+#cxp-dbg-tabs button.cxp-dbg-info:hover,
+#cxp-dbg-actions button.cxp-dbg-info:hover {
+	background: #1e293b !important;
+	border-color: #94a3b8 !important;
+	color: #e2e8f0 !important;
+	-webkit-text-fill-color: #e2e8f0 !important;
+	opacity: 1;
 }
 
-#cxp-dbg .cxp-dbg-info [data-lucide] {
-	width: 12px;
-	height: 12px;
+#cxp-dbg .cxp-dbg-info svg,
+#cxp-dbg .cxp-dbg-info [data-lucide],
+#cxp-dbg .cxp-dbg-info .cxp-icon {
+	width: 8px !important;
+	height: 8px !important;
+	stroke-width: 2.4;
 }
 
 #cxp-dbg-float-tip {

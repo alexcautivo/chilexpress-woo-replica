@@ -797,19 +797,7 @@ function cxp_checkout_debug_default_state( $value ) {
 }
 
 function cxp_checkout_debug_ensure_cart_item() {
-	if ( is_admin() || wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
-		return;
-	}
-	if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_order_received_page() ) {
-		return;
-	}
-	if ( ! WC()->cart || ! WC()->cart->is_empty() ) {
-		return;
-	}
-	$product = get_page_by_path( 'teclado-mecanico', OBJECT, 'product' );
-	if ( $product ) {
-		WC()->cart->add_to_cart( $product->ID, 1 );
-	}
+	// El carrito solo tiene lo que el cliente agregó. No sembrar el teclado en el checkout.
 }
 
 function cxp_checkout_debug_page( $title, $content ) {

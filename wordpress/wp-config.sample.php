@@ -14,8 +14,14 @@ define( 'DB_CHARSET', 'utf8mb4' );
 define( 'DB_COLLATE', '' );
 
 define( 'DB_ENGINE', 'sqlite' );
-define( 'DB_DIR', __DIR__ . '/wp-content/database/' );
-define( 'DB_FILE', '.ht.sqlite' );
+$cxp_probe_db = getenv( 'CXP_PROBE_DB' );
+if ( is_string( $cxp_probe_db ) && $cxp_probe_db !== '' ) {
+	define( 'DB_DIR', dirname( $cxp_probe_db ) . '/' );
+	define( 'DB_FILE', basename( $cxp_probe_db ) );
+} else {
+	define( 'DB_DIR', __DIR__ . '/wp-content/database/' );
+	define( 'DB_FILE', '.ht.sqlite' );
+}
 
 define( 'AUTH_KEY',         'c87fd37858ca3d531e8bdf10bbcb88fd-auth-key' );
 define( 'SECURE_AUTH_KEY',  'c87fd37858ca3d531e8bdf10bbcb88fd-secure-auth' );

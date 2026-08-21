@@ -166,15 +166,25 @@ final class Cxp_Sr108688_Repro {
 				var body = new URLSearchParams();
 				body.set('action', action);
 				body.set('nonce', nonce);
+				var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+				var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 28000) : null;
 				return fetch(ajaxUrl, {
 					method: 'POST',
 					credentials: 'same-origin',
 					headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-					body: body.toString()
+					body: body.toString(),
+					signal: ctrl ? ctrl.signal : undefined
 				}).then(function (r) {
 					var type = r.headers.get('content-type') || '';
 					if (type.indexOf('pdf') !== -1) return r.blob().then(function (blob) { return { pdf: blob }; });
 					return r.json();
+				}).catch(function (err) {
+					if (err && err.name === 'AbortError') {
+						throw new Error('Se agotó el tiempo en el paso 5 (el probe CLI no respondió). Recarga e inténtalo otra vez.');
+					}
+					throw err;
+				}).finally(function () {
+					if (timer) clearTimeout(timer);
 				});
 			}
 			function showPayload(data) {
@@ -185,6 +195,9 @@ final class Cxp_Sr108688_Repro {
 				if (typeof payload === 'string') text = payload;
 				else if (payload && payload.text) text = payload.text;
 				else text = JSON.stringify(payload, null, 2);
+				if (data.success === false && (text === 'Sin permiso' || (typeof payload === 'string' && payload.indexOf('permiso') !== -1))) {
+					text = 'Paso 5: entra primero a /wp-login.php (admin / tu clave). En este VPS el auto-login está apagado.\n\n' + text;
+				}
 				out.textContent = text;
 				if (data.success && payload && payload.reload) window.location.reload();
 				return text;
@@ -279,6 +292,9 @@ final class Cxp_Sr108688_Repro {
 
 	public static function ajax_repro() {
 		self::guard();
+		if ( function_exists( 'session_status' ) && PHP_SESSION_ACTIVE === session_status() ) {
+			session_write_close();
+		}
 		$hidden = self::hide_enum();
 		if ( is_wp_error( $hidden ) ) {
 			wp_send_json_error( $hidden->get_error_message() );
@@ -421,25 +437,67 @@ final class Cxp_Sr108688_Repro {
 		);
 	}
 
+	private static function php_cli() {
+		$candidates = array(
+			PHP_BINDIR . '/php',
+			'/usr/local/bin/php',
+			'/usr/bin/php',
+		);
+		if ( defined( 'PHP_BINARY' ) && PHP_BINARY && false !== stripos( PHP_BINARY, 'php' ) && false === stripos( PHP_BINARY, 'apache' ) ) {
+			array_unshift( $candidates, PHP_BINARY );
+		}
+		foreach ( $candidates as $bin ) {
+			if ( $bin && is_executable( $bin ) ) {
+				return $bin;
+			}
+		}
+		return 'php';
+	}
+
+	private static function proc_env( $probe_db ) {
+		$env = array();
+		foreach ( array( 'PATH', 'HOME', 'LANG', 'TERM', 'WP_HOME', 'WP_SITEURL', 'DB_ENGINE', 'CXP_AUTO_LOGIN', 'PHP_VERSION' ) as $key ) {
+			$v = getenv( $key );
+			if ( false !== $v ) {
+				$env[ $key ] = $v;
+			}
+		}
+		if ( empty( $env['PATH'] ) ) {
+			$env['PATH'] = '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
+		}
+		if ( $probe_db ) {
+			$env['CXP_PROBE_DB'] = $probe_db;
+		}
+		return $env;
+	}
+
 	private static function run_probe() {
-		$php  = PHP_BINARY;
-		$ini  = dirname( $php ) . DIRECTORY_SEPARATOR . 'php.ini';
-		$cli  = WP_CONTENT_DIR . '/mu-plugins/cxp-sr108688/probe.php';
+		$cli = WP_CONTENT_DIR . '/mu-plugins/cxp-sr108688/probe.php';
 		if ( ! is_readable( $cli ) ) {
 			return array(
 				'code'   => 2,
 				'output' => 'Falta probe.php',
 			);
 		}
-		$cmd = array( $php );
-		if ( is_readable( $ini ) ) {
-			$cmd[] = '-c';
-			$cmd[] = $ini;
-		}
-		$cmd[] = $cli;
 
+		$db_src = WP_CONTENT_DIR . '/database/.ht.sqlite';
+		$db_tmp = '';
+		if ( is_readable( $db_src ) ) {
+			$db_tmp = rtrim( sys_get_temp_dir(), '/\\' ) . '/cxp-sr108688-' . wp_generate_password( 8, false ) . '.sqlite';
+			if ( ! @copy( $db_src, $db_tmp ) ) {
+				$db_tmp = '';
+			} else {
+				foreach ( array( '-wal', '-shm' ) as $suf ) {
+					if ( is_readable( $db_src . $suf ) ) {
+						@copy( $db_src . $suf, $db_tmp . $suf );
+					}
+				}
+			}
+		}
+
+		$cmd   = array( self::php_cli(), '-d', 'display_errors=1', '-d', 'log_errors=0', $cli );
 		$pipes = array();
-		$proc  = proc_open(
+		$proc  = @proc_open(
 			$cmd,
 			array(
 				1 => array( 'pipe', 'w' ),
@@ -447,26 +505,60 @@ final class Cxp_Sr108688_Repro {
 			),
 			$pipes,
 			ABSPATH,
-			null
+			self::proc_env( $db_tmp )
 		);
 		if ( ! is_resource( $proc ) ) {
+			self::cleanup_probe_db( $db_tmp );
 			return array(
 				'code'   => 2,
 				'output' => 'No se pudo lanzar PHP CLI',
 			);
 		}
-		stream_set_timeout( $pipes[1], 25 );
-		stream_set_timeout( $pipes[2], 25 );
-		$stdout = stream_get_contents( $pipes[1] );
-		$stderr = stream_get_contents( $pipes[2] );
+
+		stream_set_blocking( $pipes[1], false );
+		stream_set_blocking( $pipes[2], false );
+		$stdout   = '';
+		$stderr   = '';
+		$deadline = microtime( true ) + 12;
+		$code     = 1;
+		do {
+			$stdout .= (string) stream_get_contents( $pipes[1] );
+			$stderr .= (string) stream_get_contents( $pipes[2] );
+			$status  = proc_get_status( $proc );
+			if ( empty( $status['running'] ) ) {
+				$code = (int) $status['exitcode'];
+				break;
+			}
+			if ( microtime( true ) >= $deadline ) {
+				proc_terminate( $proc, 9 );
+				$stderr .= "\n(probe cortado a 12s: el CLI no debe esperar la SQLite de Apache)";
+				$code    = 124;
+				break;
+			}
+			usleep( 80000 );
+		} while ( true );
+		$stdout .= (string) stream_get_contents( $pipes[1] );
+		$stderr .= (string) stream_get_contents( $pipes[2] );
 		fclose( $pipes[1] );
 		fclose( $pipes[2] );
-		$code = proc_close( $proc );
-		$out  = trim( $stderr . "\n" . $stdout );
+		proc_close( $proc );
+		self::cleanup_probe_db( $db_tmp );
+		$out = trim( $stderr . "\n" . $stdout );
 		return array(
 			'code'   => (int) $code,
 			'output' => $out !== '' ? $out : '(sin salida)',
 		);
+	}
+
+	private static function cleanup_probe_db( $db_tmp ) {
+		if ( ! $db_tmp ) {
+			return;
+		}
+		foreach ( array( '', '-wal', '-shm' ) as $suf ) {
+			if ( is_file( $db_tmp . $suf ) ) {
+				@unlink( $db_tmp . $suf );
+			}
+		}
 	}
 
 	private static function match_production( $output ) {

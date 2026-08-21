@@ -20,6 +20,15 @@ if ( ! $n_site ) {
 	$c = preg_replace( "/define\(\s*'WP_HOME'/", "define( 'WP_SITEURL', '" . $home . "' );\ndefine( 'WP_HOME'", $c, 1 );
 }
 
+if ( false === strpos( $c, 'CXP_PROBE_DB' ) ) {
+	$c = preg_replace(
+		"/define\(\s*'DB_DIR'\s*,\s*[^;]+;\s*\r?\ndefine\(\s*'DB_FILE'\s*,\s*[^;]+;/",
+		"\$cxp_probe_db = getenv( 'CXP_PROBE_DB' );\nif ( is_string( \$cxp_probe_db ) && \$cxp_probe_db !== '' ) {\n\tdefine( 'DB_DIR', dirname( \$cxp_probe_db ) . '/' );\n\tdefine( 'DB_FILE', basename( \$cxp_probe_db ) );\n} else {\n\tdefine( 'DB_DIR', __DIR__ . '/wp-content/database/' );\n\tdefine( 'DB_FILE', '.ht.sqlite' );\n}",
+		$c,
+		1
+	);
+}
+
 if ( getenv( 'DB_ENGINE' ) === 'mysql' ) {
 	$host = getenv( 'WORDPRESS_DB_HOST' ) ?: 'db';
 	$name = getenv( 'WORDPRESS_DB_NAME' ) ?: 'wordpress';

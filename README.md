@@ -124,14 +124,14 @@ Desde cero (para la instancia anterior y reconstruye la imagen con el código ac
 
 ```bash
 cp .env.example .env
-docker compose down --remove-orphans
-docker compose up --build --force-recreate -d
+docker compose -f docker-compose.local.yml down --remove-orphans
+docker compose -f docker-compose.local.yml up --build --force-recreate -d
 ```
 
 Arranque normal:
 
 ```bash
-docker compose up --build
+docker compose -f docker-compose.local.yml up --build
 ```
 
 | Variable | Default | Qué hace |
@@ -142,16 +142,16 @@ docker compose up --build
 | `DB_ENGINE` | `sqlite` | `sqlite` o `mysql` |
 | `CXP_AUTO_LOGIN` | `1` | Auto-login admin (apaga en Internet) |
 
-MySQL: `DB_ENGINE=mysql` y `docker compose --profile mysql up --build`.
+MySQL: `DB_ENGINE=mysql` y `docker compose -f docker-compose.local.yml --profile mysql up --build`.
 
 ---
 
 ## Dokploy (manual)
 
-Usa **`docker-compose.dokploy.yml`** (sin publicar puerto 80 en el host). Traefik abre la URL.
+Usa **`docker-compose.yml`** (el path por defecto de Dokploy). Dominio, `WP_HOME`, auto-login apagado y etiquetas Traefik ya van en el archivo.
 
-En el VPS Aeolabs: [docs/dokploy.md](docs/dokploy.md) → clics +  
-`http://chilexpress-woo.5.78.137.25.sslip.io`
+URL: [http://chilexpress-woo.5-78-137-25.sslip.io](http://chilexpress-woo.5-78-137-25.sslip.io)  
+Detalle: [docs/dokploy.md](docs/dokploy.md).
 
 ---
 

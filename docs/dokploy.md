@@ -10,13 +10,13 @@ Autor del laboratorio: **Alexander Alejandro Cautivo Ramos** · [alexander.cauti
 
 | Campo Dokploy | Valor |
 |---|---|
-| Provider | GitHub · este repositorio |
-| Tipo | **Docker Compose** (recomendado) o **Dockerfile** |
-| Compose file | `docker-compose.dokploy.yml` |
+| Provider | **Git** (URL pública; no hace falta GitHub App) |
+| Tipo | **Docker Compose** |
+| Compose file | `./docker-compose.yml` (default del panel; Traefik y env ya van ahí) |
 | Dockerfile (si no usas compose) | `docker/Dockerfile` |
 | Puerto interno | **80** (Apache) |
-| Dominio | el que asigne Dokploy o tu DNS |
-| HTTPS | el proxy de Dokploy (Let's Encrypt) |
+| Dominio | `chilexpress-woo.5-78-137-25.sslip.io` (etiquetas Traefik en el compose) |
+| HTTPS | apagado la primera vez (sslip.io a veces falla Let's Encrypt) |
 
 La imagen **ya incluye** WordPress 7.0.3, Woo 11.0.1, Chilexpress 1.4.0 y los MU-plugins. No hace falta montar el código desde el host.
 
@@ -35,38 +35,25 @@ Panel: [http://5.78.137.25:3000/](http://5.78.137.25:3000/) · Dokploy **v0.30.2
 
 URL pública (sin DNS propio; sslip.io apunta solo a esa IP):
 
-`http://chilexpress-woo.5.78.137.25.sslip.io`
+`http://chilexpress-woo.5-78-137-25.sslip.io`
+
+Dominio, `WP_HOME`, `CXP_AUTO_LOGIN=0` y etiquetas Traefik **ya están** en `docker-compose.yml`. En el panel no hace falta pestaña Environment ni Domains.
 
 ### Clics
 
-1. **Projects** → **Create Project** → nombre `Chilexpress replica` → Create.
-2. Entra al proyecto → **Add Service** → **Compose**.
-3. Nombre: `chilexpress-woo`.
-4. Provider: **Git** (el repo es público; no hace falta GitHub App).
+1. Proyecto **alexwoocommerce** → **production** → **+ Create Service** → **Compose**.
+2. Nombre: `chilexpress-woo`.
+3. Provider: **Git** (el quinto; no GitHub).
    - Repository: `https://github.com/alexcautivo/chilexpress-woo-replica.git`
    - Branch: `main`
-   - Compose path: `./docker-compose.dokploy.yml`
-5. **Environment**:
-
-```env
-WP_HOME=http://chilexpress-woo.5.78.137.25.sslip.io
-CXP_AUTO_LOGIN=0
-DB_ENGINE=sqlite
-PHP_VERSION=8.4.19
-```
-
-6. **Domains** → Add Domain:
-   - Host: `chilexpress-woo.5.78.137.25.sslip.io`
-   - Service / container: **wordpress**
-   - Port: **80**
-   - Path: `/`
-   - HTTPS: déjalo apagado la primera vez (sslip.io a veces falla Let's Encrypt). Si el certificado sale, cambia `WP_HOME` a `https://...` y Redeploy.
-7. **Deploy**. El build tarda varios minutos (imagen PHP + WordPress).
-8. Abre `http://chilexpress-woo.5.78.137.25.sslip.io`
+   - Compose path: déjalo en `./docker-compose.yml`
+4. Autodeploy / On Push: apagado → **Save**.
+5. **Deploy**. El build tarda varios minutos (imagen PHP + WordPress).
+6. Abre `http://chilexpress-woo.5-78-137-25.sslip.io`
    - Admin: `/wp-admin/` · usuario `admin` · clave `admin`
    - La barra de abajo es la **Consola réplica** (Tienda, Checkout, Incidencias, etc.)
 
-Si el deploy falla por puerto 80 ocupado, el compose **ya no** publica `80:80` en el host: Traefik es quien abre la URL.
+Si el deploy falla por puerto 80 ocupado, el compose **no** publica `80:80` en el host: Traefik es quien abre la URL.
 
 ---
 
@@ -74,7 +61,7 @@ Si el deploy falla por puerto 80 ocupado, el compose **ya no** publica `80:80` e
 
 1. En Dokploy: **Create Service** → **Compose**.
 2. Conecta GitHub y elige `alexcautivo/chilexpress-woo-replica`, rama `main`.
-3. Compose path: `docker-compose.dokploy.yml`.
+3. Compose path: `docker-compose.yml` (o `docker-compose.dokploy.yml`, son el mismo).
 4. Build context: la raíz del repo (donde está `docker/Dockerfile`).
 5. **Environment** (obligatorio y recomendado):
 
@@ -160,7 +147,7 @@ Rebuild cuando cambies `PHP_VERSION` o el Dockerfile. Un push a `main` + Redeplo
 
 ## Local vs Dokploy
 
-| | Local (`docker compose`) | Dokploy (`docker-compose.dokploy.yml`) |
+| | Local (`docker-compose.local.yml`) | Dokploy (`docker-compose.yml`) |
 |---|---|---|
 | Código | bind-mount `./wordpress` | copiado en la imagen |
 | Auto-login | sí (localhost) | no |

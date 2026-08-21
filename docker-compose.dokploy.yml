@@ -1,12 +1,5 @@
-# Compose para Dokploy (despliegue desde GitHub).
-# Traefik de Dokploy enruta el dominio → servicio wordpress:80.
-# No publiques 80:80 en el host: ese puerto ya lo usa Dokploy.
-#
-# 1. Tipo: Compose
-# 2. Archivo: docker-compose.dokploy.yml
-# 3. Dominio → servicio wordpress, puerto 80
-# 4. Env: WP_HOME=https://TU-DOMINIO  (sin barra final)
-# 5. CXP_AUTO_LOGIN=0
+# Alias del compose de Dokploy. Mismo contenido que docker-compose.yml
+# (el path por defecto del panel). Cualquiera de los dos archivos sirve.
 
 name: chilexpress-woo-replica
 
@@ -20,8 +13,8 @@ services:
     expose:
       - "80"
     environment:
-      WP_HOME: ${WP_HOME:-http://127.0.0.1}
-      WP_SITEURL: ${WP_HOME:-http://127.0.0.1}
+      WP_HOME: ${WP_HOME:-http://chilexpress-woo.5-78-137-25.sslip.io}
+      WP_SITEURL: ${WP_HOME:-http://chilexpress-woo.5-78-137-25.sslip.io}
       DB_ENGINE: ${DB_ENGINE:-sqlite}
       CXP_AUTO_LOGIN: ${CXP_AUTO_LOGIN:-0}
       CXP_REMOTE_SHOP_URL: ${CXP_REMOTE_SHOP_URL:-}
@@ -34,6 +27,12 @@ services:
       WORDPRESS_DB_USER: ${MYSQL_USER:-wordpress}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-wordpress}
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE:-wordpress}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.chilexpress-woo.rule=Host(`chilexpress-woo.5-78-137-25.sslip.io`)
+      - traefik.http.routers.chilexpress-woo.entrypoints=web
+      - traefik.http.services.chilexpress-woo.loadbalancer.server.port=80
     volumes:
       - wp_database:/var/www/html/wp-content/database
       - wp_uploads:/var/www/html/wp-content/uploads

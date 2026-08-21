@@ -64,7 +64,7 @@ cd wordpress && php -S 127.0.0.1:8080 router.php
 
 ```bash
 cp .env.example .env
-docker compose up --build
+docker compose -f docker-compose.local.yml up --build
 ```
 
 Sigue en http://127.0.0.1:8080. Detalle de variables: [dokploy.md](dokploy.md) (también vale en local).

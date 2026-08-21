@@ -67,6 +67,16 @@ try {
     }),
   });
 
+  // El checkout clásico solo renderiza el formulario (y el relleno del laboratorio)
+  // cuando hay algo en el carrito.
+  const shopPage = await request(`${base}/shop/`, { redirect: 'follow' });
+  const productId = (shopPage.text.match(/add-to-cart=(\d+)/) || [])[1];
+  check(Boolean(productId), 'catálogo expone un producto para el carrito');
+  if (productId) {
+    const added = await request(`${base}/?add-to-cart=${productId}`, { redirect: 'follow' });
+    check(added.status < 500, `agregar producto al carrito HTTP ${added.status}`);
+  }
+
   const pages = [
     ['home', `${base}/`, ['cxp-dbg', 'Aplicar pila', 'Consola']],
     ['shop', `${base}/shop/`, ['add_to_cart', 'product']],
@@ -161,7 +171,8 @@ try {
   const ajaxGet = await request(`${base}/wp-admin/admin-ajax.php`, { redirect: 'follow' });
   check(ajaxGet.status < 500, `admin-ajax GET HTTP ${ajaxGet.status}`);
 
-  if (fs.existsSync(debugLog)) {
+  const isLocalBase = /^https?:\/\/(127\.0\.0\.1|localhost)(:|\/|$)/.test(base);
+  if (isLocalBase && fs.existsSync(debugLog)) {
     const delta = fs.readFileSync(debugLog).subarray(logOffset).toString('utf8');
     const fatals = delta.split(/\r?\n/).filter((line) => /PHP Fatal|PHP Parse|Uncaught/i.test(line));
     check(fatals.length === 0, fatals.length ? `sin fatales PHP durante la prueba (${fatals[0]})` : 'sin fatales PHP durante la prueba');

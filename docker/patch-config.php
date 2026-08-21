@@ -32,15 +32,8 @@ if ( getenv( 'DB_ENGINE' ) === 'mysql' ) {
 	$c    = preg_replace( "/define\(\s*'DB_PASSWORD'\s*,\s*'[^']*'\s*\)/", "define( 'DB_PASSWORD', '" . $pass . "' )", $c );
 }
 
-$auto = getenv( 'CXP_AUTO_LOGIN' );
-if ( $auto !== false && $auto !== '' ) {
-	$flag = in_array( strtolower( $auto ), array( '1', 'true', 'yes', 'on' ), true ) ? 'true' : 'false';
-	if ( ! preg_match( "/define\(\s*'CXP_AUTO_LOGIN'/", $c ) ) {
-		$c = preg_replace( "/<\?php\s*/", "<?php\ndefine( 'CXP_AUTO_LOGIN', {$flag} );\n", $c, 1 );
-	} else {
-		$c = preg_replace( "/define\(\s*'CXP_AUTO_LOGIN'\s*,\s*[^)]+\)/", "define( 'CXP_AUTO_LOGIN', {$flag} )", $c );
-	}
-}
+// CXP_AUTO_LOGIN lo resuelve wp-config.sample.php via getenv().
+// No reescribir esa línea: el replace por primer ')' deja PHP inválido.
 
 $c = preg_replace( "/define\(\s*'WP_DEBUG_DISPLAY'\s*,\s*true\s*\)/", "define( 'WP_DEBUG_DISPLAY', false )", $c );
 

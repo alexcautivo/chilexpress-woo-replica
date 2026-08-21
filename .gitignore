@@ -7,3 +7,6 @@ Thumbs.db
 
 # Snapshots completos de runs: pueden contener core/plugins premium y bases de datos.
 incidents/runs/*/*/snapshot/
+
+# Dependencias de Node se instalan en tools/, no van al repo.
+tools/node_modules/

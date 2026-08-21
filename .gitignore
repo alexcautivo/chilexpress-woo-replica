@@ -7,6 +7,17 @@ Thumbs.db
 
 # Snapshots completos de runs: pueden contener core/plugins premium y bases de datos.
 incidents/runs/*/*/snapshot/
+incidents/evidence/
+incidents/runs/*/*/reported-evidence.json
+incidents/runs/*/*/reported-screenshot.*
 
 # Dependencias de Node se instalan en tools/, no van al repo.
 tools/node_modules/
+
+# Auditor: artefactos del cliente, evidencia de runs y configuracion con API keys.
+auditor/artifacts/incoming/*
+!auditor/artifacts/incoming/.gitkeep
+auditor/reports/*
+!auditor/reports/.gitkeep
+auditor/.auditor/
+auditor/.env

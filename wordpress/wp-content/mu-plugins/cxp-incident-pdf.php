@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CXP Incident PDF
  * Description: Generador genérico de PDF cliente/técnico a partir de ticket + run + comparison. Sin endpoints AJAX.
- * Version: 1.0.0
+ * Version: 1.1.0
  *
  * Uso (desde runner / tickets UI):
  *   Cxp_Incident_Pdf::download_client( $ticket, $run, $comparison );
@@ -78,20 +78,25 @@ final class Cxp_Incident_Pdf {
 
 		$pdf->heading( '2. Que se reporto', 2 );
 		self::write_reported_client( $pdf, $ticket, $comparison );
+		self::write_support_evidence( $pdf, $ticket );
 
 		$pdf->heading( '3. Que se reprodujo en laboratorio', 2 );
 		self::write_actual_client( $pdf, $run, $comparison );
 
 		$pdf->heading( '4. Resultado comparado', 2 );
-		self::write_verdict_client( $pdf, $comparison );
+		self::write_verdict_client( $pdf, $comparison, $run );
 
-		$pdf->heading( '5. Causa probable', 2 );
+		$pdf->heading( '5. Entorno exacto probado', 2 );
+		self::write_stack_tables( $pdf, $ticket, $run, $comparison );
+		self::write_inventory( $pdf, $ticket, $run );
+
+		$pdf->heading( '6. Causa probable', 2 );
 		self::write_cause_client( $pdf, $comparison );
 
-		$pdf->heading( '6. Impacto', 2 );
+		$pdf->heading( '7. Impacto', 2 );
 		$pdf->para( self::impact_text( $ticket ) );
 
-		$pdf->heading( '7. Recomendaciones y proximos pasos', 2 );
+		$pdf->heading( '8. Recomendaciones y proximos pasos', 2 );
 		self::write_recommendations( $pdf, $comparison, true );
 
 		$pdf->spacer( 8 );
@@ -134,6 +139,7 @@ final class Cxp_Incident_Pdf {
 
 		$pdf->heading( '4. Reportado vs real (firma)', 2 );
 		self::write_reported_vs_real_tech( $pdf, $ticket, $run, $comparison );
+		self::write_support_evidence( $pdf, $ticket );
 
 		$pdf->heading( '5. Diff estructurado', 2 );
 		self::write_diff( $pdf, $comparison );
@@ -213,6 +219,16 @@ final class Cxp_Incident_Pdf {
 		if ( $rep['url'] !== '' ) {
 			$pdf->kv( 'Donde falla', $rep['url'] );
 		}
+		foreach ( array(
+			'Resultado esperado' => $ticket['sintoma']['resultado_esperado'] ?? '',
+			'Resultado obtenido' => $ticket['sintoma']['resultado_obtenido'] ?? '',
+			'Precondiciones' => $ticket['sintoma']['precondiciones'] ?? '',
+			'Datos de prueba' => $ticket['sintoma']['datos_prueba'] ?? '',
+		) as $label => $value ) {
+			if ( trim( (string) $value ) !== '' ) {
+				$pdf->kv( $label, self::clip( (string) $value, 700 ) );
+			}
+		}
 		foreach ( $rep['steps'] as $step ) {
 			$pdf->bullet( $step );
 		}
@@ -241,9 +257,41 @@ final class Cxp_Incident_Pdf {
 		}
 	}
 
-	private static function write_verdict_client( Cxp_Simple_Pdf $pdf, array $comparison ) {
+	private static function write_support_evidence( Cxp_Simple_Pdf $pdf, array $ticket ) {
+		$evidence = is_array( $ticket['evidencia'] ?? null ) ? $ticket['evidencia'] : array();
+		$text = trim( (string) ( $evidence['ticket_texto'] ?? '' ) );
+		$notes = trim( (string) ( $evidence['capturas_notas'] ?? '' ) );
+		$file = trim( (string) ( $evidence['captura_archivo'] ?? '' ) );
+		if ( '' !== $text ) {
+			$pdf->kv( 'Texto del ticket/correo', '' );
+			$pdf->code( self::clip( $text, 2500 ) );
+		}
+		if ( '' !== $notes ) {
+			$pdf->kv( 'Descripción del pantallazo', self::clip( $notes, 1000 ) );
+		}
+		if ( '' !== $file ) {
+			$pdf->kv( 'Pantallazo adjunto', 'incidents/' . ltrim( $file, '/' ) );
+		}
+	}
+
+	private static function write_verdict_client( Cxp_Simple_Pdf $pdf, array $comparison, array $run = array() ) {
 		$v = self::verdict_info( $comparison );
 		$pdf->para( $v['label_es'] );
+		$total = $run['steps_total'] ?? null;
+		if ( $total !== null && $total !== '' ) {
+			$ok = (int) ( $run['steps_ok'] ?? 0 );
+			$pdf->kv( 'Pruebas automaticas', $ok . '/' . (int) $total . ' correctas' );
+			$pdf->para(
+				(int) $total === $ok
+					? 'Todas las comprobaciones se ejecutaron sin errores tecnicos de la prueba.'
+					: 'Algunas comprobaciones no pasaron; el detalle esta en el informe tecnico.'
+			);
+		}
+		$pdf->para(
+			! empty( $comparison['issue_reproduced'] )
+				? 'Resultado: el laboratorio SI reprodujo el problema informado.'
+				: 'Resultado: el laboratorio NO reprodujo el problema informado con esta pila y estos pasos.'
+		);
 		if ( $v['explanation'] !== '' ) {
 			$pdf->para( $v['explanation'] );
 		}
@@ -317,29 +365,45 @@ final class Cxp_Incident_Pdf {
 	}
 
 	private static function write_inventory( Cxp_Simple_Pdf $pdf, array $ticket, array $run ) {
-		$plugins = array();
-		if ( ! empty( $ticket['plugins'] ) && is_array( $ticket['plugins'] ) ) {
-			$plugins = $ticket['plugins'];
-		} elseif ( ! empty( $run['plugins'] ) && is_array( $run['plugins'] ) ) {
-			$plugins = $run['plugins'];
+		$requested = ! empty( $ticket['plugins'] ) && is_array( $ticket['plugins'] ) ? $ticket['plugins'] : array();
+		$actual = array();
+		if ( ! empty( $run['stack_actual']['plugins'] ) && is_array( $run['stack_actual']['plugins'] ) ) {
+			$actual = $run['stack_actual']['plugins'];
 		} elseif ( ! empty( $run['inventory']['plugins'] ) && is_array( $run['inventory']['plugins'] ) ) {
-			$plugins = $run['inventory']['plugins'];
+			$actual = $run['inventory']['plugins'];
 		}
 		$rows = array();
-		foreach ( $plugins as $p ) {
+		$seen = array();
+		foreach ( $requested as $p ) {
+			$slug = (string) ( $p['slug'] ?? '' );
+			$real = is_array( $actual[ $slug ] ?? null ) ? $actual[ $slug ] : array();
+			$seen[ $slug ] = true;
+			$rows[] = array(
+				(string) ( $p['nombre'] ?? $p['name'] ?? $slug ),
+				(string) ( $p['version'] ?? '' ),
+				(string) ( $real['version'] ?? 'no instalado' ),
+				( isset( $p['activo'] ) ? ( $p['activo'] ? 'si' : 'no' ) : '—' ) . ' / ' .
+					( array_key_exists( 'active', $real ) ? ( $real['active'] ? 'si' : 'no' ) : '—' ),
+				(string) ( $p['fuente'] ?? $p['source'] ?? '' ),
+			);
+		}
+		foreach ( $actual as $slug => $p ) {
+			if ( isset( $seen[ (string) $slug ] ) ) {
+				continue;
+			}
 			if ( ! is_array( $p ) ) {
-				$rows[] = array( (string) $p, '', '', '' );
 				continue;
 			}
 			$rows[] = array(
-				(string) ( $p['nombre'] ?? $p['name'] ?? $p['slug'] ?? '' ),
+				(string) ( $p['name'] ?? $slug ),
+				'no solicitado',
 				(string) ( $p['version'] ?? '' ),
-				isset( $p['activo'] ) ? ( $p['activo'] ? 'si' : 'no' ) : (string) ( $p['active'] ?? '' ),
-				(string) ( $p['fuente'] ?? $p['source'] ?? $p['checksum'] ?? '' ),
+				'— / ' . ( ! empty( $p['active'] ) ? 'si' : 'no' ),
+				'existente laboratorio',
 			);
 		}
 		if ( $rows ) {
-			$pdf->table( array( 'Plugin', 'Version', 'Activo', 'Fuente/checksum' ), $rows, array( 160, 80, 50, 170 ) );
+			$pdf->table( array( 'Plugin', 'Solicitada', 'Real', 'Activo req/real', 'Fuente' ), $rows, array( 150, 70, 70, 85, 85 ) );
 		} else {
 			$pdf->note( 'Sin inventario de plugins.' );
 		}
@@ -375,6 +439,22 @@ final class Cxp_Incident_Pdf {
 		$v = self::verdict_info( $comparison );
 		$pdf->spacer( 4 );
 		$pdf->kv( 'Veredicto', $v['code'] . ' — ' . $v['label_es'] );
+		if ( isset( $comparison['score'] ) ) {
+			$pdf->kv( 'Score de coincidencia', (string) $comparison['score'] );
+		}
+		if ( ! empty( $comparison['checks'] ) && is_array( $comparison['checks'] ) ) {
+			$rows = array();
+			foreach ( $comparison['checks'] as $field => $ok ) {
+				$rows[] = array( (string) $field, $ok ? 'coincide' : 'no coincide' );
+			}
+			$pdf->table( array( 'Campo comparado', 'Resultado' ), $rows, array( 200, 120 ) );
+		}
+		if ( isset( $run['steps_total'] ) && $run['steps_total'] !== null ) {
+			$pdf->kv( 'Pasos OK', (int) ( $run['steps_ok'] ?? 0 ) . '/' . (int) $run['steps_total'] );
+		}
+		if ( ! empty( $comparison['rules_version'] ) ) {
+			$pdf->kv( 'Version de reglas', (string) $comparison['rules_version'] );
+		}
 	}
 
 	private static function write_diff( Cxp_Simple_Pdf $pdf, array $comparison ) {
@@ -803,14 +883,42 @@ final class Cxp_Incident_Pdf {
 	}
 
 	private static function flatten_stack( array $pila ) {
+		$labels = array(
+			'php' => 'PHP',
+			'wordpress' => 'WordPress',
+			'woocommerce' => 'WooCommerce',
+			'chilexpress_oficial' => 'Chilexpress Oficial',
+			'chilexpress-oficial' => 'Chilexpress Oficial',
+		);
 		$out = array();
 		foreach ( $pila as $k => $v ) {
+			$key = (string) $k;
+			if ( 'plugins' === $key ) {
+				foreach ( (array) $v as $slug => $plugin ) {
+					if ( ! is_array( $plugin ) ) {
+						continue;
+					}
+					$slug = (string) $slug;
+					if ( ! in_array( $slug, array( 'woocommerce', 'chilexpress-oficial' ), true ) ) {
+						continue;
+					}
+					$out[ $labels[ $slug ] ] = (string) ( $plugin['version'] ?? '' );
+				}
+				continue;
+			}
+			if ( in_array( $key, array( 'tema', 'theme' ), true ) && is_array( $v ) ) {
+				$out['Tema'] = trim( (string) ( $v['nombre'] ?? $v['name'] ?? $v['slug'] ?? '' ) . ' ' . (string) ( $v['version'] ?? '' ) );
+				if ( ! empty( $v['padre_slug'] ) ) {
+					$out['Tema padre'] = trim( (string) $v['padre_slug'] . ' ' . (string) ( $v['padre_version'] ?? '' ) );
+				}
+				continue;
+			}
 			if ( is_array( $v ) ) {
-				$name = (string) ( $v['nombre'] ?? $v['name'] ?? $k );
+				$name = (string) ( $v['nombre'] ?? $v['name'] ?? $key );
 				$ver  = (string) ( $v['version'] ?? '' );
 				$out[ $name ] = $ver !== '' ? $ver : wp_json_encode( $v, JSON_UNESCAPED_UNICODE );
 			} else {
-				$out[ (string) $k ] = (string) $v;
+				$out[ $labels[ $key ] ?? $key ] = (string) $v;
 			}
 		}
 		return $out;

@@ -198,10 +198,15 @@ final class Cxp_Incident_Runner {
 	private static function ticket_plugins( $ticket ) {
 		$plugins = is_array( $ticket['plugins'] ?? null ) ? $ticket['plugins'] : array();
 		$wc = (string) ( $ticket['pila']['woocommerce'] ?? '' );
+		$cxp = (string) ( $ticket['pila']['chilexpress_oficial'] ?? '' );
 		$has_wc = false;
+		$has_cxp = false;
 		foreach ( $plugins as $plugin ) {
 			if ( 'woocommerce' === ( $plugin['slug'] ?? '' ) ) {
 				$has_wc = true;
+			}
+			if ( 'chilexpress-oficial' === ( $plugin['slug'] ?? '' ) ) {
+				$has_cxp = true;
 			}
 		}
 		if ( $wc && ! $has_wc ) {
@@ -211,6 +216,15 @@ final class Cxp_Incident_Runner {
 				'version' => $wc,
 				'activo' => true,
 				'fuente' => 'wordpress.org',
+			);
+		}
+		if ( $cxp && ! $has_cxp ) {
+			$plugins[] = array(
+				'nombre' => 'Chilexpress Oficial',
+				'slug' => 'chilexpress-oficial',
+				'version' => $cxp,
+				'activo' => true,
+				'fuente' => 'repo',
 			);
 		}
 		return $plugins;
@@ -561,7 +575,7 @@ final class Cxp_Incident_Runner {
 		}
 		$run_dir = self::run_dir( $id, $run_id );
 		$run = self::read_json( $run_dir . '/run.json' );
-		if ( ! $run || ! in_array( $run['state'] ?? '', array( 'lista', 'comparada' ), true ) ) {
+		if ( ! $run || ! in_array( $run['state'] ?? '', array( 'lista', 'comparada', 'comparada_con_fallos' ), true ) ) {
 			return new WP_Error( 'cxp_incident_run', 'La pila de este run no está lista' );
 		}
 		$locked = self::acquire_lock( $id );
@@ -595,11 +609,24 @@ final class Cxp_Incident_Runner {
 			$browser_events = self::read_json( $run_dir . '/browser-events.json' );
 			$actual = self::actual_evidence( $context, $log_delta, $results, $browser_events );
 			$comparison = self::compare_evidence( $ticket, $actual );
+			$reported_evidence = (array) ( $ticket['evidencia'] ?? array() );
+			self::write_json( $run_dir . '/reported-evidence.json', $reported_evidence );
+			$capture = ltrim( (string) ( $reported_evidence['captura_archivo'] ?? '' ), '/' );
+			if ( 0 === strpos( $capture, 'evidence/' ) && is_readable( self::root() . '/' . $capture ) ) {
+				$extension = strtolower( pathinfo( $capture, PATHINFO_EXTENSION ) );
+				copy( self::root() . '/' . $capture, $run_dir . '/reported-screenshot.' . $extension );
+			}
 			self::write_json( $run_dir . '/steps.json', $results );
 			file_put_contents( $run_dir . '/debug.log', $log_delta );
 			self::write_json( $run_dir . '/result.json', $actual );
 			self::write_json( $run_dir . '/comparison.json', $comparison );
-			self::write_run( $run_dir, $run, 'Flujo finalizado: ' . $comparison['verdict'], 'comparada' );
+			$failed = count( array_filter( $results, static function ( $step ) { return isset( $step['ok'] ) && ! $step['ok']; } ) );
+			self::write_run(
+				$run_dir,
+				$run,
+				'Flujo finalizado: ' . $comparison['verdict'] . ( $failed ? ' (' . $failed . ' paso(s) fallidos)' : ' (todos los pasos OK)' ),
+				$failed ? 'comparada_con_fallos' : 'comparada'
+			);
 			return array(
 				'ticket_id' => $id,
 				'run_id' => $run_id,
@@ -744,6 +771,7 @@ final class Cxp_Incident_Runner {
 		}
 		$combined = $context['last_body'] . "\n" . $log . "\n" . $browser_text;
 		$signature = self::normalize_error( $combined );
+		$failed_steps = array_values( array_filter( $steps, static function ( $step ) { return isset( $step['ok'] ) && ! $step['ok']; } ) );
 		return array(
 			'captured_at' => gmdate( 'c' ),
 			'url' => $context['last_url'],
@@ -754,6 +782,8 @@ final class Cxp_Incident_Runner {
 			'browser_events' => array_slice( (array) $browser_events, -100 ),
 			'steps_ok' => count( array_filter( $steps, static function ( $step ) { return ! empty( $step['ok'] ); } ) ),
 			'steps_total' => count( $steps ),
+			'steps_failed' => count( $failed_steps ),
+			'execution_ok' => count( $steps ) > 0 && ! $failed_steps,
 			'stack' => self::current_stack(),
 		);
 	}
@@ -839,7 +869,10 @@ final class Cxp_Incident_Runner {
 
 	public static function compare_evidence( $ticket, $actual ) {
 		$reported_text = (string) ( $ticket['sintoma']['mensaje_error'] ?? '' ) . "\n" .
+			(string) ( $ticket['sintoma']['resultado_obtenido'] ?? '' ) . "\n" .
 			(string) ( $ticket['evidencia']['correo_wordpress'] ?? '' ) . "\n" .
+			(string) ( $ticket['evidencia']['ticket_texto'] ?? '' ) . "\n" .
+			(string) ( $ticket['evidencia']['capturas_notas'] ?? '' ) . "\n" .
 			(string) ( $ticket['evidencia']['debug_log_extracto'] ?? '' );
 		$reported = self::normalize_error( $reported_text );
 		$reported['class'] = (string) ( $ticket['evidencia']['clase_error'] ?? $reported['class'] );
@@ -882,13 +915,26 @@ final class Cxp_Incident_Runner {
 			}
 		}
 		$recommendations = self::recommendations_for_causes( $causes );
+		$issue_reproduced = in_array( $verdict, array( 'coincide', 'coincide_parcialmente' ), true );
+		$outcome = 'no_reproducida';
+		if ( 'coincide' === $verdict ) {
+			$outcome = 'fallo_reproducido';
+		} elseif ( 'coincide_parcialmente' === $verdict ) {
+			$outcome = 'fallo_parcial';
+		} elseif ( 'no_coincide' === $verdict ) {
+			$outcome = 'fallo_diferente';
+		}
 		return array(
 			'verdict' => $verdict,
+			'outcome' => $outcome,
+			'issue_reproduced' => $issue_reproduced,
+			'execution_ok' => ! empty( $actual['execution_ok'] ),
 			'score' => round( $positive / count( $checks ), 2 ),
 			'checks' => $checks,
 			'shared_markers' => $shared,
 			'markers_present' => $shared,
 			'missing_markers' => array_values( array_diff( $reported_markers, $real_markers ) ),
+			'markers_missing' => array_values( array_diff( $reported_markers, $real_markers ) ),
 			'reported' => $reported,
 			'reproduced' => $real,
 			'probable_causes' => $causes,
@@ -903,7 +949,9 @@ final class Cxp_Incident_Runner {
 			'differences' => $differences,
 			'recommendations' => $recommendations,
 			'verdict_explanation' => 'Se compararon clase, mensaje, archivo y marcadores técnicos del reporte con la ejecución real.',
-			'summary_client' => 'La prueba terminó con resultado ' . str_replace( '_', ' ', $verdict ) . '. La causa probable se basa en evidencia y reglas versionadas.',
+			'summary_client' => $issue_reproduced
+				? 'La prueba del laboratorio terminó y reprodujo total o parcialmente el problema informado. Esto es un resultado negativo para el sitio, pero confirma el reporte del cliente.'
+				: 'La prueba del laboratorio terminó sin reproducir el mismo problema informado. Esto no descarta un fallo intermitente; indica que no apareció con la pila y los pasos probados.',
 			'stack_actual' => $actual['stack'] ?? array(),
 			'compared_at' => gmdate( 'c' ),
 			'rules_version' => self::RULES_VERSION,
@@ -921,6 +969,21 @@ final class Cxp_Incident_Runner {
 		}
 		if ( false !== strpos( $all, 'plugins_loaded' ) ) {
 			$causes[] = array( 'rule' => 'early_load', 'summary' => 'Un plugin se inicia antes de que WooCommerce termine de registrar sus clases.' );
+		}
+		if ( false !== strpos( $all, 'checkout') && ( false !== strpos( $all, 'block') || 'bloques' === ( $ticket['entorno']['checkout'] ?? '' ) ) ) {
+			$causes[] = array( 'rule' => 'checkout_blocks', 'summary' => 'El checkout usa bloques y el JavaScript del plugin espera los campos del checkout clásico.' );
+		}
+		if ( false !== strpos( $all, '401' ) || false !== strpos( $all, '403' ) || false !== strpos( $all, 'unauthorized' ) || false !== strpos( $all, 'subscription key' ) ) {
+			$causes[] = array( 'rule' => 'api_credentials', 'summary' => 'Chilexpress rechazó la solicitud por credenciales, ambiente o permisos de API.' );
+		}
+		if ( false !== strpos( $all, 'timeout' ) || false !== strpos( $all, 'timed out' ) || false !== strpos( $all, 'could not resolve host' ) || false !== strpos( $all, 'curl error 6' ) ) {
+			$causes[] = array( 'rule' => 'network_failure', 'summary' => 'La tienda no pudo completar la conexión con el servicio externo de Chilexpress.' );
+		}
+		if ( false !== strpos( $all, 'comuna' ) || false !== strpos( $all, 'coverage') || false !== strpos( $all, 'countycode' ) ) {
+			$causes[] = array( 'rule' => 'coverage_data', 'summary' => 'La región/comuna o su código no coincide con el catálogo de cobertura esperado por Chilexpress.' );
+		}
+		if ( false !== strpos( $all, 'cannot redeclare' ) || false !== strpos( $all, 'plugin conflict' ) ) {
+			$causes[] = array( 'rule' => 'plugin_conflict', 'summary' => 'Dos plugins o versiones incompatibles están cargando código que entra en conflicto.' );
 		}
 		$requested_php = (string) ( $ticket['pila']['php'] ?? '' );
 		if ( $requested_php && $requested_php !== (string) ( $actual['stack']['php'] ?? '' ) ) {
@@ -940,6 +1003,11 @@ final class Cxp_Incident_Runner {
 			'missing_dependency' => 'Reinstalar la versión exacta del plugin afectado y verificar que el paquete esté completo.',
 			'partial_update' => 'Desactivar temporalmente el plugin dependiente, completar la actualización y reactivarlo después de validar el sitio.',
 			'early_load' => 'El fabricante debe mover la inicialización al hook de la dependencia cargada y comprobar que las clases existan.',
+			'checkout_blocks' => 'Probar con checkout clásico o adaptar el módulo Chilexpress a WooCommerce Blocks / Checkout Extensibility.',
+			'api_credentials' => 'Verificar que las tres API keys correspondan al mismo ambiente, estén activas y tengan acceso al producto solicitado.',
+			'network_failure' => 'Revisar DNS, firewall, TLS y conectividad saliente del hosting hacia los endpoints Chilexpress; repetir con timeout controlado.',
+			'coverage_data' => 'Enviar nombre y código oficiales de región/comuna (por ejemplo LA REINA / LARE), refrescar cobertura y repetir la cotización.',
+			'plugin_conflict' => 'Repetir con solo WooCommerce y Chilexpress activos; reactivar los demás plugins uno por uno hasta identificar el conflicto.',
 			'php_mismatch' => 'Repetir la prueba con la misma versión de PHP informada por el cliente.',
 			'server_error' => 'Revisar el stack trace y las últimas líneas de debug.log antes de repetir la operación.',
 			'insufficient_evidence' => 'Solicitar el correo de error crítico, debug.log y pasos exactos antes de concluir la causa.',
@@ -1200,6 +1268,10 @@ final class Cxp_Incident_Runner {
 			wp_die( 'No se puede generar el PDF.' );
 		}
 		$run = self::read_json( $dir . '/run.json' );
+		$reported_evidence = self::read_json( $dir . '/reported-evidence.json' );
+		if ( $reported_evidence ) {
+			$ticket['evidencia'] = $reported_evidence;
+		}
 		$result = self::read_json( $dir . '/result.json' );
 		$comparison = self::read_json( $dir . '/comparison.json' );
 		$steps = self::read_json( $dir . '/steps.json' );
@@ -1217,7 +1289,13 @@ final class Cxp_Incident_Runner {
 				'steps' => $steps,
 				'result' => $actual,
 				'actual' => $actual,
-				'stack_actual' => (array) ( $result['stack'] ?? array() ),
+				'steps_ok' => $result['steps_ok'] ?? null,
+				'steps_total' => $result['steps_total'] ?? null,
+				'steps_failed' => $result['steps_failed'] ?? null,
+				'execution_ok' => $result['execution_ok'] ?? null,
+				'health' => self::read_json( $dir . '/health.json' ),
+				'apply_log' => self::read_json( $dir . '/apply-log.json' ),
+				'stack_actual' => (array) ( $result['stack'] ?? self::read_json( $dir . '/stack-after.json' ) ),
 				'snapshot_id' => $run_id,
 				'restored' => 'restaurada' === ( $run['state'] ?? '' ),
 				'evidence' => array(

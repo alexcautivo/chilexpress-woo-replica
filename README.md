@@ -86,16 +86,15 @@ Clic en la barra inferior. En tienda y wp-admin las pestañas cambian. Cada bot�
 
 ### Incidencias (cualquier cliente)
 
-1. **Copiar JSON para el cliente** — plantilla schema **1.1** (`incidents/templates/para-el-cliente.json`).
-2. El cliente rellena PHP, WordPress, tema, plugins (`slug` + `version` + `activo` + `fuente`), error exacto, URL y pasos.
-3. **Crear ticket** — queda en `incidents/tickets/{id}.json`.
-4. **Vista previa** — diferencia entre lo instalado y lo pedido.
-5. **Crear flujo** — pasos declarativos seguros (GET/AJAX, activar plugin, assertions). Nunca corre código del cliente.
-6. **Aplicar pila** — snapshot de core, plugins, temas, `wp-config` y SQLite; instala versiones exactas desde wordpress.org o ZIP en `drop-plugins/`. Chilexpress sale del árbol `chilexpress-oficial/` del repo.
-7. Si PHP no coincide: la consola prepara el runtime y pide **reiniciar** `start.sh` o rebuild Docker. Luego **Aplicar pila** de nuevo (mismo run).
-8. **Ejecutar flujo** — abre Chrome, captura HTTP, JS y `debug.log`, compara con el error reportado (`coincide` / `parcial` / `no_coincide` / `no_reproducible`).
-9. **PDF cliente** (lenguaje simple) y **PDF técnico** (pila, pasos, logs, reglas).
-10. **Restaurar snapshot**. Artefactos en `incidents/runs/{ticket}/{run}/`.
+1. **Copiar formulario JSON genérico** — plantilla schema **1.1** (`incidents/templates/para-el-cliente.json`).
+2. El cliente rellena PHP, WordPress, tema, **todos los plugins** (`slug` + `version` + `activo` + `fuente`), URL, pasos, resultado esperado y resultado obtenido.
+3. **Validar y añadir nuevo ticket** — comprueba que existan las versiones y datos mínimos; queda en `incidents/tickets/{id}.json`.
+4. Opcional: **📎 Texto / pantallazo** añade el correo/ticket copiado y una captura PNG/JPG/WEBP. Transcribe o describe el texto visible para incluirlo en el diagnóstico automático.
+5. **▶ Probar ticket completo** — en un solo flujo hace vista previa, snapshot, instala la pila exacta, verifica salud, ejecuta los pasos seguros y compara evidencia.
+6. Si PHP no coincide, el Play se pausa: reconstruye Docker/reinicia PHP y vuelve a pulsarlo para continuar el mismo run.
+7. La salida separa dos conceptos: **prueba ejecutada correctamente** e **incidencia reproducida/no reproducida**, y explica causa probable + cómo corregirla.
+8. Descarga **PDF cliente** y **PDF técnico** tanto si apareció el fallo como si no. Ambos incluyen pila solicitada/real, plugins y versiones; el técnico agrega pasos, HTTP, PHP, JS, logs y reglas.
+9. **Restaurar snapshot** devuelve core, plugins, temas, `wp-config` y SQLite al estado anterior. Artefactos en `incidents/runs/{ticket}/{run}/`.
 
 Fuentes de plugin permitidas: `wordpress.org`, `zip_local`, `repo`. Tope: 40 plugins. URLs del flujo solo del mismo sitio del laboratorio.
 
@@ -104,7 +103,7 @@ Contrato: [incidents/schema/incident.schema.json](incidents/schema/incident.sche
 ### Qué mandarle al cliente
 
 1. Consola → **Incidencias** → **Copiar JSON para el cliente**.
-2. En el correo pide: URL y error exacto; PHP y WordPress; tema; **todos los plugins con versión exacta y activo/inactivo**; pasos; correo crítico o `debug.log`.
+2. En el correo pide: URL y error exacto; PHP y WordPress; tema; **todos los plugins con versión exacta y activo/inactivo**; pasos; resultado esperado/obtenido; correo crítico o `debug.log`.
 3. Indica dónde verlo: **WooCommerce → Estado** y **Herramientas → Salud del sitio → Información**.
 4. Pide que devuelva el JSON completo y que no incluya contraseñas, API keys ni datos de producción.
 
@@ -112,7 +111,8 @@ Correo listo para copiar, ejemplos de plugins públicos/privados y operación pa
 
 ### Formas de armar la prueba
 
-- **Fiel al cliente:** importa el JSON y pulsa **Aplicar pila**. Instala automáticamente las versiones exactas y conserva un snapshot.
+- **Fiel al cliente (recomendado):** importa el JSON y pulsa **▶ Probar ticket completo**.
+- **Paso a paso:** usa Vista previa → Crear flujo → Aplicar pila → Ejecutar flujo → Resultado.
 - **Manual:** en **Laboratorio / Versiones** elige WordPress y cada plugin, carga ZIP privados autorizados y pulsa **Recargar WordPress completo**.
 - **Actualización general:** **Actualizar a latest**. Sirve para explorar, no para reproducir fielmente un ticket antiguo.
 
@@ -214,6 +214,23 @@ Redeploy: panel Dokploy → **Projects** → **alexwoocommerce** → **chilexpre
 
 ---
 
+## Auditor de artefactos (ZIP → PASS/FAIL)
+
+Herramienta separada en [`auditor/`](auditor/). Responde si **un ZIP oficial concreto** es compatible con **una versión concreta** de WooCommerce, PrestaShop, Magento o Shopify.
+
+```bash
+cd auditor
+node bin/auditor.mjs inspect artifacts/incoming/woocommerce-plugin-1.4.0-RELEASE.zip
+node bin/auditor.mjs audit   artifacts/incoming/woocommerce-plugin-1.4.0-RELEASE.zip --platform-version=11.0.1
+node bin/auditor.mjs matrix  artifacts/incoming/woocommerce-plugin-1.4.0-RELEASE.zip --versions=9.8.5,10.6.2,11.0.1
+```
+
+Calcula SHA-256, detecta plataforma y versión, levanta un lab Docker desechable con versiones fijas, instala el ZIP sin modificarlo, ejecuta rutas críticas y la regresión SR-108688, y entrega `reports/AUDIT-ID/` con exit code. Un fatal nunca termina en 0. La IA es opcional y no puede convertir `FAIL` en `PASS`.
+
+Detalle: [auditor/README.md](auditor/README.md) · [arquitectura](auditor/docs/ARQUITECTURA.md) · [plan Dokploy](auditor/docs/PLAN-DEPLOY-DOKPLOY.md).
+
+---
+
 ## Otras plataformas (solo plan)
 
 Magento, PrestaShop y Shopify **no están implementados** en este repo. Hay un plan por tienda, con la misma semilla (5 productos wiki, CLP, kg/cm, LA REINA, Larrain 5862, tarjeta `4242`) y el mismo flujo de incidencias JSON. No se escribe código de esas tiendas hasta que lo indiques.
@@ -237,6 +254,7 @@ Carpeta: [incidents/planes/laboratorio-multiplataforma/](incidents/planes/labora
 | [Incidencias](incidents/README.md) | JSON 1.1, apply, runs, PDF |
 | [Guía de incidencias para clientes](docs/guia-incidencias-clientes.md) | Correo, JSON, versiones, ejecución e informes |
 | [Plan Magento / PrestaShop / Shopify](incidents/planes/laboratorio-multiplataforma/) | Solo especificación; no ejecutar aún |
+| [Auditor de artefactos](auditor/README.md) | ZIP → compatibilidad, matriz, regresiones, IA opcional |
 | [Dokploy](docs/dokploy.md) | Deploy |
 | [Identificación / diagnóstico / respuesta](docs/cliente-identificacion.md) | Textos SR-108688 |
 | [FAQ](docs/faq-replica.md) | Montaje de la réplica |
@@ -252,6 +270,7 @@ Los mismos Markdown salen del panel **Documentos**.
 - `wordpress/wp-config.php` (copia el sample)
 - `.env`, API keys, contraseñas de tiendas reales
 - Snapshots de runs (`incidents/runs/*/*/snapshot/`)
+- Pantallazos/texto privado del cliente (`incidents/evidence/` y copias del run)
 
 La SQLite de semilla **sí** va en el repo (`wordpress/wp-content/database/.ht.sqlite`): catálogo y Chilexpress, **sin pedidos**. En Dokploy usa un volumen para no pisar datos reales.
 

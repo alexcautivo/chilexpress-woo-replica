@@ -26,7 +26,7 @@ En la Consola réplica:
 > - Versión de PHP y WordPress.
 > - Tema, tema padre y versiones.
 > - **Todos los plugins**, incluso los desactivados, con versión exacta y estado activo/inactivo.
-> - Pasos concretos para reproducir la falla.
+> - Pasos concretos, resultado esperado y resultado que obtuvo.
 > - Correo de error crítico o extracto de `debug.log`, si existe.
 >
 > Puede encontrar las versiones en **WooCommerce → Estado** y **Herramientas → Salud del sitio → Información**.
@@ -39,7 +39,7 @@ Después del texto, pega el contenido de:
 
 `incidents/templates/para-el-cliente.json`
 
-El cliente no tiene que programar el flujo técnico. Debe completar principalmente `origen`, `sintoma`, `pila`, `plugins`, `entorno`, `evidencia` y `pedido`.
+El cliente no tiene que programar el flujo técnico. Debe completar principalmente `origen`, `sintoma`, `pila`, `plugins`, `entorno`, `evidencia` y `pedido`. En `plugins` debe incluir **todos** los plugins visibles en su instalación, aunque estén inactivos.
 
 ---
 
@@ -105,15 +105,26 @@ Reglas:
 1. Copia el JSON que devolvió el cliente.
 2. Consola → **Incidencias**.
 3. Pégalo en el cuadro.
-4. Pulsa **Crear ticket con este JSON**.
+4. Pulsa **Validar y añadir nuevo ticket**.
 
 El ticket queda en:
 
 `incidents/tickets/{ticket_id}.json`
 
-Este paso **no cambia WordPress**. Solo valida y guarda la incidencia.
+Este paso **no cambia WordPress**. Valida que estén las versiones exactas, URL, pasos y resultados esperado/obtenido antes de guardar.
 
 Si el cliente no envió un `ticket_id`, la consola crea uno como `CXP-20260821-181500`.
+
+### Texto o pantallazo opcional
+
+En la fila del ticket pulsa **📎 Texto / pantallazo**:
+
+1. Pega el texto completo del correo o ticket de soporte.
+2. Describe qué aparece en la captura y en qué paso ocurrió.
+3. Adjunta un PNG, JPG o WEBP de hasta 5 MB.
+4. Pulsa **Guardar evidencia y usarla al comparar** antes de Play.
+
+La imagen queda guardada como evidencia y aparece referenciada en los PDF. El diagnóstico compara automáticamente el **texto pegado/transcrito** con el error real, HTTP, PHP, JavaScript y `debug.log`; no depende de OCR ni de una API externa de visión.
 
 ---
 
@@ -121,28 +132,25 @@ Si el cliente no envió un `ticket_id`, la consola crea uno como `CXP-20260821-1
 
 La consola permite dos formas.
 
-### A. Aplicar exactamente lo que informó el cliente
+### A. Play completo (recomendado)
 
-Es la opción recomendada para comparar el error.
+Pulsa **▶ Probar ticket completo**. La consola:
 
-1. Pulsa **Vista previa**.
-2. Revisa `actual → solicitado`.
-3. Sube los ZIP privados que falten a `drop-plugins/`.
-4. Pulsa **Aplicar pila** y confirma.
+1. Valida y compara la pila.
+2. Crea un snapshot de WordPress, plugins, temas, configuración y SQLite.
+3. Instala WordPress, cada plugin y el tema en las versiones exactas.
+4. Activa/desactiva plugins como los tenía el cliente.
+5. Verifica front, admin, `admin-ajax.php` y versiones reales.
+6. Ejecuta el flujo seguro, captura evidencia y compara.
+7. Muestra la salida y habilita los dos PDF.
 
-La consola:
+Antes de Play, sube a `drop-plugins/` los ZIP privados autorizados indicados por el ticket. Si PHP es distinto, Play se pausa: reinicia `start.sh` o reconstruye Docker y vuelve a pulsar Play para continuar el mismo run.
 
-1. Crea un snapshot de WordPress, plugins, temas, configuración y SQLite.
-2. Instala la versión exacta de WordPress.
-3. Instala cada plugin en la versión del JSON.
-4. Activa o desactiva cada plugin según lo reportado.
-5. Instala o activa el tema disponible.
-6. Limpia cachés y verifica front, admin y `admin-ajax.php`.
-7. Comprueba que las versiones reales coincidan con las solicitadas.
+### B. Paso a paso
 
-Si PHP es distinto, prepara el runtime y muestra **Reinicio requerido**. Reinicia `start.sh` o reconstruye Docker y pulsa **Aplicar pila** otra vez para continuar el mismo run.
+Usa **Vista previa → Crear flujo → Aplicar pila → Ejecutar flujo → Resultado** cuando quieras revisar o ajustar cada etapa manualmente.
 
-### B. Armar otra combinación manual
+### C. Armar otra combinación manual
 
 En **Laboratorio / Versiones** puedes:
 
@@ -160,9 +168,7 @@ En **Laboratorio / Versiones** puedes:
 
 ## 5. Crear y ejecutar el flujo
 
-1. Pulsa **Crear flujo** para generar un flujo seguro desde la URL y el error informado.
-2. Revisa el JSON si el caso necesita pasos adicionales.
-3. Pulsa **Ejecutar flujo**.
+Play usa el flujo declarativo del ticket. Si falta, crea uno seguro desde la URL y el error. Los pasos humanos se conservan en el reporte, pero una acción de interfaz no registrada debe traducirse a una operación segura antes de automatizarse.
 
 El laboratorio solo admite acciones declarativas registradas:
 
@@ -206,6 +212,8 @@ Resultados:
 | `no_coincide` | El laboratorio produjo otro error |
 | `no_reproducible` | La pila y pasos no generaron el fallo informado |
 
+La salida muestra además **Prueba completada** o **Prueba con pasos fallidos**. Reproducir el error es una ejecución útil para el diagnóstico, pero representa un resultado negativo para el sitio; por eso ambos conceptos se muestran por separado.
+
 Las causas probables salen de reglas versionadas: dependencia ausente, actualización incompleta, carga prematura, incompatibilidad de PHP, plugin/tema faltante, timeout o fallo externo.
 
 ---
@@ -219,6 +227,7 @@ Botón **PDF cliente**:
 - explica qué reportó;
 - qué pudo reproducirse;
 - si coincide o no;
+- PHP, WordPress, tema y plugins solicitados/reales;
 - causa probable en lenguaje simple;
 - impacto;
 - recomendaciones y próximos pasos;
@@ -230,7 +239,7 @@ Botón **PDF técnico**:
 
 - ticket y run;
 - pila solicitada y real;
-- inventario completo de plugins;
+- inventario completo de plugins con versión solicitada/real y estado activo;
 - pasos y assertions;
 - HTTP, JavaScript, PHP y `debug.log`;
 - firma y diff del error;

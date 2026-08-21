@@ -44,15 +44,17 @@ Cualquier cliente, no solo SR-108688. Carpeta del repo: `incidents/`.
 
 | Botón | Qué hace |
 |---|---|
-| **Copiar JSON para el cliente** | Plantilla `incidents/templates/para-el-cliente.json` |
-| **Crear ticket con este JSON** | Valida y guarda `incidents/tickets/{id}.json` |
+| **1. Copiar formulario JSON genérico** | Plantilla para cualquier cliente WordPress + WooCommerce + Chilexpress |
+| **2. Validar y añadir nuevo ticket** | Exige versiones, resultado esperado/obtenido y pasos; guarda `incidents/tickets/{id}.json` |
+| **📎 Texto / pantallazo** | Guarda texto del soporte y captura opcional; el texto se compara en el próximo análisis |
+| **▶ Probar ticket completo** | Vista previa → snapshot → versiones exactas → health → flujo → comparación, en una acción |
 | **JSON** | Abre un ticket ya creado |
 | **Vista previa** | Compara PHP, WordPress, plugins y tema actuales con los solicitados |
 | **Crear flujo** | Genera pasos declarativos seguros desde la URL y el error del ticket; nunca ejecuta código del cliente |
 | **Aplicar pila** | Snapshot completo + instalación exacta desde wordpress.org o ZIP local autorizado |
 | **Ejecutar flujo** | Abre la URL segura en Chrome, ejecuta pasos declarativos y captura HTTP/JS/PHP |
-| **Resultado** | Muestra pasos, evidencia real, coincidencias, diferencias y causas probables |
-| **PDF cliente / PDF técnico** | Genera los dos entregables dinámicos del run seleccionado |
+| **Resultado** | Separa ejecución OK/FAIL de incidencia reproducida/no reproducida |
+| **PDF cliente / PDF técnico** | Se descargan con fallo o sin fallo; incluyen pila y plugins solicitados/reales |
 | **Restaurar snapshot** | Devuelve core, plugins, temas, configuración y SQLite al estado anterior |
 
 El plan explícito de SR-108688 (por qué falló, qué hacer hoy, mejoras al plugin Chilexpress) está en `incidents/planes/SR-108688/`.

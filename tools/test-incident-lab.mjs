@@ -26,6 +26,9 @@ const example = readJson('incidents/tickets/_EJEMPLO-1.1.json');
 
 check(schema.$schema?.includes('2020-12'), 'schema usa JSON Schema 2020-12');
 check(template.schema_version === '1.1', 'plantilla usa schema 1.1');
+check(Boolean(template.sintoma?.resultado_esperado), 'plantilla pide resultado esperado');
+check(Boolean(template.sintoma?.resultado_obtenido), 'plantilla pide resultado obtenido');
+check(Boolean(template.evidencia?.ticket_texto), 'plantilla permite pegar texto del ticket');
 check(reference.schema_version === '1.1', 'SR-108688 migrado a 1.1');
 check(example.schema_version === '1.1', 'ejemplo multi-cliente usa 1.1');
 
@@ -109,6 +112,9 @@ try {
   absorb(response);
   check(response.status === 200, 'WordPress responde HTTP 200');
   check(html.includes('Aplicar pila'), 'la consola muestra Aplicar pila');
+  check(html.includes('Probar ticket completo'), 'la consola ofrece Play genérico de punta a punta');
+  check(html.includes('Validar y añadir nuevo ticket'), 'la consola permite añadir un ticket genérico');
+  check(html.includes('Texto / pantallazo'), 'la consola permite evidencia opcional del cliente');
   check(html.includes('PDF técnico'), 'la consola muestra PDF técnico');
   check(html.includes('Actualizar WordPress + plugins públicos a latest'), 'la consola muestra actualización global');
 

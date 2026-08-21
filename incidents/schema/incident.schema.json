@@ -50,6 +50,10 @@
         },
         "mensaje_error": { "type": "string", "maxLength": 4000 },
         "url_donde_falla": { "type": "string", "maxLength": 500 },
+        "resultado_esperado": { "type": "string", "maxLength": 2000 },
+        "resultado_obtenido": { "type": "string", "maxLength": 2000 },
+        "precondiciones": { "type": "string", "maxLength": 2000 },
+        "datos_prueba": { "type": "string", "maxLength": 2000 },
         "pasos_para_reproducir": {
           "type": "array",
           "maxItems": 30,
@@ -81,8 +85,10 @@
       "additionalProperties": false,
       "properties": {
         "correo_wordpress": { "type": "string", "maxLength": 20000 },
+        "ticket_texto": { "type": "string", "maxLength": 30000 },
         "debug_log_extracto": { "type": "string", "maxLength": 20000 },
         "capturas_notas": { "type": "string", "maxLength": 4000 },
+        "captura_archivo": { "type": "string", "maxLength": 300, "pattern": "^$|^evidence/[A-Za-z0-9._-]+/[A-Za-z0-9._-]+\\.(png|jpg|jpeg|webp)$" },
         "http_status": { "type": ["integer", "null"], "minimum": 100, "maximum": 599 },
         "clase_error": { "type": "string", "maxLength": 400 },
         "archivo": { "type": "string", "maxLength": 400 },

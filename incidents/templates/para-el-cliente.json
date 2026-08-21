@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1",
   "ticket_id": "",
-  "instrucciones_para_completar": "Completen este JSON y devuélvanlo pegado en el correo o el chat. No borren las claves. Si no saben un dato, dejen el texto vacio o escriban no_se. Versiones: Escritorio → Herramientas → Salud del sitio, o WooCommerce → Estado. El slug es la carpeta en /wp-content/plugins/NOMBRE/ (tambien aparece en la URL de wordpress.org). Dupliquen filas en plugins si tienen mas. fuente: wordpress.org si es plugin publico; si es premium o ZIP propio dejen zip_local y Aeolabs lo carga; Chilexpress Oficial del laboratorio es repo. No peguen contraseñas, claves API ni dumps. Los pasos humanos van en sintoma. El bloque flujo_reproduccion es opcional para ustedes: Aeolabs lo usa en la consola (solo URLs del sitio, sin codigo).",
+  "instrucciones_para_completar": "Formulario generico para cualquier tienda WordPress + WooCommerce + Chilexpress. Complete y devuelva TODO el JSON en el correo. No borre claves. Si no sabe un dato escriba no_se. Copie versiones exactas desde WooCommerce > Estado y Herramientas > Salud del sitio > Informacion. En plugins incluya TODOS los plugins, incluso inactivos; duplique una fila por plugin. slug es la carpeta en wp-content/plugins. fuente: wordpress.org si es publico, zip_local si es premium/propio, repo solo para la copia Chilexpress del laboratorio. No incluya contraseñas, API keys, tarjetas reales ni bases de produccion. Describa pasos, resultado esperado y resultado obtenido. Aeolabs revisa el flujo seguro antes de ejecutarlo; el JSON nunca ejecuta PHP ni comandos.",
   "origen": {
     "empresa": "",
     "sitio_url": "https://",
@@ -14,8 +14,12 @@
     "cuando_empezo": "Fecha y hora aproximada, zona horaria Chile.",
     "frecuencia": "siempre",
     "impacto": "sitio_caido",
-    "mensaje_error": "Copiar el texto exacto. Ejemplo: Class Automattic\\WooCommerce\\Enums\\ProductTaxStatus not found",
-    "url_donde_falla": "/wp-admin/admin-ajax.php",
+    "mensaje_error": "Copiar el texto exacto del error. Si no aparece texto, describir que se ve.",
+    "url_donde_falla": "/checkout/",
+    "resultado_esperado": "Que debia ocurrir al completar los pasos.",
+    "resultado_obtenido": "Que ocurrio realmente, incluyendo mensajes, pantalla en blanco o comportamiento incorrecto.",
+    "precondiciones": "Ej. usuario administrador conectado, producto en carrito, Chilexpress activo.",
+    "datos_prueba": "SKU/producto, region, comuna y datos no sensibles necesarios. No pegar claves ni datos reales.",
     "pasos_para_reproducir": [
       "1. Entré a ...",
       "2. Pulsé ...",
@@ -59,16 +63,6 @@
       "archivo_zip": "",
       "checksum": "",
       "notas": "No parchear. Si su ZIP es otro, cambien fuente a zip_local."
-    },
-    {
-      "nombre": "Akismet Anti-spam",
-      "slug": "akismet",
-      "version": "5.3.7",
-      "activo": true,
-      "fuente": "wordpress.org",
-      "archivo_zip": "",
-      "checksum": "",
-      "notas": "Ejemplo. Reemplacen o borren y agreguen el resto de su lista."
     }
   ],
   "entorno": {
@@ -79,8 +73,10 @@
   },
   "evidencia": {
     "correo_wordpress": "Pegar el correo de error critico si llego.",
+    "ticket_texto": "Pegar el texto completo del ticket o correo de soporte. Si hay pantallazo, transcribir aqui el texto visible.",
     "debug_log_extracto": "Ultimas lineas de wp-content/debug.log si lo tienen.",
-    "capturas_notas": "Describir capturas o enlaces. No pongan contraseñas.",
+    "capturas_notas": "Describir que muestra cada captura. Enviar PNG/JPG aparte; no incrustar base64 ni contraseñas.",
+    "captura_archivo": "",
     "http_status": null,
     "clase_error": "",
     "archivo": "",
@@ -95,18 +91,11 @@
       {
         "id": "abrir-url-del-fallo",
         "op": "open_url",
-        "url": "/wp-admin/admin-ajax.php",
-        "descripcion": "Misma URL donde falla. Cambien la ruta si es checkout u otra pantalla."
+        "url": "/checkout/",
+        "descripcion": "Misma ruta donde falla. Aeolabs la ajusta antes de ejecutar."
       }
     ],
-    "assertions": [
-      {
-        "id": "texto-del-error",
-        "tipo": "body_contains",
-        "esperado": "Ha habido un error critico",
-        "paso": "abrir-url-del-fallo"
-      }
-    ],
+    "assertions": [],
     "politicas": {
       "timeout_segundos": 180,
       "max_pasos": 20,

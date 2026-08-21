@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "ticket_id": "",
+  "instrucciones_para_completar": "Completen este JSON y devuélvanlo pegado en el correo o el chat. No borren las claves. Si no saben un dato, dejen el texto vacio o escriban no_se. Las versiones salen en Escritorio → Herramientas → Salud del sitio, o en WooCommerce → Estado. Este archivo es el ticket: con el mismo JSON Aeolabs replica el entorno.",
+  "origen": {
+    "empresa": "",
+    "sitio_url": "https://",
+    "contacto_nombre": "",
+    "contacto_email": "",
+    "fecha_utc": ""
+  },
+  "sintoma": {
+    "resumen": "En una frase: que ve el cliente o el administrador.",
+    "cuando_empezo": "Fecha y hora aproximada, zona horaria Chile.",
+    "frecuencia": "siempre",
+    "impacto": "sitio_caido",
+    "mensaje_error": "Copiar el texto exacto. Ejemplo: Class Automattic\\WooCommerce\\Enums\\ProductTaxStatus not found",
+    "url_donde_falla": "https://sitio.cl/wp-admin/admin-ajax.php",
+    "pasos_para_reproducir": [
+      "1. Entré a ...",
+      "2. Pulsé ...",
+      "3. Vi ..."
+    ]
+  },
+  "pila": {
+    "php": "8.x.x",
+    "wordpress": "x.x.x",
+    "woocommerce": "x.x.x",
+    "chilexpress_oficial": "1.4.0",
+    "tema": "Nombre y version del tema hijo",
+    "tema_padre": "Nombre y version del padre si hay"
+  },
+  "plugins": [
+    {
+      "nombre": "Chilexpress Oficial",
+      "version": "1.4.0",
+      "activo": true
+    }
+  ],
+  "entorno": {
+    "hosting": "Nombre del hosting o agencia",
+    "actualizacion_en_curso": false,
+    "checkout": "clasico",
+    "ambiente": "produccion"
+  },
+  "evidencia": {
+    "correo_wordpress": "Pegar el correo de error critico si llego.",
+    "debug_log_extracto": "Ultimas lineas de wp-content/debug.log si lo tienen.",
+    "capturas_notas": "Describir capturas o enlaces. No pongan contraseñas."
+  },
+  "pedido": {
+    "que_necesitan": "Ej. recuperar el sitio / poder actualizar Woo / cotizar envios",
+    "urgencia": "alta"
+  }
+}

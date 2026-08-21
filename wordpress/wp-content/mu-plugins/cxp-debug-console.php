@@ -40,9 +40,9 @@ final class Cxp_Debug_Console {
 
 	public static function enqueue_ui() {
 		$base = content_url( 'mu-plugins/cxp-debug-console' );
-		wp_enqueue_style( 'cxp-console-ui', $base . '/console-ui.css', array(), '1.8.7' );
+		wp_enqueue_style( 'cxp-console-ui', $base . '/console-ui.css', array(), '1.8.9' );
 		wp_enqueue_script( 'cxp-lucide', $base . '/lucide.min.js', array(), '0.469.0', true );
-		wp_enqueue_script( 'cxp-console-ui', $base . '/console-ui.js', array( 'cxp-lucide' ), '1.8.7', true );
+		wp_enqueue_script( 'cxp-console-ui', $base . '/console-ui.js', array( 'cxp-lucide' ), '1.8.9', true );
 	}
 
 	public static function capture_error( $errno, $errstr, $errfile = '', $errline = 0 ) {

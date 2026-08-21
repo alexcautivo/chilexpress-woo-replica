@@ -71,6 +71,21 @@ function cxp_docs_dir() {
 	return dirname( ABSPATH ) . '/docs';
 }
 
+function cxp_incidents_dir() {
+	$candidates = array(
+		cxp_env( 'CXP_INCIDENTS_DIR', '' ),
+		dirname( ABSPATH ) . '/incidents',
+		'/var/www/incidents',
+		WP_CONTENT_DIR . '/cxp-incidents',
+	);
+	foreach ( $candidates as $dir ) {
+		if ( $dir && is_dir( $dir ) ) {
+			return rtrim( $dir, '/\\' );
+		}
+	}
+	return dirname( ABSPATH ) . '/incidents';
+}
+
 function cxp_lab_email_default() {
 	return 'alexander.cautivo+testwordpress@aeolabs.io';
 }

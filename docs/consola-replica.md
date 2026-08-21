@@ -38,6 +38,18 @@ Si el badge está rojo, abre la consola y mira **ERRORES DE ESTA PETICIÓN** y l
 | **Borrar todos los pedidos** | Definitivo (sin papelera). Pide confirmación |
 | **Cerrar** | Pliega la consola |
 
+## Pestaña Incidencias
+
+Cualquier cliente, no solo SR-108688. Carpeta del repo: `incidents/`.
+
+| Botón | Qué hace |
+|---|---|
+| **Copiar JSON para el cliente** | Plantilla `incidents/templates/para-el-cliente.json` |
+| **Crear ticket con este JSON** | Valida y guarda `incidents/tickets/{id}.json` |
+| **Ver JSON** | Abre un ticket ya creado |
+
+El plan explícito de SR-108688 (por qué falló, qué hacer hoy, mejoras al plugin Chilexpress) está en `incidents/planes/SR-108688/`.
+
 Abajo, la tabla **Pedidos** lista hasta 100 órdenes con **Detalle**, **Generar OT** y **Borrar**.
 
 Para OT: entra a **Editar** el pedido o marca el checkbox y usa el flujo oficial «Generar Multiples OT». No uses Acciones masivas de Woo sin marcar filas.

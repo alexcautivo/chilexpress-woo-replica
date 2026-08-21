@@ -31,9 +31,10 @@ Repo GitHub: https://github.com/alexcautivo/chilexpress-woo-replica
 | [Instrucciones](docs/cliente-instrucciones.md) | Qué hacer en producción |
 | [FAQ](docs/faq-replica.md) | Situaciones que salieron al montar la réplica |
 | [Autores](AUTHORS.md) | Créditos |
+| [Incidencias](incidents/README.md) | JSON para el cliente, tickets y planes de acción |
 | [Credenciales de laboratorio](CREDENTIALS.md) | `admin` / `admin` (sin secretos de APIs) |
 
-Los mismos Markdown se generan desde la consola (panel **Documentos**).
+Los mismos Markdown se generan desde la consola (panel **Documentos**). El JSON de incidencia se copia desde la pestaña **Incidencias**.
 
 ---
 
@@ -166,6 +167,19 @@ Clic en la barra negra de abajo. En **tienda** y **wp-admin** las pestañas camb
 | **APIs Chilexpress** | Keys por entorno o pegadas (no se imprimen en el HTML) |
 | **Laboratorio / Más** | ZIP, snapshot, rollback, versiones |
 | **Sistema** | Plugins, copiar evidencia, créditos |
+
+---
+
+## Incidencias (cualquier cliente)
+
+Esta réplica no es solo SR-108688. Carpeta [`incidents/`](incidents/README.md):
+
+1. Consola → **Incidencias** → **Copiar JSON para el cliente**.
+2. El cliente lo rellena (versiones, error exacto, URL, pasos).
+3. Pegar el JSON → **Crear ticket**. Queda en `incidents/tickets/`.
+4. El plan de acción (por qué falló, qué hacer hoy, qué debería cambiar el plugin) vive en `incidents/planes/{ticket}/`.
+
+SR-108688 de referencia: [`incidents/planes/SR-108688/`](incidents/planes/SR-108688/) — incluye un plan realista de **mejoras a Chilexpress Oficial** (arranque en `woocommerce_loaded`). Ese código **no se aplica** en el ZIP 1.4.0 de este repo.
 
 ---
 

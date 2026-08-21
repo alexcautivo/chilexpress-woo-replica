@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alexcautivo/chilexpress-woo-replica/incidents/schema/incident.schema.json",
+  "title": "Ticket de incidencia Aeolabs (WordPress / Woo / Chilexpress)",
+  "type": "object",
+  "required": ["schema_version", "origen", "sintoma", "pila"],
+  "properties": {
+    "schema_version": { "type": "string", "const": "1.0" },
+    "ticket_id": {
+      "type": "string",
+      "description": "Vacío al enviarlo al cliente. Aeolabs lo asigna al crear el ticket (ej. SR-108688 o CXP-20260820-221500)."
+    },
+    "origen": {
+      "type": "object",
+      "required": ["sitio_url"],
+      "properties": {
+        "empresa": { "type": "string" },
+        "sitio_url": { "type": "string" },
+        "contacto_nombre": { "type": "string" },
+        "contacto_email": { "type": "string" },
+        "fecha_utc": { "type": "string" }
+      }
+    },
+    "sintoma": {
+      "type": "object",
+      "required": ["resumen"],
+      "properties": {
+        "resumen": { "type": "string" },
+        "cuando_empezo": { "type": "string" },
+        "frecuencia": {
+          "type": "string",
+          "enum": ["siempre", "intermitente", "solo_al_actualizar", "solo_en_checkout", "solo_en_admin", "desconocido"]
+        },
+        "impacto": {
+          "type": "string",
+          "enum": ["sitio_caido", "admin_caido", "checkout", "cotizador", "ot_envio", "otro"]
+        },
+        "mensaje_error": { "type": "string" },
+        "url_donde_falla": { "type": "string" },
+        "pasos_para_reproducir": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "pila": {
+      "type": "object",
+      "properties": {
+        "php": { "type": "string" },
+        "wordpress": { "type": "string" },
+        "woocommerce": { "type": "string" },
+        "chilexpress_oficial": { "type": "string" },
+        "tema": { "type": "string" },
+        "tema_padre": { "type": "string" }
+      }
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "nombre": { "type": "string" },
+          "version": { "type": "string" },
+          "activo": { "type": "boolean" }
+        }
+      }
+    },
+    "entorno": {
+      "type": "object",
+      "properties": {
+        "hosting": { "type": "string" },
+        "actualizacion_en_curso": { "type": "boolean" },
+        "checkout": { "type": "string", "enum": ["clasico", "bloques", "desconocido"] },
+        "ambiente": { "type": "string", "enum": ["produccion", "staging", "local", "desconocido"] }
+      }
+    },
+    "evidencia": {
+      "type": "object",
+      "properties": {
+        "correo_wordpress": { "type": "string" },
+        "debug_log_extracto": { "type": "string" },
+        "capturas_notas": { "type": "string" }
+      }
+    },
+    "pedido": {
+      "type": "object",
+      "properties": {
+        "que_necesitan": { "type": "string" },
+        "urgencia": { "type": "string", "enum": ["critica", "alta", "media", "baja"] }
+      }
+    }
+  }
+}

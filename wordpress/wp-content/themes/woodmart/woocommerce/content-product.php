@@ -34,7 +34,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 				echo cxp_storefront_loop_qty_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			?>
-			<div class="wd-add-btn wd-add-btn-replace">
+			<div class="wd-add-btn">
 				<?php woocommerce_template_loop_add_to_cart(); ?>
 			</div>
 		</div>

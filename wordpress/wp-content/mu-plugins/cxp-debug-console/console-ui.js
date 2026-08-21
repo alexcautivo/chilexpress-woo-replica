@@ -60,19 +60,24 @@
     'Snapshot': 'Copia el plugin actual por si hay que volver atrás.',
     'Desactivar': 'Apaga este plugin. Chilexpress Oficial no se parchea.',
     'Activar': 'Enciende este plugin.',
-    'Preparar esta PHP': 'Descarga el runtime. Hay que reiniciar el servidor después.'
+    'Preparar esta PHP': 'Descarga el runtime. Hay que reiniciar el servidor después.',
+    'Copiar JSON para el cliente': 'Copia la plantilla. El cliente la rellena y la devuelve. Con ese JSON se crea el ticket.',
+    'Crear ticket con este JSON': 'Valida el JSON pegado y lo guarda en incidents/tickets/.',
+    'Ver JSON': 'Muestra el JSON de este ticket ya creado.',
   };
 
   var STORE_TABS = [
     { id: 'tienda', label: 'Tienda', icon: 'store', hint: 'Catálogo y checkout. El carrito solo se abre después de pasar por el checkout.', panels: ['cxp-dbg-shortcuts'] },
     { id: 'pedidos', label: 'Pedidos', icon: 'package', hint: 'Pedidos de la réplica, detalle y generar OT Chilexpress.', panels: ['cxp-dbg-ot', 'cxp-dbg-orders'] },
     { id: 'ticket', label: 'Ticket', icon: 'bug', hint: 'Réplica SR-108688: recorrer el fatal, copiar evidencia y PDF para el cliente.', panels: ['cxp-dbg-sr'] },
+    { id: 'incidencias', label: 'Incidencias', icon: 'clipboard-list', hint: 'JSON para el cliente y alta de tickets. Sirve para SR-108688 y para cualquier incidencia nueva.', panels: ['cxp-dbg-tickets'] },
     { id: 'docs', label: 'Ayuda', icon: 'book-open', hint: 'Textos y PDF para el cliente. Chilexpress Oficial no se parchea.', panels: ['cxp-dbg-docs', 'cxp-dbg-about'] },
     { id: 'mas', label: 'Más', icon: 'settings', hint: 'APIs, versiones y plugins. En la tienda quedan atrás; en wp-admin son el trabajo diario.', panels: ['cxp-dbg-apis', 'cxp-dbg-stack', 'cxp-dbg-lab', 'cxp-dbg-plugins'] }
   ];
 
   var ADMIN_TABS = [
     { id: 'ticket', label: 'Ticket', icon: 'bug', hint: 'Primero: recorrer SR-108688, copiar evidencia y bajar el PDF de plan de acción.', panels: ['cxp-dbg-sr'] },
+    { id: 'incidencias', label: 'Incidencias', icon: 'clipboard-list', hint: 'Pegar el JSON del cliente y crear un ticket. Planes en incidents/ del repo.', panels: ['cxp-dbg-tickets'] },
     { id: 'pedidos', label: 'Pedidos y OT', icon: 'package', hint: 'Lista HPOS, generar OT e imprimir. No uses acciones masivas sin marcar el pedido.', panels: ['cxp-dbg-shortcuts', 'cxp-dbg-ot', 'cxp-dbg-orders'] },
     { id: 'apis', label: 'APIs', icon: 'key', hint: 'Keys de Cobertura, Cotizador y Envíos. Staging del ZIP 1.4.0 o las de Dokploy.', panels: ['cxp-dbg-apis'] },
     { id: 'lab', label: 'Laboratorio', icon: 'flask-conical', hint: 'Cambiar versiones, ZIP, snapshot y rollback. Chilexpress 1.4.0 se restaura intacto.', panels: ['cxp-dbg-stack', 'cxp-dbg-lab'] },

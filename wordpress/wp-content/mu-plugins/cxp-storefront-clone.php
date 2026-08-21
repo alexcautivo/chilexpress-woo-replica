@@ -82,15 +82,15 @@ add_action(
 		wp_enqueue_style(
 			'cxp-checkout-cxp',
 			content_url( 'mu-plugins/cxp-checkout-debug/checkout-cxp.css' ),
-			array( 'chilexpress-woo-oficial-storefront' ),
-			'1.8.6'
+			array( 'chilexpress-woo-oficial-storefront', 'woodmart-style', 'woodmart-replica-layout' ),
+			'1.9.0'
 		);
 
 		wp_enqueue_script(
 			'cxp-storefront-qty',
 			content_url( 'mu-plugins/cxp-checkout-debug/storefront.js' ),
 			array( 'jquery' ),
-			'1.8.6',
+			'1.9.0',
 			true
 		);
 		wp_localize_script(
@@ -580,6 +580,22 @@ add_filter(
 	},
 	10,
 	4
+);
+
+add_filter(
+	'woocommerce_loop_add_to_cart_link',
+	static function ( $html, $product ) {
+		if ( ! is_string( $html ) || false !== strpos( $html, 'cxp-atc-label' ) ) {
+			return $html;
+		}
+		$icon  = function_exists( 'cxp_icon' ) ? cxp_icon( 'shopping-cart', 'cxp-atc-icon' ) : '';
+		$label = $product instanceof WC_Product ? $product->add_to_cart_text() : 'Agregar al carrito';
+		$inner = '<span class="cxp-atc-label">' . esc_html( $label ) . '</span>' . $icon;
+		$out   = preg_replace( '/(<a\b[^>]*>)(.*?)(<\/a>)/is', '$1' . $inner . '$3', $html, 1 );
+		return is_string( $out ) ? $out : $html;
+	},
+	99,
+	2
 );
 
 function cxp_storefront_loop_qty_html() {

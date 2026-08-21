@@ -33,6 +33,7 @@ services:
       CXP_API_KEY_RATE: ${CXP_API_KEY_RATE:-}
       CXP_API_KEY_OT: ${CXP_API_KEY_OT:-}
       CXP_DOCS_DIR: /var/www/docs
+      CXP_INCIDENTS_DIR: /var/www/incidents
       WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST:-db}
       WORDPRESS_DB_USER: ${MYSQL_USER:-wordpress}
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD:-wordpress}

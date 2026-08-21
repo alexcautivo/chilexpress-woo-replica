@@ -136,4 +136,5 @@ Semilla de tienda (datos de prueba del plugin, no secretos de producción): TCC 
 - PHP se cambia desde la consola (**Preparar esta PHP**) y reiniciando `start.sh`, o en Docker (`.env` → `PHP_VERSION` + rebuild).
 
 Manual de cada botón: [consola-replica.md](consola-replica.md).  
-Despliegue en Dokploy: [dokploy.md](dokploy.md).
+Despliegue en Dokploy: [dokploy.md](dokploy.md).  
+Incidencias (JSON → ticket, planes): carpeta `incidents/` del repo.

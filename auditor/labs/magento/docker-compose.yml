@@ -1,0 +1,60 @@
+# Laboratorio Magento del auditor (§22). Requiere OpenSearch y es el mas pesado.
+# Se levanta solo bajo demanda.
+
+name: cxp-auditor-magento
+
+services:
+  db:
+    image: ${AUDITOR_MAGENTO_DB_IMAGE:-mysql:8.0}
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: auditor
+      MYSQL_DATABASE: magento
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pauditor"]
+      interval: 10s
+      timeout: 5s
+      retries: 40
+      start_period: 30s
+    volumes:
+      - db_data:/var/lib/mysql
+
+  search:
+    image: ${AUDITOR_MAGENTO_SEARCH_IMAGE:-opensearchproject/opensearch:2.12.0}
+    environment:
+      discovery.type: single-node
+      plugins.security.disabled: "true"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: AuditorLab123!
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 40
+      start_period: 60s
+
+  magento:
+    image: ${AUDITOR_MAGENTO_IMAGE:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      search:
+        condition: service_healthy
+    environment:
+      MAGENTO_DB_HOST: db
+      MAGENTO_DB_NAME: magento
+      MAGENTO_DB_USER: magento
+      MAGENTO_DB_PASSWORD: magento
+      MAGENTO_SEARCH_HOST: search
+    ports:
+      - "127.0.0.1:${AUDITOR_MAGENTO_PORT:-8183}:80"
+    volumes:
+      - magento_data:/var/www/html
+      - ${AUDITOR_ARTIFACT_DIR:-./artifact}:/artifact:ro
+    profiles: ["magento"]
+
+volumes:
+  db_data:
+  magento_data:

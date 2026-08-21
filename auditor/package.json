@@ -1,0 +1,18 @@
+{
+  "name": "chilexpress-auditor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Auditor multiplataforma de artefactos Chilexpress (WooCommerce, PrestaShop, Magento, Shopify).",
+  "bin": {
+    "auditor": "bin/auditor.mjs"
+  },
+  "scripts": {
+    "auditor": "node bin/auditor.mjs",
+    "test": "node test/auditor.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

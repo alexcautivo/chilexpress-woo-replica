@@ -1,0 +1,54 @@
+# Laboratorio PrestaShop del auditor (§21). Aislado y con versiones fijas.
+
+name: cxp-auditor-prestashop
+
+services:
+  db:
+    image: ${AUDITOR_PS_DB_IMAGE:-mariadb:11.4}
+    environment:
+      MARIADB_ROOT_PASSWORD: auditor
+      MARIADB_DATABASE: prestashop
+      MARIADB_USER: prestashop
+      MARIADB_PASSWORD: prestashop
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 20s
+    volumes:
+      - db_data:/var/lib/mysql
+
+  prestashop:
+    image: ${AUDITOR_PS_IMAGE:-prestashop/prestashop:8.1-apache}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_SERVER: db
+      DB_NAME: prestashop
+      DB_USER: prestashop
+      DB_PASSWD: prestashop
+      PS_INSTALL_AUTO: "1"
+      PS_ERASE_DB: "0"
+      PS_DEV_MODE: "1"
+      PS_DOMAIN: 127.0.0.1:${AUDITOR_PS_PORT:-8182}
+      PS_FOLDER_ADMIN: adminauditor
+      PS_FOLDER_INSTALL: install
+      ADMIN_MAIL: auditor@example.invalid
+      ADMIN_PASSWD: AuditorLab123
+    ports:
+      - "127.0.0.1:${AUDITOR_PS_PORT:-8182}:80"
+    volumes:
+      - ps_data:/var/www/html
+      - ${AUDITOR_ARTIFACT_DIR:-./artifact}:/artifact:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 60
+      start_period: 60s
+
+volumes:
+  db_data:
+  ps_data:

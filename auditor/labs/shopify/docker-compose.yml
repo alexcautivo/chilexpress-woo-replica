@@ -1,0 +1,22 @@
+# Laboratorio Shopify del auditor (§23).
+#
+# Shopify no es una plataforma PHP autoalojada: no existe un "core" que instalar
+# en Docker. Este compose solo levanta un contenedor Node para ejecutar sondas
+# de API contra una tienda de desarrollo, cuando el operador aporte credenciales.
+#
+# Sin credenciales el adapter devuelve SKIP, nunca PASS.
+
+name: cxp-auditor-shopify
+
+services:
+  probe:
+    image: ${AUDITOR_SHOPIFY_IMAGE:-node:22-alpine}
+    working_dir: /probe
+    environment:
+      SHOPIFY_SHOP_DOMAIN: ${SHOPIFY_SHOP_DOMAIN:-}
+      SHOPIFY_API_VERSION: ${SHOPIFY_API_VERSION:-2025-01}
+      SHOPIFY_ACCESS_TOKEN: ${SHOPIFY_ACCESS_TOKEN:-}
+    entrypoint: ["tail", "-f", "/dev/null"]
+    volumes:
+      - ${AUDITOR_ARTIFACT_DIR:-./artifact}:/artifact:ro
+    profiles: ["shopify"]

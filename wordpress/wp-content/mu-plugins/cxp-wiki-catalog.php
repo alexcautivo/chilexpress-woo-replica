@@ -22,6 +22,7 @@ function cxp_wiki_catalog_products() {
 			'width'       => '10',
 			'height'      => '5',
 			'stock'       => 98,
+			'caso'        => 'envío liviano/mínimo',
 			'short'       => 'Envío liviano/mínimo. Wiki: 0,2 kg · 15×10×5 cm.',
 		),
 		array(
@@ -33,6 +34,7 @@ function cxp_wiki_catalog_products() {
 			'width'       => '15',
 			'height'      => '4',
 			'stock'       => 100,
+			'caso'        => 'paquete estándar',
 			'short'       => 'Paquete estándar. Wiki: 0,9 kg · 45×15×4 cm.',
 		),
 		array(
@@ -44,6 +46,7 @@ function cxp_wiki_catalog_products() {
 			'width'       => '40',
 			'height'      => '15',
 			'stock'       => 49,
+			'caso'        => 'volumen medio',
 			'short'       => 'Volumen medio. Wiki: 3,5 kg · 60×40×15 cm.',
 		),
 		array(
@@ -55,6 +58,7 @@ function cxp_wiki_catalog_products() {
 			'width'       => '30',
 			'height'      => '8',
 			'stock'       => 30,
+			'caso'        => 'valor declarado alto',
 			'short'       => 'Valor declarado alto. Wiki: 2,2 kg · 40×30×8 cm.',
 		),
 		array(
@@ -66,13 +70,34 @@ function cxp_wiki_catalog_products() {
 			'width'       => '65',
 			'height'      => '30',
 			'stock'       => 20,
+			'caso'        => 'bulto grande/pesado',
 			'short'       => 'Bulto grande/pesado. Wiki: 12 kg · 70×65×30 cm.',
 		),
 	);
 }
 
+function cxp_wiki_catalog_caso( $product ) {
+	if ( $product instanceof WC_Product ) {
+		$caso = $product->get_meta( '_cxp_caso' );
+		if ( $caso ) {
+			return (string) $caso;
+		}
+		$slug = $product->get_slug();
+	} elseif ( is_string( $product ) ) {
+		$slug = $product;
+	} else {
+		return '';
+	}
+	foreach ( cxp_wiki_catalog_products() as $row ) {
+		if ( $row['slug'] === $slug ) {
+			return (string) ( $row['caso'] ?? '' );
+		}
+	}
+	return '';
+}
+
 function cxp_wiki_catalog_apply() {
-	if ( get_option( 'cxp_wiki_catalog' ) === '1' ) {
+	if ( get_option( 'cxp_wiki_catalog' ) === '2' ) {
 		return;
 	}
 	if ( ! class_exists( 'WC_Product_Simple' ) ) {
@@ -111,11 +136,12 @@ function cxp_wiki_catalog_apply() {
 		$product->set_stock_status( 'instock' );
 		$product->set_virtual( false );
 		$product->set_downloadable( false );
+		$product->update_meta_data( '_cxp_caso', $data['caso'] ?? '' );
 		$product->save();
 	}
 
 	cxp_wiki_catalog_enable_chilexpress_shipping();
-	update_option( 'cxp_wiki_catalog', '1', false );
+	update_option( 'cxp_wiki_catalog', '2', false );
 }
 
 function cxp_wiki_catalog_enable_chilexpress_shipping() {

@@ -38,6 +38,10 @@ add_action(
 		wp_enqueue_style( 'woodmart-theme-settings', $base . '/css/theme-settings.css', array( 'woodmart-style' ), $ver );
 		wp_enqueue_style( 'woodmart-header-vars', $base . '/css/header-vars.css', array( 'woodmart-style' ), $ver );
 		wp_enqueue_style( 'woodmart-replica-layout', $base . '/css/replica-layout.css', array( 'woodmart-header-vars' ), $ver );
+		if ( function_exists( 'is_woocommerce' ) ) {
+			wp_enqueue_script( 'wc-add-to-cart' );
+			wp_enqueue_script( 'wc-cart-fragments' );
+		}
 	}
 );
 

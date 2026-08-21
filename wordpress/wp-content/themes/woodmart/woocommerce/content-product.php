@@ -26,6 +26,11 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 				<a href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a>
 			</h3>
 			<?php woocommerce_template_loop_price(); ?>
+			<?php
+			if ( function_exists( 'cxp_storefront_dims_markup' ) ) {
+				echo cxp_storefront_dims_markup( $product, 'card' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+			?>
 			<div class="wd-add-btn wd-add-btn-replace">
 				<?php woocommerce_template_loop_add_to_cart(); ?>
 			</div>

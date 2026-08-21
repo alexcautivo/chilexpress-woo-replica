@@ -67,7 +67,9 @@ Si la consola muestra otra WP o Woo: **Volver a versiones del cliente**.
 | Contraseña | `admin` |
 | Auto-login | solo en localhost, o si `CXP_AUTO_LOGIN=1` |
 
-Checkout de prueba: Juan Espoz · RM · **LA REINA** · Avenida Larrain **5862** · tarjeta `4242…4242` / 12/34 / 123. Botón **Llenar datos válidos**.
+Checkout de prueba: destinos **reales** de la RM (calle + comuna oficial Chilexpress: `LA REINA`/`LARE`, `NUNOA`/`NUNO`, `SANTIAGO CENTRO`/`STGO`, `MAIPU`/`MIPU`, etc.). Juan Espoz · Av. Larrain **5862**. Tarjeta `4242…4242` / 12/34 / 123. **Usar dirección** llena el form; **Cotizar envío** llama al cotizador.
+
+El **carrito** no se abre hasta pasar por el checkout. Cada producto admite cantidad **1–10**. El buscador del header tiene una **i** que explica qué hace; en la consola el atajo **Buscar** enfoca ese campo.
 
 Las subscription keys de Chilexpress **no van en el repo**. Pégalas en la consola o en variables `CXP_API_KEY_GEO`, `CXP_API_KEY_RATE`, `CXP_API_KEY_OT`.
 
@@ -148,17 +150,17 @@ Guía completa: [docs/dokploy.md](docs/dokploy.md).
 
 ## Consola réplica (barra inferior)
 
-Clic en la barra negra de abajo. Manual: [docs/consola-replica.md](docs/consola-replica.md).
+Clic en la barra negra de abajo. En **tienda** y **wp-admin** las pestañas cambian. Cada botón tiene un círculo **i**: al pasar el mouse dice qué hace. Manual: [docs/consola-replica.md](docs/consola-replica.md).
 
-| Panel | Para qué |
+| Pestaña / panel | Para qué |
 |---|---|
-| **Documentos** | Identificación, diagnóstico, respuesta, instrucciones, FAQ, guía, consola, Dokploy |
-| **Pila / versiones** | Instalar otra WP/Woo, restaurar Chilexpress 1.4.0, pila del cliente |
-| **SR-108688** | Replicar el fatal y restaurar el enum |
-| **Laboratorio de plugins** | ZIP, snapshot, rollback |
+| **Tienda** (front) | Atajos: Tienda, **Buscar**, Checkout, Carrito (si ya pasaste por checkout) |
+| **Ticket / SR-108688** | Recorrer el fatal, evidencia, PDF plan de acción para el cliente |
+| **Pedidos y OT** | Lista, detalle, Generar OT, borrar |
+| **Documentos / Ayuda** | Identificación, diagnóstico, respuesta, instrucciones, FAQ, guía, PDF |
 | **APIs Chilexpress** | Keys por entorno o pegadas (no se imprimen en el HTML) |
-| **Pedidos** | Borrar, Generar OT |
-| **Créditos** | Autor del laboratorio |
+| **Laboratorio / Más** | ZIP, snapshot, rollback, versiones |
+| **Sistema** | Plugins, copiar evidencia, créditos |
 
 ---
 

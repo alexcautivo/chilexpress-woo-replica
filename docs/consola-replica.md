@@ -28,7 +28,10 @@ Si el badge está rojo, abre la consola y mira **ERRORES DE ESTA PETICIÓN** y l
 |---|---|
 | **Pedidos locales (Generar OTs)** | Lista HPOS `/wp-admin/admin.php?page=wc-orders` |
 | **Pedidos tienda remota** | Solo si definiste `CXP_REMOTE_SHOP_URL` |
-| **Checkout / Tienda** | Páginas Woo |
+| **Tienda** | Catálogo (peso, medidas, cantidad 1–10) |
+| **Buscar** | Enfoca el buscador del encabezado. En la tienda, el botón **Buscar** tiene una **i** al lado que explica el flujo |
+| **Checkout** | Checkout clásico + destinos reales RM + cotizador |
+| **Carrito** | Solo después de visitar el checkout |
 | **Copiar todo** | Informe listo para pegar en el ticket (versiones, plugins, logs) |
 | **Copiar solo versiones** | El bloque de pila, sin logs |
 | **Copiar todos los plugins** | Inventario nombre + versión + activo/mu |

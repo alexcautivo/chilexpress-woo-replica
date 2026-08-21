@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 final class Cxp_Order_Ot_Ui {
 	public static function boot() {
+		add_action( 'admin_init', array( __CLASS__, 'force_listado_after_ot' ), 1 );
 		add_action( 'add_meta_boxes', array( __CLASS__, 'metabox' ) );
 		add_action( 'woocommerce_order_actions_end', array( __CLASS__, 'actions_end' ) );
 		add_action( 'woocommerce_order_item_add_action_buttons', array( __CLASS__, 'item_buttons' ) );
@@ -233,10 +234,30 @@ final class Cxp_Order_Ot_Ui {
 		exit;
 	}
 
+	public static function force_listado_after_ot() {
+		if ( ! is_admin() ) {
+			return;
+		}
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+		if ( 'chilexpress_woo_oficial_generar_ot' === $page && ! isset( $_GET['pedidos_cxp'] ) ) {
+			$_GET['pedidos_cxp'] = '1';
+			if ( 'POST' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+				wp_safe_redirect( add_query_arg( 'pedidos_cxp', '1' ) );
+				exit;
+			}
+		}
+		$is_legacy_orders = isset( $_GET['post_type'] ) && 'shop_order' === $_GET['post_type'] && empty( $_GET['page'] );
+		$from_ot          = isset( $_SERVER['HTTP_REFERER'] ) && false !== strpos( (string) $_SERVER['HTTP_REFERER'], 'chilexpress_woo_oficial_generar_ot' );
+		if ( $is_legacy_orders && $from_ot ) {
+			wp_safe_redirect( admin_url( 'admin.php?page=chilexpress_woo_oficial_listado_pedidos' ) );
+			exit;
+		}
+	}
+
 	private static function ot_url( $order_id, $action ) {
 		$action = 'imprimir_ot' === $action ? 'imprimir_ot' : 'generar_ot';
 		return wp_nonce_url(
-			admin_url( 'admin.php?page=chilexpress_woo_oficial_generar_ot&action=' . $action . '&order_id=' . absint( $order_id ) ),
+			admin_url( 'admin.php?page=chilexpress_woo_oficial_generar_ot&action=' . $action . '&order_id=' . absint( $order_id ) . '&pedidos_cxp=1' ),
 			'generar-ot'
 		);
 	}

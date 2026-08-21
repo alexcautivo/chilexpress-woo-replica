@@ -36,7 +36,7 @@ add_action(
 				$this->title       = $this->get_option( 'title', 'Tarjeta de crédito (prueba)' );
 				$this->description = $this->get_option(
 					'description',
-					'Tarjeta falsa de debug. Número: 4242 4242 4242 4242 · Vence 12/34 · CVC 123. Siempre aprueba.'
+					'Pago de prueba. Usa 4242 4242 4242 4242 · vence 12/34 · CVC 123. No se cobra nada.'
 				);
 				$this->enabled     = $this->get_option( 'enabled', 'yes' );
 				add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -267,12 +267,71 @@ add_filter(
 add_action(
 	'woocommerce_before_checkout_form',
 	static function () {
-		$data = cxp_checkout_debug_customer_data();
+		$addresses = cxp_checkout_debug_quote_addresses();
 		?>
-		<div class="cxp-fill-valid" role="region" aria-label="Datos de prueba Chilexpress">
-			<p>Llena el checkout con datos válidos para cotizar Chilexpress: <?php echo esc_html( $data['first_name'] . ' ' . $data['last_name'] ); ?>, <?php echo esc_html( $data['state'] ); ?> / <?php echo esc_html( $data['city'] ); ?>, <?php echo esc_html( $data['address_1'] . ' ' . $data['address_2'] ); ?>.</p>
-			<button type="button" id="cxp-fill-valid">Llenar datos válidos</button>
+		<nav class="cxp-checkout-steps" aria-label="Pasos del checkout">
+			<button type="button" class="cxp-checkout-steps__btn is-active" data-cxp-step="1"><span>1</span> Datos de envío</button>
+			<button type="button" class="cxp-checkout-steps__btn" data-cxp-step="2"><span>2</span> Pago y resumen</button>
+		</nav>
+		<div class="cxp-fill-valid" role="region" aria-label="Destinos de envío">
+			<div class="cxp-fill-valid__intro">
+				<h2><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'map-pin' ) : ''; ?> Elige un destino real</h2>
+				<p>Calles y comunas que existen en la RM. El nombre de comuna es el de Chilexpress (ej. <code>NUNOA</code>, <code>SANTIAGO CENTRO</code>). <strong>Usar dirección</strong> llena el formulario. <strong>Cotizar envío</strong> llama al cotizador (PREX, CHEX y precio).</p>
+			</div>
+			<ul class="cxp-addr-list">
+				<?php foreach ( $addresses as $addr ) : ?>
+				<li class="cxp-addr" data-addr="<?php echo esc_attr( $addr['id'] ); ?>">
+					<div class="cxp-addr__meta">
+						<?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'house' ) : ''; ?>
+						<strong><?php echo esc_html( $addr['first_name'] . ' ' . $addr['last_name'] ); ?></strong>
+						<span class="cxp-addr__city"><?php echo esc_html( $addr['city_label'] ?? $addr['city'] ); ?></span>
+						<span class="cxp-addr__street"><?php echo esc_html( $addr['address_1'] . ' ' . $addr['address_2'] ); ?></span>
+						<em class="cxp-addr__hint"><?php echo esc_html( $addr['hint'] ?? ( $addr['city'] . ' · ' . $addr['county_code'] ) ); ?></em>
+					</div>
+					<div class="cxp-addr__actions">
+						<button type="button" class="cxp-fill-addr" data-addr="<?php echo esc_attr( $addr['id'] ); ?>"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'file-text' ) : ''; ?> Usar dirección</button>
+						<button type="button" class="cxp-probe-addr" data-addr="<?php echo esc_attr( $addr['id'] ); ?>"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'truck' ) : ''; ?> Cotizar envío</button>
+					</div>
+					<pre class="cxp-probe-out" hidden></pre>
+				</li>
+				<?php endforeach; ?>
+			</ul>
 		</div>
+		<?php
+	},
+	5
+);
+
+add_action(
+	'woocommerce_after_checkout_billing_form',
+	static function () {
+		?>
+		<div class="cxp-step-actions">
+			<button type="button" class="cxp-go-payment" data-cxp-step="2">Continuar al pago →</button>
+		</div>
+		<?php
+	}
+);
+
+add_action(
+	'woocommerce_review_order_before_payment',
+	static function () {
+		?>
+		<aside class="cxp-pay-summary" aria-live="polite">
+			<h3>Resumen de tus datos</h3>
+			<dl>
+				<div><dt>Cliente</dt><dd class="js-sum-name">—</dd></div>
+				<div><dt>Correo</dt><dd class="js-sum-email">—</dd></div>
+				<div><dt>Dirección</dt><dd class="js-sum-addr">—</dd></div>
+				<div><dt>Envío elegido</dt><dd class="js-sum-ship">Elige un radio de Chilexpress</dd></div>
+			</dl>
+			<?php
+			if ( function_exists( 'cxp_storefront_cart_dims_table' ) ) {
+				echo cxp_storefront_cart_dims_table(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
+			?>
+			<button type="button" class="cxp-go-data" data-cxp-step="1">← Volver a datos</button>
+		</aside>
 		<?php
 	},
 	5
@@ -288,31 +347,386 @@ add_action(
 			'cxp-fill-valid',
 			content_url( 'mu-plugins/cxp-checkout-debug/fill.js' ),
 			array( 'jquery' ),
-			'1.0.0',
+			'1.8.0',
 			true
 		);
-		wp_localize_script( 'cxp-fill-valid', 'cxpFillAddress', cxp_checkout_debug_customer_data() );
+		wp_localize_script(
+			'cxp-fill-valid',
+			'cxpCheckoutLab',
+			array(
+				'ajax'      => admin_url( 'admin-ajax.php' ),
+				'nonce'     => wp_create_nonce( 'cxp_probe_rate' ),
+				'addresses' => cxp_checkout_debug_quote_addresses(),
+			)
+		);
 	},
 	30
 );
 
-function cxp_checkout_debug_customer_data() {
-	if ( function_exists( 'cxp_chilexpress_seed_destination' ) ) {
-		return cxp_chilexpress_seed_destination();
-	}
-	return array(
-		'first_name' => 'Juan',
-		'last_name'  => 'Espoz',
-		'email'      => function_exists( 'cxp_lab_email' ) ? cxp_lab_email() : 'alexander.cautivo+testwordpress@aeolabs.io',
+add_action( 'wp_ajax_cxp_probe_rate', 'cxp_checkout_debug_ajax_probe_rate' );
+add_action( 'wp_ajax_nopriv_cxp_probe_rate', 'cxp_checkout_debug_ajax_probe_rate' );
+
+function cxp_checkout_debug_quote_addresses() {
+	$email = function_exists( 'cxp_lab_email' ) ? cxp_lab_email() : 'alexander.cautivo+testwordpress@aeolabs.io';
+	$base  = array(
+		'email'      => $email,
+		'phone'      => '912345678',
 		'country'    => 'CL',
 		'state'      => 'RM',
-		'city'       => 'LA REINA',
-		'address_1'  => 'Avenida Larrain',
-		'address_2'  => '5862',
 		'postcode'   => '',
-		'phone'      => '912345678',
+		'complement' => 'Casa',
+	);
+	// city + county_code = coverageName / countyCode de chilexpress-oficial/includes/data/comunas/RM.json
+	// Calles y números reales de la RM para que el formulario y el cotizador coincidan.
+	$list = array(
+		array(
+			'id'          => 'lareina',
+			'first_name'  => 'Juan',
+			'last_name'   => 'Espoz',
+			'city'        => 'LA REINA',
+			'city_label'  => 'La Reina',
+			'county_code' => 'LARE',
+			'address_1'   => 'Avenida Larrain',
+			'address_2'   => '5862',
+			'hint'        => 'Plaza La Reina. Comuna oficial LA REINA · LARE.',
+		),
+		array(
+			'id'          => 'providencia',
+			'first_name'  => 'Ana',
+			'last_name'   => 'Soto',
+			'city'        => 'PROVIDENCIA',
+			'city_label'  => 'Providencia',
+			'county_code' => 'PROV',
+			'address_1'   => 'Avenida Providencia',
+			'address_2'   => '2124',
+			'hint'        => 'Metro Manuel Montt. Comuna oficial PROVIDENCIA · PROV.',
+		),
+		array(
+			'id'          => 'lascondes',
+			'first_name'  => 'Pedro',
+			'last_name'   => 'Rivas',
+			'city'        => 'LAS CONDES',
+			'city_label'  => 'Las Condes',
+			'county_code' => 'LCON',
+			'address_1'   => 'Avenida Apoquindo',
+			'address_2'   => '4501',
+			'hint'        => 'Escuela Militar. Comuna oficial LAS CONDES · LCON.',
+		),
+		array(
+			'id'          => 'nunoa',
+			'first_name'  => 'Camila',
+			'last_name'   => 'Diaz',
+			'city'        => 'NUNOA',
+			'city_label'  => 'Nunoa',
+			'county_code' => 'NUNO',
+			'address_1'   => 'Avenida Irarrazaval',
+			'address_2'   => '3250',
+			'hint'        => 'Plaza Nunoa. Comuna oficial NUNOA · NUNO (sin eñe, asi lo pide Chilexpress).',
+		),
+		array(
+			'id'          => 'puentealto',
+			'first_name'  => 'Diego',
+			'last_name'   => 'Munoz',
+			'city'        => 'PUENTE ALTO',
+			'city_label'  => 'Puente Alto',
+			'county_code' => 'PALT',
+			'address_1'   => 'Avenida Concha y Toro',
+			'address_2'   => '2986',
+			'hint'        => 'Plaza de Puente Alto. Comuna oficial PUENTE ALTO · PALT.',
+		),
+		array(
+			'id'          => 'santiago',
+			'first_name'  => 'Laura',
+			'last_name'   => 'Reyes',
+			'city'        => 'SANTIAGO CENTRO',
+			'city_label'  => 'Santiago Centro',
+			'county_code' => 'STGO',
+			'address_1'   => 'Avenida Libertador Bernardo O Higgins',
+			'address_2'   => '1140',
+			'hint'        => 'Alameda frente a La Moneda. Comuna oficial SANTIAGO CENTRO · STGO.',
+		),
+		array(
+			'id'          => 'maipu',
+			'first_name'  => 'Andres',
+			'last_name'   => 'Perez',
+			'city'        => 'MAIPU',
+			'city_label'  => 'Maipu',
+			'county_code' => 'MIPU',
+			'address_1'   => 'Avenida Pajaritos',
+			'address_2'   => '3209',
+			'hint'        => 'Mall Arauco Maipu. Comuna oficial MAIPU · MIPU (no MAIP).',
+		),
+		array(
+			'id'          => 'vitacura',
+			'first_name'  => 'Sofia',
+			'last_name'   => 'Hahn',
+			'city'        => 'VITACURA',
+			'city_label'  => 'Vitacura',
+			'county_code' => 'VITA',
+			'address_1'   => 'Avenida Vitacura',
+			'address_2'   => '2670',
+			'hint'        => 'Parque Bicentenario. Comuna oficial VITACURA · VITA.',
+		),
+	);
+	$out = array();
+	foreach ( $list as $row ) {
+		$out[ $row['id'] ] = array_merge( $base, $row );
+	}
+	return $out;
+}
+
+function cxp_checkout_debug_customer_data() {
+	$addresses = cxp_checkout_debug_quote_addresses();
+	return $addresses['lareina'];
+}
+
+function cxp_checkout_debug_probe_package() {
+	$general = get_option( 'chilexpress_woo_oficial_general', array() );
+	$pkg     = array(
+		'weight'   => (float) ( $general['peso_producto_defecto'] ?? 0.8 ),
+		'height'   => (float) ( $general['alto_producto_defecto'] ?? 15 ),
+		'width'    => (float) ( $general['ancho_producto_defecto'] ?? 20 ),
+		'length'   => (float) ( $general['largo_producto_defecto'] ?? 10 ),
+		'declared' => 19990,
+	);
+	if ( ! function_exists( 'WC' ) || ! WC()->cart || WC()->cart->is_empty() ) {
+		return $pkg;
+	}
+	$biggest = 0;
+	$weight  = 0.0;
+	$price   = 0.0;
+	foreach ( WC()->cart->get_cart() as $item ) {
+		$product = $item['data'] ?? null;
+		if ( ! $product instanceof WC_Product ) {
+			continue;
+		}
+		$qty    = (float) ( $item['quantity'] ?? 1 );
+		$height = (float) ( $product->get_height() !== '' ? $product->get_height() : $pkg['height'] );
+		$width  = (float) ( $product->get_width() !== '' ? $product->get_width() : $pkg['width'] );
+		$length = (float) ( $product->get_length() !== '' ? $product->get_length() : $pkg['length'] );
+		$size   = $height * $width * $length;
+		if ( $size > $biggest ) {
+			$biggest       = $size;
+			$pkg['height'] = $height;
+			$pkg['width']  = $width;
+			$pkg['length'] = $length;
+		}
+		$item_weight = $product->get_weight() !== '' ? (float) $product->get_weight() : $pkg['weight'];
+		$weight     += $item_weight * $qty;
+		$price      += (float) $product->get_price() * $qty;
+	}
+	if ( $weight > 0 ) {
+		$pkg['weight'] = $weight;
+	}
+	if ( $price > 0 ) {
+		$pkg['declared'] = $price;
+	}
+	return $pkg;
+}
+
+function cxp_checkout_debug_ajax_probe_rate() {
+	check_ajax_referer( 'cxp_probe_rate', 'nonce' );
+
+	$id        = sanitize_key( wp_unslash( $_POST['addr'] ?? '' ) );
+	$addresses = cxp_checkout_debug_quote_addresses();
+	if ( ! isset( $addresses[ $id ] ) ) {
+		wp_send_json_error( array( 'message' => 'Dirección no reconocida.' ), 400 );
+	}
+
+	$addr = $addresses[ $id ];
+	if ( ! class_exists( 'Chilexpress_Woo_Oficial_API' ) ) {
+		$api_file = WP_PLUGIN_DIR . '/chilexpress-oficial/includes/class-chilexpress-woo-oficial-api.php';
+		if ( is_readable( $api_file ) ) {
+			require_once $api_file;
+		}
+	}
+	if ( ! class_exists( 'Chilexpress_Woo_Oficial_API' ) ) {
+		wp_send_json_error(
+			array(
+				'quote_ready' => false,
+				'message'     => 'No está cargada la API de Chilexpress Oficial.',
+			)
+		);
+	}
+
+	$general  = get_option( 'chilexpress_woo_oficial_general', array() );
+	$origin   = (string) ( $general['comuna_origen'] ?? 'PROV' );
+	$priority = 0;
+	$tcc      = $general['numero_tcc_origen'] ?? '18578680';
+	$pkg      = cxp_checkout_debug_probe_package();
+	$api      = new Chilexpress_Woo_Oficial_API();
+	$response = $api->obtener_cotizacion(
+		$origin,
+		$addr['county_code'],
+		$priority,
+		$tcc,
+		$pkg['weight'],
+		$pkg['height'],
+		$pkg['width'],
+		$pkg['length'],
+		$pkg['declared']
+	);
+
+	if ( is_wp_error( $response ) ) {
+		wp_send_json_error(
+			array(
+				'quote_ready' => false,
+				'origin'      => $origin,
+				'destination' => $addr['county_code'],
+				'city'        => $addr['city'],
+				'package'     => $pkg,
+				'message'     => $response->get_error_message(),
+			)
+		);
+	}
+
+	$services = array();
+	foreach ( (array) $response as $opt ) {
+		if ( ! is_object( $opt ) ) {
+			continue;
+		}
+		$services[] = array(
+			'code'           => $opt->serviceTypeCode ?? '',
+			'name'           => $opt->serviceDescription ?? '',
+			'price'          => $opt->serviceValue ?? '',
+			'price_discount' => $opt->serviceValueDiscount ?? '',
+		);
+	}
+
+	$ready = false;
+	foreach ( $services as $svc ) {
+		if ( '' !== (string) $svc['name'] && '' !== (string) $svc['price_discount'] && '' !== (string) $svc['code'] ) {
+			$ready = true;
+			break;
+		}
+	}
+
+	$chosen = sanitize_text_field( wp_unslash( $_POST['chosen'] ?? '' ) );
+	if ( $ready ) {
+		cxp_checkout_debug_apply_customer( $addr );
+		cxp_checkout_debug_store_quote( $addr, $services, $chosen );
+	}
+
+	wp_send_json_success(
+		array(
+			'quote_ready' => $ready,
+			'addr'        => $id,
+			'origin'      => $origin,
+			'destination' => $addr['county_code'],
+			'city'        => $addr['city'],
+			'street'      => $addr['address_1'] . ' ' . $addr['address_2'],
+			'package'     => $pkg,
+			'services'    => $services,
+			'message'     => $ready
+				? sprintf( 'Elige un radio: la API trajo %d servicio(s) con precio.', count( $services ) )
+				: 'La API respondió, pero faltan serviceTypeCode / serviceDescription / serviceValueDiscount.',
+		)
 	);
 }
+
+function cxp_checkout_debug_apply_customer( $addr ) {
+	if ( ! function_exists( 'WC' ) || ! WC()->customer ) {
+		return;
+	}
+	$customer = WC()->customer;
+	foreach ( array( 'billing', 'shipping' ) as $group ) {
+		$customer->{"set_{$group}_first_name"}( $addr['first_name'] );
+		$customer->{"set_{$group}_last_name"}( $addr['last_name'] );
+		$customer->{"set_{$group}_country"}( $addr['country'] );
+		$customer->{"set_{$group}_state"}( $addr['state'] );
+		$customer->{"set_{$group}_city"}( $addr['city'] );
+		$customer->{"set_{$group}_address_1"}( $addr['address_1'] );
+		$customer->{"set_{$group}_address_2"}( $addr['address_2'] );
+		$customer->{"set_{$group}_phone"}( $addr['phone'] );
+	}
+	$customer->set_billing_email( $addr['email'] );
+	$customer->set_calculated_shipping( false );
+	$customer->save();
+	if ( WC()->session ) {
+		foreach ( array_keys( (array) WC()->session->get_session_data() ) as $key ) {
+			if ( 0 === strpos( (string) $key, 'shipping_for_package' ) ) {
+				WC()->session->set( $key, null );
+			}
+		}
+	}
+	if ( WC()->shipping() ) {
+		WC()->shipping()->reset_shipping();
+	}
+}
+
+function cxp_checkout_debug_store_quote( $addr, $services, $chosen = '' ) {
+	if ( ! function_exists( 'WC' ) || ! WC()->session ) {
+		return;
+	}
+	if ( '' === $chosen && ! empty( $services[0]['code'] ) ) {
+		$chosen = (string) $services[0]['code'];
+	}
+	WC()->session->set(
+		'cxp_api_quote',
+		array(
+			'city'        => $addr['city'],
+			'county_code' => $addr['county_code'],
+			'services'    => $services,
+			'chosen'      => $chosen,
+		)
+	);
+	if ( $chosen ) {
+		WC()->session->set( 'chosen_shipping_methods', array( 'chilexpress_woo_oficial:' . $chosen ) );
+	}
+}
+
+add_filter(
+	'woocommerce_package_rates',
+	static function ( $rates, $package ) {
+		if ( ! function_exists( 'WC' ) || ! WC()->session ) {
+			return $rates;
+		}
+		$quote = WC()->session->get( 'cxp_api_quote' );
+		if ( empty( $quote['services'] ) || ! is_array( $quote['services'] ) ) {
+			return $rates;
+		}
+		$city = strtoupper( (string) ( $package['destination']['city'] ?? '' ) );
+		$want = strtoupper( (string) ( $quote['city'] ?? '' ) );
+		if ( $want && $city && $city !== $want && 'ALHUE' !== $city && 'ALHU' !== $city ) {
+			return $rates;
+		}
+		$out = array();
+		foreach ( $quote['services'] as $svc ) {
+			$code  = (string) ( $svc['code'] ?? '' );
+			$label = (string) ( $svc['name'] ?? '' );
+			$cost  = (float) ( $svc['price_discount'] !== '' ? $svc['price_discount'] : ( $svc['price'] ?? 0 ) );
+			if ( '' === $code || '' === $label ) {
+				continue;
+			}
+			$id   = 'chilexpress_woo_oficial:' . $code;
+			$rate = new WC_Shipping_Rate( $id, 'Chilexpress - ' . $label, $cost, array(), 'chilexpress_woo_oficial' );
+			$rate->add_meta_data( 'serviceTypeCode', $code );
+			$out[ $id ] = $rate;
+		}
+		return $out ? $out : $rates;
+	},
+	30,
+	2
+);
+
+add_action(
+	'woocommerce_checkout_update_order_review',
+	static function ( $posted ) {
+		parse_str( (string) $posted, $data );
+		$chosen = $data['shipping_method'][0] ?? '';
+		if ( ! $chosen || ! function_exists( 'WC' ) || ! WC()->session ) {
+			return;
+		}
+		$quote = WC()->session->get( 'cxp_api_quote' );
+		if ( ! is_array( $quote ) ) {
+			return;
+		}
+		if ( preg_match( '/:(\d+)$/', (string) $chosen, $m ) ) {
+			$quote['chosen'] = $m[1];
+			WC()->session->set( 'cxp_api_quote', $quote );
+		}
+	}
+);
 
 function cxp_checkout_debug_prefill_customer() {
 	if ( ! function_exists( 'WC' ) || ! WC()->customer ) {

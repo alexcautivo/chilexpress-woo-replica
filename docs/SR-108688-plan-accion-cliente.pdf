@@ -1,0 +1,98 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R 5 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 4 0 R /Resources << /Font << /F1  7 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 4571 >>
+stream
+BT /F1 8.00 Tf 0 g 48.00 793.89 Td (SR-108688  |  Plan de accion para el cliente  |  celularesenventa.cl) Tj ET
+0.7 G 48 779.89 m 547 779.89 l S
+0 G
+0.7 G 48 765.89 m 547 765.89 l S
+0 G
+BT /F1 16.00 Tf 0 g 48.00 759.89 Td (Que paso y que hay que hacer \(lenguaje simple\)) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 729.89 Td (Tienda: celularesenventa.cl · Ticket: SR-108688 · Fecha del problema: 11 de agosto de 2026) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 714.89 Td (Preparo: Alexander Alejandro Cautivo Ramos · Aeolabs · alexander.cautivo@aeolabs.io) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 693.89 Td (1. En una frase) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 668.89 Td (La tienda se cayo mientras se actualizaba WooCommerce. El plugin de Chilexpress siguio trabajando a) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 655.89 Td (mitad del proceso, cuando WooCommerce todavia no habia terminado de copiar todos sus archivos. No) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 642.89 Td (es que Chilexpress 1.4.0 "no sirva" con WooCommerce 11. Cuando la actualizacion termina bien, ambos) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 629.89 Td (conviven.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 612.89 Td (2. Que NO es este problema) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 587.89 Td (o No es el tema Woodmart ni un virus.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 572.89 Td (o No son las claves de Chilexpress ni el cotizador de envios.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 557.89 Td (o No hay que bajar WooCommerce a una version vieja \(eso deja la tienda insegura\).) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 542.89 Td (o No hay que editar a mano el plugin Chilexpress en el sitio. Ese cambio lo debe publicar) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 529.89 Td (Chilexpress.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 514.89 Td (3. Que hacer ahora \(sitio en marcha\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 489.89 Td (Sigan estos pasos en este orden. No hace falta saber programar.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 472.89 Td (o 1. En WordPress: Plugins, desactivar "Chilexpress Oficial".) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 457.89 Td (o 2. Actualizar WooCommerce y esperar a que termine al 100%.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 442.89 Td (o 3. Volver a activar Chilexpress Oficial.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 427.89 Td (o 4. Probar una compra de prueba \(elegir region, comuna y un envio Chilexpress\).) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 412.89 Td (o 5. Si usan ordenes de transporte, generar una OT de prueba \(mejor en ambiente de pruebas\).) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 397.89 Td (4. Si el sitio ya muestra "Ha habido un error critico") Tj ET
+BT /F1 10.00 Tf 0 g 48.00 372.89 Td (No se puede entrar al escritorio. Hay que hacerlo por el hosting \(administrador de archivos o FTP\),) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 359.89 Td (con ayuda de UPMOVIL si hace falta.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 342.89 Td (o 1. Entrar a la carpeta wp-content/plugins/.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 327.89 Td (o 2. Renombrar chilexpress-oficial a chilexpress-oficial-off \(con eso el plugin se apaga\).) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 312.89 Td (o 3. Completar o reinstalar WooCommerce hasta el final.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 297.89 Td (o 4. Devolver el nombre original a la carpeta \(chilexpress-oficial\) y activar el plugin desde) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 284.89 Td (WordPress.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 269.89 Td (o 5. Probar el checkout como en el punto 3.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 254.89 Td (5. Regla para la proxima actualizacion) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 229.89 Td (Antes de actualizar WooCommerce: apagar Chilexpress. Actualizar. Recien despues, volver a encender) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 216.89 Td (Chilexpress. No actualicen los dos al mismo tiempo.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 199.89 Td (6. El arreglo de fondo \(no lo hagan ustedes\)) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 174.89 Td (Chilexpress debe publicar una version que espere a que WooCommerce termine de cargar. Hasta que eso) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 161.89 Td (salga, usen la regla del punto 5. No parcheen el plugin en produccion: el siguiente update oficial) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 148.89 Td (lo borra y se pierde el diagnostico.) Tj ET
+BT /F1 13.00 Tf 0 g 48.00 131.89 Td (7. Como saber que quedo bien) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 106.89 Td (o El sitio abre \(tienda, carrito y checkout\).) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 91.89 Td (o Se puede elegir region, comuna y un envio Chilexpress.) Tj ET
+BT /F1 10.00 Tf 0 g 60.00 76.89 Td (o No vuelve el correo de WordPress con "error critico" al usar el escritorio.) Tj ET
+BT /F1 8.00 Tf 0 g 277.64 28.00 Td (Pagina 1) Tj ET
+
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Contents 6 0 R /Resources << /Font << /F1  7 0 R >> >> >>
+endobj
+6 0 obj
+<< /Length 729 >>
+stream
+BT /F1 8.00 Tf 0 g 48.00 793.89 Td (SR-108688  |  Plan de accion para el cliente  |  celularesenventa.cl) Tj ET
+0.7 G 48 779.89 m 547 779.89 l S
+0 G
+BT /F1 13.00 Tf 0 g 48.00 765.89 Td (8. Lo que confirmo el laboratorio) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 740.89 Td (Con WooCommerce ya instalado completo, el sitio no se cae. El corte aparece solo durante la ventana) Tj ET
+BT /F1 10.00 Tf 0 g 48.00 727.89 Td (de la actualizacion. El plugin oficial no se modifico.) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 702.89 Td (Este PDF es para el equipo de la tienda. El informe tecnico queda aparte. Aeolabs no modifica Chilexpress) Tj ET
+BT /F1 9.00 Tf 0 g 48.00 690.89 Td (Oficial 1.4.0.) Tj ET
+BT /F1 8.00 Tf 0 g 277.64 28.00 Td (Pagina 2) Tj ET
+
+endstream
+endobj
+7 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000254 00000 n 
+0000004877 00000 n 
+0000005010 00000 n 
+0000005790 00000 n 
+trailer << /Size 8 /Root 1 0 R >>
+startxref
+5887
+%%EOF

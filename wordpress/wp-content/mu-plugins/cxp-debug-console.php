@@ -33,6 +33,16 @@ final class Cxp_Debug_Console {
 		add_filter( 'woocommerce_admin_order_actions', array( __CLASS__, 'order_row_actions' ), 20, 2 );
 		add_action( 'woocommerce_order_list_table_extra_tablenav', array( __CLASS__, 'orders_table_button' ), 20, 2 );
 		add_action( 'admin_head', array( __CLASS__, 'admin_styles' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_ui' ), 40 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_ui' ), 40 );
+		add_action( 'login_enqueue_scripts', array( __CLASS__, 'enqueue_ui' ), 40 );
+	}
+
+	public static function enqueue_ui() {
+		$base = content_url( 'mu-plugins/cxp-debug-console' );
+		wp_enqueue_style( 'cxp-console-ui', $base . '/console-ui.css', array(), '1.8.2' );
+		wp_enqueue_script( 'cxp-lucide', $base . '/lucide.min.js', array(), '0.469.0', true );
+		wp_enqueue_script( 'cxp-console-ui', $base . '/console-ui.js', array( 'cxp-lucide' ), '1.8.2', true );
 	}
 
 	public static function capture_error( $errno, $errstr, $errfile = '', $errline = 0 ) {
@@ -78,6 +88,9 @@ final class Cxp_Debug_Console {
 		$orders_remote = $remote_base ? ( $remote_base . '/wp-admin/admin.php?page=wc-orders' ) : '';
 		$checkout_url  = function_exists( 'wc_get_checkout_url' ) ? wc_get_checkout_url() : home_url( '/checkout/' );
 		$shop_url      = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
+		$is_admin_ui   = is_admin();
+		$can_cart      = function_exists( 'cxp_storefront_can_open_cart' ) && cxp_storefront_can_open_cart();
+		$cart_url      = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/cart/' );
 		?>
 		<style id="cxp-debug-console-css">
 			#cxp-dbg{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#e8edf5 !important;-webkit-text-fill-color:#e8edf5;text-align:left;color-scheme:dark}
@@ -143,9 +156,10 @@ final class Cxp_Debug_Console {
 			#cxp-dbg a.cxp-dbg-btn-export{border-color:#1d4ed8;background:#1e3a8a;color:#dbeafe !important;-webkit-text-fill-color:#dbeafe;font-weight:700}
 			body.cxp-dbg-pad{padding-bottom:40px}
 		</style>
-		<div id="cxp-dbg">
+		<div id="cxp-dbg" class="<?php echo $is_admin_ui ? 'cxp-dbg--admin' : 'cxp-dbg--store'; ?>">
 			<div id="cxp-dbg-bar" role="button" tabindex="0" aria-expanded="false">
 				<strong>Consola réplica</strong>
+				<span class="cxp-dbg-place"><?php echo $is_admin_ui ? 'WP Admin' : 'Tienda'; ?></span>
 				<span id="cxp-dbg-credit">Aeolabs · Alexander Cautivo</span>
 				<span id="cxp-dbg-meta"><?php echo esc_html( $report['summary'] ); ?></span>
 				<span id="cxp-dbg-count" class="<?php echo $errors_n ? '' : 'is-ok'; ?>">
@@ -154,19 +168,33 @@ final class Cxp_Debug_Console {
 				<span><?php echo $log_n ? esc_html( $log_n . ' líneas debug.log' ) : 'debug.log vacío'; ?> · clic para abrir</span>
 			</div>
 			<div id="cxp-dbg-panel">
+				<nav id="cxp-dbg-tabs" aria-label="Secciones de la consola"></nav>
+				<p id="cxp-dbg-tabhint">Elige una pestaña. Cada botón dice para qué sirve.</p>
 				<div id="cxp-dbg-shortcuts">
-					<p><strong>Generar OTs</strong> — No uses Acciones masivas sin marcar el checkbox. Entra al pedido (Editar) y pulsa <em>Generar OT</em>, o marca #29 y luego Generar Multiples OT.</p>
+					<?php if ( $is_admin_ui ) : ?>
+						<p><strong>Atajos de escritorio</strong> — Pedidos HPOS y OT. No uses Acciones masivas sin marcar el checkbox. Entra al pedido (Editar) y pulsa <em>Generar OT</em>.</p>
+					<?php else : ?>
+						<p><strong>Atajos de la tienda</strong> — Primero checkout (dirección real + cotizar). El carrito se habilita solo después de pasar por el checkout.</p>
+					<?php endif; ?>
 					<div id="cxp-dbg-actions">
-						<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_local ); ?>">Pedidos locales (Generar OTs)</a>
-						<?php if ( $orders_remote ) : ?>
-							<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_remote ); ?>" target="_blank" rel="noopener noreferrer">Pedidos tienda remota</a>
+						<a class="cxp-dbg-btn" href="<?php echo esc_url( $shop_url ); ?>" title="Abre el catálogo con peso, medidas y cantidad 1–10.">Tienda</a>
+						<button type="button" id="cxp-dbg-search" class="cxp-dbg-btn" title="Enfoca el buscador del encabezado. Escribe un producto y pulsa Buscar o Enter.">Buscar</button>
+						<a class="cxp-dbg-btn" href="<?php echo esc_url( $checkout_url ); ?>" title="Checkout clásico: elige un destino real y cotiza Chilexpress.">Checkout</a>
+						<?php if ( $can_cart ) : ?>
+							<a class="cxp-dbg-btn" href="<?php echo esc_url( $cart_url ); ?>" title="Ya pasaste por el checkout: aquí puedes revisar cantidades.">Carrito</a>
+						<?php else : ?>
+							<span class="cxp-dbg-help">Carrito bloqueado hasta visitar el checkout.</span>
 						<?php endif; ?>
-						<a class="cxp-dbg-btn" href="<?php echo esc_url( $checkout_url ); ?>">Checkout</a>
-						<a class="cxp-dbg-btn" href="<?php echo esc_url( $shop_url ); ?>">Tienda</a>
+						<?php if ( $is_admin_ui ) : ?>
+							<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_local ); ?>" title="Lista de pedidos locales para generar OT.">Pedidos locales (Generar OTs)</a>
+							<?php if ( $orders_remote ) : ?>
+								<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( $orders_remote ); ?>" target="_blank" rel="noopener noreferrer" title="Misma pantalla en la tienda remota, si está configurada.">Pedidos tienda remota</a>
+							<?php endif; ?>
+							<button type="button" id="cxp-dbg-del-all">Borrar todos los pedidos</button>
+						<?php endif; ?>
 						<button type="button" id="cxp-dbg-copy">Copiar todo</button>
 						<button type="button" id="cxp-dbg-copy-ver">Copiar solo versiones</button>
 						<button type="button" id="cxp-dbg-copy-plugins">Copiar todos los plugins</button>
-						<button type="button" id="cxp-dbg-del-all">Borrar todos los pedidos</button>
 						<button type="button" id="cxp-dbg-close">Cerrar</button>
 						<span id="cxp-dbg-copied" hidden>Copiado</span>
 					</div>
@@ -199,7 +227,7 @@ final class Cxp_Debug_Console {
 										<td><?php echo esc_html( $row['name'] ); ?></td>
 										<td>
 											<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( admin_url( 'admin.php?page=wc-orders&action=edit&id=' . $row['id'] ) ); ?>">Detalle</a>
-											<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=chilexpress_woo_oficial_generar_ot&action=generar_ot&order_id=' . $row['id'] ), 'generar-ot' ) ); ?>">Generar OT</a>
+											<a class="cxp-dbg-btn cxp-dbg-btn-ot" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin.php?page=chilexpress_woo_oficial_generar_ot&action=generar_ot&order_id=' . $row['id'] . '&pedidos_cxp=1' ), 'generar-ot' ) ); ?>">Generar OT</a>
 										</td>
 										<td>
 											<button type="button" class="cxp-dbg-del-one" data-id="<?php echo esc_attr( (string) $row['id'] ); ?>">Borrar</button>
@@ -268,6 +296,23 @@ final class Cxp_Debug_Console {
 				e.stopPropagation();
 				close();
 			});
+			var searchBtn = document.getElementById('cxp-dbg-search');
+			if (searchBtn) {
+				searchBtn.addEventListener('click', function (e) {
+					e.stopPropagation();
+					var input = document.getElementById('cxp-header-search') || document.querySelector('.wd-header-search-form input.s, form.searchform input.s');
+					if (!input) {
+						window.location.href = <?php echo wp_json_encode( $shop_url ); ?>;
+						return;
+					}
+					close();
+					input.scrollIntoView({ block: 'center', behavior: 'smooth' });
+					window.setTimeout(function () {
+						input.focus();
+						if (input.select) input.select();
+					}, 200);
+				});
+			}
 			function copy(text) {
 				function ok() {
 					copied.hidden = false;

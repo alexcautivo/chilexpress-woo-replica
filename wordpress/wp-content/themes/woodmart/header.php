@@ -36,30 +36,34 @@
 					<div class="whb-column whb-col-left">
 						<div class="site-logo">
 							<?php
-							$logo = content_url( 'uploads/2023/11/logo-1.svg' );
-							if ( has_custom_logo() ) {
-								the_custom_logo();
-							} else {
-								echo '<a href="' . esc_url( home_url( '/' ) ) . '" class="wd-logo wd-main-logo" rel="home">';
-								echo '<img width="459" height="87" src="' . esc_url( $logo ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" style="max-width:300px">';
-								echo '</a>';
-							}
+							$cxp_logo = plugins_url( 'chilexpress-oficial/public/imgs/logo-chilexpress.svg' );
 							?>
+							<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="cxp-storefront-logo wd-logo wd-main-logo" rel="home" aria-label="Chilexpress">
+								<img width="320" height="52" src="<?php echo esc_url( $cxp_logo ); ?>" alt="Chilexpress" decoding="async">
+							</a>
 						</div>
 					</div>
 					<div class="whb-column whb-col-center">
-						<div class="wd-search-form wd-header-search-form wd-display-form">
+						<div class="wd-search-form wd-header-search-form wd-display-form cxp-search-wrap">
 							<form role="search" method="get" class="searchform wd-style-default" action="<?php echo esc_url( home_url( '/' ) ); ?>">
-								<input type="text" class="s" placeholder="Busca tus productos aquí!" value="<?php echo esc_attr( get_search_query() ); ?>" name="s" required>
+								<label class="screen-reader-text" for="cxp-header-search">Buscar productos</label>
+								<input id="cxp-header-search" type="text" class="s" placeholder="Busca tus productos aquí" value="<?php echo esc_attr( get_search_query() ); ?>" name="s" required title="Escribe el nombre de un producto del catálogo (audífonos, notebook, silla…).">
 								<input type="hidden" name="post_type" value="product">
-								<button type="submit" class="searchsubmit"><span>Search</span></button>
+								<button type="submit" class="searchsubmit" aria-label="Buscar productos del catálogo" title="Busca en el catálogo de la réplica. Luego agrega 1 a 10 unidades y cotiza en el checkout.">
+									<?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'search' ) : ''; ?>
+									<span>Buscar</span>
+								</button>
 							</form>
+							<button type="button" class="cxp-search-info" aria-label="Qué hace Buscar" data-tip="Busca productos del catálogo por nombre. Pulsa Buscar o Enter. Después agrégalos (máximo 10 de cada uno) y ve al checkout para cotizar Chilexpress con una dirección real de la RM.">
+								<?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'info' ) : 'i'; ?>
+								<span class="cxp-search-tip">Busca productos del catálogo por nombre. Pulsa Buscar o Enter. Después agrégalos (máximo 10 de cada uno) y ve al checkout para cotizar Chilexpress con una dirección real de la RM.</span>
+							</button>
 						</div>
 					</div>
 					<div class="whb-column whb-col-right">
 						<?php if ( function_exists( 'wc_get_cart_url' ) ) : ?>
 							<div class="wd-header-cart wd-tools-element">
-								<a href="<?php echo esc_url( wc_get_cart_url() ); ?>">
+								<a class="cxp-header-cart-link" href="<?php echo esc_url( wc_get_cart_url() ); ?>">
 									<span>Carrito</span>
 									<span class="wd-tools-count"><?php echo esc_html( WC()->cart ? WC()->cart->get_cart_contents_count() : 0 ); ?></span>
 								</a>
@@ -87,3 +91,4 @@
 		</div>
 	</div>
 </header>
+<?php do_action( 'cxp_after_header' ); ?>

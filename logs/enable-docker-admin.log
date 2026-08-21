@@ -1,0 +1,70 @@
+﻿**********************
+Inicio de la transcripción de Windows PowerShell
+Hora de inicio: 20260820171640
+Nombre de usuario: DESKTOP-MTVA6F3\ntltam
+Usuario RunAs: DESKTOP-MTVA6F3\ntltam
+Nombre de la configuración: 
+Máquina: DESKTOP-MTVA6F3 (Microsoft Windows NT 10.0.19045.0)
+Aplicación host: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\HP\Desktop\wirdscrepss\tools\enable-docker-admin.ps1
+Id. de proceso: 21392
+PSVersion: 5.1.19041.6456
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.6456
+BuildVersion: 10.0.19041.6456
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+La transcripción ha comenzado. El archivo de salida es C:\Users\HP\Desktop\wirdscrepss\logs\enable-docker-admin.log
+=== Features ===
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Habilitando características
+[==========================100.0%==========================]
+La operación se completó correctamente.
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Habilitando características
+[==========================100.0%==========================]
+La operación se completó correctamente.
+=== WSL install (no distro) ===
+Instalando componente opcional de Windows: Microsoft-Windows-Subsystem-Linux
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Habilitando características
+[==========================100.0%==========================]
+La operación se completó correctamente.
+Instalando componente opcional de Windows: VirtualMachinePlatform
+
+Herramienta Administración y mantenimiento de imágenes de implementación
+Versión: 10.0.19041.3636
+
+Versión de imagen: 10.0.19045.6466
+
+Habilitando características
+[==========================100.0%==========================]
+La operación se completó correctamente.
+La operación solicitada se realizó correctamente. Los cambios se aplicarán una vez que se reinicie el sistema.
+=== Docker service ===
+[SC] StartService ERROR 1056:
+
+Ya se está ejecutando una instancia de este servicio.
+
+DONE
+**********************
+Fin de la transcripción de Windows PowerShell
+Hora de finalización: 20260820171647
+**********************

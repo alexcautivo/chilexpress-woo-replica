@@ -1,0 +1,221 @@
+{
+    "coverageAreas": [
+        {
+            "countyCode": "CORR",
+            "coverageName": "CORRAL"
+        },
+        {
+            "countyCode": "FUTR",
+            "coverageName": "FUTRONO"
+        },
+        {
+            "countyCode": "CAUN",
+            "coverageName": "FUTRONO - CAUNAO"
+        },
+        {
+            "countyCode": "LLIF",
+            "coverageName": "FUTRONO - LLIFEN"
+        },
+        {
+            "countyCode": "MONT",
+            "coverageName": "FUTRONO - MONTUELA"
+        },
+        {
+            "countyCode": "PROS",
+            "coverageName": "FUTRONO - PUERTO DE ROSAS"
+        },
+        {
+            "countyCode": "PSQU",
+            "coverageName": "FUTRONO - PUERTO SQUELLA"
+        },
+        {
+            "countyCode": "SANA",
+            "coverageName": "FUTRONO - SANTA ANA"
+        },
+        {
+            "countyCode": "LAUN",
+            "coverageName": "LA UNION"
+        },
+        {
+            "countyCode": "LRAN",
+            "coverageName": "LAGO RANCO"
+        },
+        {
+            "countyCode": "LANC",
+            "coverageName": "LANCO"
+        },
+        {
+            "countyCode": "LAPE",
+            "coverageName": "LANCO - LA PENA"
+        },
+        {
+            "countyCode": "LSUR",
+            "coverageName": "LANCO - LANCO 5 SUR"
+        },
+        {
+            "countyCode": "LOCO",
+            "coverageName": "LANCO - LOS COPIHUES"
+        },
+        {
+            "countyCode": "MAMA",
+            "coverageName": "LANCO - MALALHUE"
+        },
+        {
+            "countyCode": "PURU",
+            "coverageName": "LANCO - PURULON"
+        },
+        {
+            "countyCode": "LLAG",
+            "coverageName": "LOS LAGOS"
+        },
+        {
+            "countyCode": "MAFI",
+            "coverageName": "MAFIL"
+        },
+        {
+            "countyCode": "MRQN",
+            "coverageName": "MARIQUINA"
+        },
+        {
+            "countyCode": "PAIL",
+            "coverageName": "PAILLACO"
+        },
+        {
+            "countyCode": "PANG",
+            "coverageName": "PANGUIPULLI"
+        },
+        {
+            "countyCode": "CAES",
+            "coverageName": "PANGUIPULLI - CAMINO A LA ESPERANZA"
+        },
+        {
+            "countyCode": "CAUE",
+            "coverageName": "PANGUIPULLI - CARRIRINGUE"
+        },
+        {
+            "countyCode": "CHOS",
+            "coverageName": "PANGUIPULLI - CHOSHUENCO"
+        },
+        {
+            "countyCode": "COIH",
+            "coverageName": "PANGUIPULLI - COIHUECO"
+        },
+        {
+            "countyCode": "CONA",
+            "coverageName": "PANGUIPULLI - CONARIPE"
+        },
+        {
+            "countyCode": "GUNE",
+            "coverageName": "PANGUIPULLI - GUANEHUE"
+        },
+        {
+            "countyCode": "AHUE",
+            "coverageName": "PANGUIPULLI - HUELLAHUE"
+        },
+        {
+            "countyCode": "LIQU",
+            "coverageName": "PANGUIPULLI - LIQUINE"
+        },
+        {
+            "countyCode": "LLAE",
+            "coverageName": "PANGUIPULLI - LLANCAHUE"
+        },
+        {
+            "countyCode": "LLON",
+            "coverageName": "PANGUIPULLI - LLONQUEN"
+        },
+        {
+            "countyCode": "MELE",
+            "coverageName": "PANGUIPULLI - MELEFQUEN"
+        },
+        {
+            "countyCode": "NETU",
+            "coverageName": "PANGUIPULLI - NELTUME"
+        },
+        {
+            "countyCode": "NITR",
+            "coverageName": "PANGUIPULLI - NITRE"
+        },
+        {
+            "countyCode": "PANC",
+            "coverageName": "PANGUIPULLI - PANCUL"
+        },
+        {
+            "countyCode": "PUFU",
+            "coverageName": "PANGUIPULLI - PUERTO FUY"
+        },
+        {
+            "countyCode": "PNIT",
+            "coverageName": "PANGUIPULLI - PUERTO NITRE"
+        },
+        {
+            "countyCode": "PSRE",
+            "coverageName": "PANGUIPULLI - PUERTO SANTA REGINA"
+        },
+        {
+            "countyCode": "PUUE",
+            "coverageName": "PANGUIPULLI - PULLIGUE"
+        },
+        {
+            "countyCode": "PUNA",
+            "coverageName": "PANGUIPULLI - PUNAHUE"
+        },
+        {
+            "countyCode": "PUEN",
+            "coverageName": "PANGUIPULLI - PUYUMEN"
+        },
+        {
+            "countyCode": "REME",
+            "coverageName": "PANGUIPULLI - REMECO"
+        },
+        {
+            "countyCode": "TECO",
+            "coverageName": "PANGUIPULLI - TERMAS DE CONARIPE"
+        },
+        {
+            "countyCode": "TRAC",
+            "coverageName": "PANGUIPULLI - TRACALPULLI"
+        },
+        {
+            "countyCode": "TRCO",
+            "coverageName": "PANGUIPULLI - TRAITRAICO"
+        },
+        {
+            "countyCode": "RIOB",
+            "coverageName": "RIO BUENO"
+        },
+        {
+            "countyCode": "VALD",
+            "coverageName": "VALDIVIA"
+        },
+        {
+            "countyCode": "CAAN",
+            "coverageName": "VALDIVIA - CAMINO A MANATIALES"
+        },
+        {
+            "countyCode": "CPBL",
+            "coverageName": "VALDIVIA - CAMINO A PIEDRA BLANCA"
+        },
+        {
+            "countyCode": "CAYU",
+            "coverageName": "VALDIVIA - CAYUMAPU"
+        },
+        {
+            "countyCode": "MAYO",
+            "coverageName": "VALDIVIA - CHOCOCAMAYO"
+        },
+        {
+            "countyCode": "NIEB",
+            "coverageName": "VALDIVIA - NIEBLA"
+        },
+        {
+            "countyCode": "RLIN",
+            "coverageName": "VALDIVIA - REBELLIN"
+        },
+        {
+            "countyCode": "SCIO",
+            "coverageName": "VALDIVIA - SAN IGNACIO"
+        }
+    ],
+    "dateUpdated": "2026-08-20 18:25:10"
+}

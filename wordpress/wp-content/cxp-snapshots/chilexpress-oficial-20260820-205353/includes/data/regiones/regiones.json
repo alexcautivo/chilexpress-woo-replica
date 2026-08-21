@@ -1,0 +1,69 @@
+{
+    "regions": [
+        {
+            "regionId": "R1",
+            "regionName": "TARAPACA"
+        },
+        {
+            "regionId": "R2",
+            "regionName": "ANTOFAGASTA"
+        },
+        {
+            "regionId": "R3",
+            "regionName": "ATACAMA"
+        },
+        {
+            "regionId": "R4",
+            "regionName": "COQUIMBO"
+        },
+        {
+            "regionId": "R5",
+            "regionName": "VALPARAISO"
+        },
+        {
+            "regionId": "R6",
+            "regionName": "LIBERTADOR GRAL BERNARDO O HIGGINS"
+        },
+        {
+            "regionId": "R7",
+            "regionName": "MAULE"
+        },
+        {
+            "regionId": "R8",
+            "regionName": "BIOBIO"
+        },
+        {
+            "regionId": "R9",
+            "regionName": "ARAUCANIA"
+        },
+        {
+            "regionId": "RM",
+            "regionName": "METROPOLITANA DE SANTIAGO"
+        },
+        {
+            "regionId": "R10",
+            "regionName": "LOS LAGOS"
+        },
+        {
+            "regionId": "R11",
+            "regionName": "AISEN DEL GRAL C IBANEZ DEL CAMPO"
+        },
+        {
+            "regionId": "R12",
+            "regionName": "MAGALLANES Y LA ANTARTICA CHILENA"
+        },
+        {
+            "regionId": "R14",
+            "regionName": "LOS RIOS"
+        },
+        {
+            "regionId": "R15",
+            "regionName": "ARICA Y PARINACOTA"
+        },
+        {
+            "regionId": "R16",
+            "regionName": "NUBLE"
+        }
+    ],
+    "dateUpdated": "2026-08-20 17:53:39"
+}

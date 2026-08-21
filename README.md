@@ -170,6 +170,13 @@ node tools/test-functional.mjs
 node tools/test-incident-lab.mjs
 ```
 
+Checkout en un navegador real (necesita Chrome y `npm install` en `tools/`):
+
+```powershell
+cd tools
+node test-checkout-fill.mjs
+```
+
 **Bash / Git Bash:**
 
 ```bash

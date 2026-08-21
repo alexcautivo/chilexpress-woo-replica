@@ -40,39 +40,53 @@
       .replace(/Ñ/g, 'N');
   }
 
-  function matchCityOption($city, city, county) {
-    var wanted = [norm(city), norm(county)].filter(Boolean);
+  function matchOption($el, wanted) {
+    var list = wanted.map(norm).filter(Boolean);
     var matched = '';
-    $city.find('option').each(function () {
+    $el.find('option').each(function () {
       var v = norm(this.value);
       var t = norm(this.text);
-      if (wanted.indexOf(v) !== -1 || wanted.indexOf(t) !== -1) {
+      if (list.indexOf(v) !== -1 || list.indexOf(t) !== -1) {
         matched = this.value;
       }
     });
     return matched;
   }
 
-  function waitForCity(name, city, county, done) {
+  /**
+   * Chilexpress llena región y comuna por AJAX. Fijar el valor de una sola vez
+   * falla si las opciones todavía no existen: el campo queda vacío y el
+   * checkout responde «Región es un campo requerido». Se espera a la opción.
+   */
+  function waitForOption(name, wanted, done) {
     var tries = 0;
     var timer = setInterval(function () {
       tries += 1;
-      var $city = field(name);
-      var matched = matchCityOption($city, city, county);
+      var $el = field(name);
+      if (!$el.length) {
+        if (tries > 40) {
+          clearInterval(timer);
+          done(false);
+        }
+        return;
+      }
+      var matched = matchOption($el, wanted);
       if (matched) {
-        $city.val(matched);
-        $city.trigger('change');
-        $city.trigger({
-          type: 'select2:select',
-          params: { data: { id: matched, text: matched } }
-        });
         clearInterval(timer);
-        done();
+        if (String($el.val() || '') !== matched) {
+          $el.val(matched);
+          $el.trigger('change');
+          $el.trigger({
+            type: 'select2:select',
+            params: { data: { id: matched, text: matched } }
+          });
+        }
+        done(true, matched);
         return;
       }
       if (tries > 40) {
         clearInterval(timer);
-        done();
+        done(false);
       }
     }, 200);
   }
@@ -99,13 +113,19 @@
     setText('billing_address_3', d.complement || 'Casa');
     setText('shipping_address_3', d.complement || 'Casa');
     $('#ship-to-different-address-checkbox').prop('checked', false).trigger('change');
-    var sameState = val('billing_state') === (d.state || 'RM');
-    setSelect('billing_state', d.state, sameState);
-    setSelect('shipping_state', d.state, sameState);
-    waitForCity('billing_city', d.city, d.county_code, function () {
-      waitForCity('shipping_city', d.city, d.county_code, function () {
+    // La comuna depende de la región: primero se fija la región y solo después
+    // se busca la comuna, que Chilexpress carga en respuesta a ese cambio.
+    var state = [d.state || 'RM', d.state_name];
+    var city = [d.city, d.county_code];
+    // Facturación es lo que valida el checkout: no debe quedar esperando a los
+    // campos de envío, que a veces ni siquiera se renderizan.
+    waitForOption('billing_state', state, function () {
+      waitForOption('billing_city', city, function () {
         $(document.body).trigger('update_checkout');
       });
+    });
+    waitForOption('shipping_state', state, function () {
+      waitForOption('shipping_city', city, function () {});
     });
   }
 

@@ -54,16 +54,16 @@ Si la consola muestra otra pila: **Laboratorio → Volver a pila del cliente**.
 
 ## Acceso
 
-| | |
-|---|---|
-| Sitio | http://127.0.0.1:8080 |
-| Admin | http://127.0.0.1:8080/wp-admin/ *(barra final)* |
-| Usuario / clave | `admin` / `admin` — [CREDENTIALS.md](CREDENTIALS.md) |
-| Auto-login | solo localhost, o `CXP_AUTO_LOGIN=1` |
+| | Local | Dokploy (en línea) |
+|---|---|---|
+| Sitio | http://127.0.0.1:8080 | http://chilexpress-woo.5-78-137-25.sslip.io |
+| Admin | http://127.0.0.1:8080/wp-admin/ | http://chilexpress-woo.5-78-137-25.sslip.io/wp-admin/ |
+| Usuario / clave | `admin` / `admin` — [CREDENTIALS.md](CREDENTIALS.md) | igual; **cámbiala** en cuanto el sitio sea público |
+| Auto-login | solo localhost, o `CXP_AUTO_LOGIN=1` | **apagado** (`CXP_AUTO_LOGIN=0`) |
 
 Checkout clásico (no Woo Blocks). Destinos reales de la RM: **LA REINA**, **NUNOA**, **SANTIAGO CENTRO**, **MAIPU**. Calle de prueba: Av. Larrain **5862**. Tarjeta `4242…4242` / 12/34 / 123.
 
-El carrito no se abre hasta pasar por el checkout. **Usar dirección** llena el formulario; **Cotizar envío** llama al cotizador staging.
+El formulario de checkout (y los botones **Usar dirección** / **Cotizar envío**) solo aparece **con un producto en el carrito**. Añade algo desde `/shop/` antes de ir a `/checkout/`.
 
 Las keys de Chilexpress **no van en git**. Pégalas en la consola o usa `CXP_API_KEY_GEO`, `CXP_API_KEY_RATE`, `CXP_API_KEY_OT`.
 
@@ -153,12 +153,31 @@ bash start.sh
 
 Admin: `/wp-admin/` **con barra final**.
 
-Comprobaciones del laboratorio de incidencias (sitio en 8080):
+Comprobaciones del laboratorio (sitio local en 8080, o Dokploy con `CXP_BASE`):
+
+**PowerShell** (Windows):
+
+```powershell
+cd c:\Users\HP\Desktop\wirdscrepss
+# Local (Docker o start.sh debe estar arriba):
+$env:CXP_BASE = "http://127.0.0.1:8080"
+node tools/test-functional.mjs
+node tools/test-incident-lab.mjs
+
+# Deploy público:
+$env:CXP_BASE = "http://chilexpress-woo.5-78-137-25.sslip.io"
+node tools/test-functional.mjs
+node tools/test-incident-lab.mjs
+```
+
+**Bash / Git Bash:**
 
 ```bash
-node tools/test-incident-lab.mjs
-node tools/test-functional.mjs
+CXP_BASE=http://127.0.0.1:8080 node tools/test-functional.mjs
+CXP_BASE=http://chilexpress-woo.5-78-137-25.sslip.io node tools/test-incident-lab.mjs
 ```
+
+Las pruebas **no aplican pila** ni reinstalan plugins. En Dokploy, **Aplicar pila** sí cambia el entorno hasta **Restaurar snapshot**. Verificado contra el deploy público (home, shop, checkout con carrito, admin, vista previa SR-108688, PDF cliente y técnico).
 
 ---
 
@@ -189,7 +208,9 @@ Incidencias: variable `CXP_INCIDENTS_DIR=/var/www/incidents`.
 
 Dokploy usa tres volúmenes persistentes: SQLite, uploads e incidencias. Un redeploy actualiza código, documentos y contrato JSON sin borrar tickets/runs creados desde la consola.
 
-URL pública actual: `http://chilexpress-woo.5-78-137-25.sslip.io`
+URL pública: `http://chilexpress-woo.5-78-137-25.sslip.io`
+
+Redeploy: panel Dokploy → **Projects** → **alexwoocommerce** → **chilexpress-woo** → **Deploy**. La pestaña **Docker** solo lista contenedores; no publica código. Tras el deploy, la consola debe mostrar **Incidencias**, **Copiar JSON**, **Vista previa**, **Aplicar pila** y los dos PDF.
 
 ---
 

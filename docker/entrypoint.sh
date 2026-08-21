@@ -15,18 +15,18 @@ fi
 
 mkdir -p wp-content/database wp-content/uploads wp-content/cache
 
-# Dokploy monta /var/www/incidents en un volumen persistente. Refresca el
-# contrato y la documentación del laboratorio, pero no pisa tickets/runs
-# creados por el operador.
+# Dokploy monta /var/www/incidents en un volumen vacio: hay que sembrarlo.
+# En local esa ruta es un bind-mount del repo, asi que la siembra NUNCA
+# sobrescribe: solo rellena lo que falta (cp -n). Pisar aqui destruiria el
+# arbol de trabajo del operador.
 INCIDENT_SEED=/var/www/seed-incidents
 INCIDENT_DIR=/var/www/incidents
 if [ -d "$INCIDENT_SEED" ]; then
-  mkdir -p "$INCIDENT_DIR"/{schema,templates,tickets,planes,runs}
-  cp -a "$INCIDENT_SEED"/schema/. "$INCIDENT_DIR"/schema/ 2>/dev/null || true
-  cp -a "$INCIDENT_SEED"/templates/. "$INCIDENT_DIR"/templates/ 2>/dev/null || true
-  cp -an "$INCIDENT_SEED"/tickets/. "$INCIDENT_DIR"/tickets/ 2>/dev/null || true
-  cp -an "$INCIDENT_SEED"/planes/. "$INCIDENT_DIR"/planes/ 2>/dev/null || true
-  cp -a "$INCIDENT_SEED"/README.md "$INCIDENT_DIR"/README.md 2>/dev/null || true
+  mkdir -p "$INCIDENT_DIR"/schema "$INCIDENT_DIR"/templates "$INCIDENT_DIR"/tickets "$INCIDENT_DIR"/planes "$INCIDENT_DIR"/runs
+  for part in schema templates tickets planes; do
+    cp -an "$INCIDENT_SEED/$part/." "$INCIDENT_DIR/$part/" 2>/dev/null || true
+  done
+  cp -an "$INCIDENT_SEED"/README.md "$INCIDENT_DIR"/README.md 2>/dev/null || true
 fi
 
 SEED=/var/www/seed/.ht.sqlite

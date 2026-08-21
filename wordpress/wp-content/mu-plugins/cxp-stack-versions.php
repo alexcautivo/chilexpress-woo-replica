@@ -1186,17 +1186,33 @@ final class Cxp_Stack_Versions {
 			activate_plugin( 'chilexpress-oficial/chilexpress-woo-oficial.php', '', false, true );
 			return 'Chilexpress Oficial 1.4.0 ya era la copia del repo (activada).';
 		}
+		// includes/data guarda el cache de regiones y comunas que el plugin baja
+		// de la API. El arbol del repo solo trae READMEs: si no se conserva, el
+		// selector de Region queda vacio despues de cada restauracion.
+		$cache = '';
+		if ( is_dir( $dest . '/includes/data' ) ) {
+			$cache = WP_CONTENT_DIR . '/upgrade/cxp-cxpdata-' . wp_generate_password( 6, false );
+			wp_mkdir_p( $cache );
+			copy_dir( $dest . '/includes/data', $cache );
+		}
 		if ( is_dir( $dest ) ) {
 			self::rmdir( $dest );
 		}
 		if ( ! copy_dir( $src, $dest ) ) {
 			return new WP_Error( 'cxp_stack', 'No se pudo copiar Chilexpress 1.4.0' );
 		}
+		$restored_cache = '';
+		if ( $cache && is_dir( $cache ) ) {
+			wp_mkdir_p( $dest . '/includes/data' );
+			copy_dir( $cache, $dest . '/includes/data' );
+			self::rmdir( $cache );
+			$restored_cache = ' Cache de regiones y comunas conservado.';
+		}
 		if ( ! function_exists( 'activate_plugin' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 		activate_plugin( 'chilexpress-oficial/chilexpress-woo-oficial.php', '', false, true );
-		return 'Chilexpress Oficial 1.4.0 restaurado desde la copia intacta del repo.';
+		return 'Chilexpress Oficial 1.4.0 restaurado desde la copia intacta del repo.' . $restored_cache;
 	}
 
 	private static function download_zip( $url, $filename ) {

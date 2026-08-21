@@ -2,6 +2,10 @@
 
 Réplica de prueba del ticket **SR-108688** (tienda de producción [celularesenventa.cl](https://celularesenventa.cl)).
 
+**Todo este desarrollo** — tienda, checkout, consola réplica, Docker, documentos y orquestación de la pila — es de **Alexander Alejandro Cautivo Ramos**, desarrollador full stack de **[Aeolabs.io](https://aeolabs.io)** · [alexander.cautivo@aeolabs.io](mailto:alexander.cautivo@aeolabs.io).
+
+Ese crédito se ve en la franja amarilla de la tienda, la barra de admin (junto a *Hola, admin*), el header, la consola réplica, el escritorio de wp-admin, el login y el pie del admin. Detalle: [AUTHORS.md](AUTHORS.md).
+
 Fatal:
 
 ```
@@ -10,16 +14,7 @@ Class "Automattic\WooCommerce\Enums\ProductTaxStatus" not found
 
 Este repositorio **no parchea** el PHP de Chilexpress Oficial 1.4.0. Es un laboratorio para reproducir el update a medias, cotizar en staging, generar OT y redactar la respuesta al cliente.
 
----
-
-<p align="center">
-  <strong>Todo este desarrollo</strong><br>
-  Alexander Alejandro Cautivo Ramos<br>
-  Desarrollador full stack · <a href="https://aeolabs.io">Aeolabs.io</a><br>
-  <a href="mailto:alexander.cautivo@aeolabs.io">alexander.cautivo@aeolabs.io</a>
-</p>
-
-Repo: https://github.com/alexcautivo/chilexpress-woo-replica
+Repo GitHub: https://github.com/alexcautivo/chilexpress-woo-replica
 
 ---
 
@@ -70,7 +65,7 @@ Si la consola muestra otra WP o Woo: **Volver a versiones del cliente**.
 
 Checkout de prueba: destinos **reales** de la RM (calle + comuna oficial Chilexpress: `LA REINA`/`LARE`, `NUNOA`/`NUNO`, `SANTIAGO CENTRO`/`STGO`, `MAIPU`/`MIPU`, etc.). Juan Espoz · Av. Larrain **5862**. Tarjeta `4242…4242` / 12/34 / 123. **Usar dirección** llena el form; **Cotizar envío** llama al cotizador.
 
-El **carrito** no se abre hasta pasar por el checkout y **no se rellena solo**. Si ves productos que no agregaste, usa **Vaciar carrito** (checkout, carrito o la barra inferior). Cada producto admite cantidad **1–10**. El buscador del header tiene una **i** que explica qué hace; en la consola el atajo **Buscar** enfoca ese campo.
+El **carrito** no se abre hasta pasar por el checkout y **no se rellena solo**. Si ves productos que no agregaste, usa **Vaciar carrito** (checkout, carrito o la barra inferior). Cada producto admite cantidad **1–10**. En las tarjetas, **Agregar al carrito** muestra el texto y el icono del carro a la **derecha**, sin taparse. El buscador del header tiene una **i** que explica qué hace; en la consola el atajo **Buscar** enfoca ese campo.
 
 Las subscription keys de Chilexpress **no van en el repo**. Pégalas en la consola o en variables `CXP_API_KEY_GEO`, `CXP_API_KEY_RATE`, `CXP_API_KEY_OT`.
 
@@ -124,8 +119,17 @@ Admin: `/wp-admin/` **con barra final**.
 
 ## Docker local
 
+Desde cero (para la instancia anterior y reconstruye la imagen con el código actual):
+
 ```bash
 cp .env.example .env
+docker compose down --remove-orphans
+docker compose up --build --force-recreate -d
+```
+
+Arranque normal:
+
+```bash
 docker compose up --build
 ```
 
@@ -183,3 +187,5 @@ Las API keys y contraseñas de tiendas reales **no pertenecen** a este repo púb
 ## Licencia
 
 MIT para el laboratorio (MU-plugins, Docker, docs). WordPress, Woo, Woodmart y Chilexpress conservan las suyas. Ver [LICENSE](LICENSE) y [AUTHORS.md](AUTHORS.md).
+
+**Autor:** Alexander Alejandro Cautivo Ramos · desarrollador full stack · [Aeolabs.io](https://aeolabs.io).

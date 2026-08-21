@@ -25,7 +25,7 @@ Persistencia:
 - volumen `wp_database` → SQLite (`wp-content/database`)
 - volumen `wp_uploads` → medios
 
-Si recreas el deploy **sin** esos volúmenes, la tienda vuelve a semilla vacía.
+Si recreas el deploy **sin** esos volúmenes, la tienda vuelve a la **semilla** del repo: catálogo wiki (5 productos), Chilexpress staging, **sin pedidos**. La SQLite versionada en `wordpress/wp-content/database/.ht.sqlite` es esa semilla limpia.
 
 ---
 

@@ -166,10 +166,10 @@ Clic en la barra negra de abajo. En **tienda** y **wp-admin** las pestañas camb
 
 ## Qué no se versiona
 
-- `runtime/` (PHP portable Windows)
-- `wordpress/wp-content/database/` (SQLite generado)
 - `wordpress/wp-config.php` (copia el sample)
 - `.env`, `debug.log`, cache, upgrade, snapshots, `*.zip`
+
+La SQLite **sí** va en el repo (`wordpress/wp-content/database/.ht.sqlite`): semilla con el catálogo y Chilexpress, **sin pedidos**. En Dokploy usa un volumen para no pisar pedidos reales en cada deploy.
 
 Las API keys y contraseñas de tiendas reales **no pertenecen** a este repo público.
 

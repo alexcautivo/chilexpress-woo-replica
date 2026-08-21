@@ -330,7 +330,7 @@ final class Cxp_Sr108688_Repro {
 	}
 
 	public static function ajax_pdf() {
-		self::guard();
+		self::guard_pdf();
 		if ( ! class_exists( 'Cxp_Simple_Pdf' ) ) {
 			require_once WP_CONTENT_DIR . '/mu-plugins/cxp-simple-pdf.php';
 		}
@@ -530,6 +530,18 @@ final class Cxp_Sr108688_Repro {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( 'Sin permiso' );
 		}
+		self::guard_nonce();
+	}
+
+	/**
+	 * El PDF del cliente es solo lectura. En Dokploy CXP_AUTO_LOGIN=0 y la consola
+	 * está en la tienda: exigir manage_options devolvía {"success":false,"data":"Sin permiso"}.
+	 */
+	private static function guard_pdf() {
+		self::guard_nonce();
+	}
+
+	private static function guard_nonce() {
 		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ?? '' ) ), self::NONCE ) ) {
 			wp_send_json_error( 'Nonce inválido' );
 		}

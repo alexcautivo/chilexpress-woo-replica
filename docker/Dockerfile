@@ -29,6 +29,7 @@ COPY docker/entrypoint.sh /usr/local/bin/cxp-entrypoint.sh
 COPY docker/patch-config.php /usr/local/bin/patch-config.php
 COPY docs/ /var/www/docs/
 COPY incidents/ /var/www/incidents/
+COPY incidents/ /var/www/seed-incidents/
 COPY chilexpress-oficial/ /var/www/chilexpress-oficial/
 COPY baselines/ /var/www/baselines/
 COPY wordpress/ /var/www/html/
@@ -37,8 +38,8 @@ COPY wordpress/wp-content/database/.ht.sqlite /var/www/seed/.ht.sqlite
 
 RUN sed -i 's/\r$//' /usr/local/bin/cxp-entrypoint.sh \
 	&& chmod +x /usr/local/bin/cxp-entrypoint.sh \
-	&& mkdir -p /var/www/html/wp-content/database /var/www/html/wp-content/uploads \
-	&& chown -R www-data:www-data /var/www/html /var/www/docs /var/www/incidents /var/www/seed
+	&& mkdir -p /var/www/html/wp-content/database /var/www/html/wp-content/uploads /var/www/incidents \
+	&& chown -R www-data:www-data /var/www/html /var/www/docs /var/www/incidents /var/www/seed /var/www/seed-incidents
 
 WORKDIR /var/www/html
 EXPOSE 80

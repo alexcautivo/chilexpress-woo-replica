@@ -59,6 +59,8 @@ El plan explícito de SR-108688 (por qué falló, qué hacer hoy, mejoras al plu
 
 Crear un ticket no cambia WordPress. **Aplicar pila** es una acción distinta, confirmada y con snapshot. Si PHP no coincide, la consola prepara el runtime y pide reiniciar antes de continuar. Los artefactos se guardan en `incidents/runs/{ticket}/{run}/`.
 
+Para saber exactamente qué correo enviar, cómo pedir cada versión y qué PDF entregar: `docs/guia-incidencias-clientes.md`.
+
 Abajo, la tabla **Pedidos** lista hasta 100 órdenes con **Detalle**, **Generar OT** y **Borrar**.
 
 Para OT: entra a **Editar** el pedido o marca el checkbox y usa el flujo oficial «Generar Multiples OT». No uses Acciones masivas de Woo sin marcar filas.

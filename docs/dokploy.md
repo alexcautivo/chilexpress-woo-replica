@@ -24,8 +24,9 @@ Persistencia:
 
 - volumen `wp_database` → SQLite (`wp-content/database`)
 - volumen `wp_uploads` → medios
+- volumen `wp_incidents` → tickets, runs y planes importados en `/var/www/incidents`
 
-Si recreas el deploy **sin** esos volúmenes, la tienda vuelve a la **semilla** del repo: catálogo wiki (5 productos), Chilexpress staging, **sin pedidos**. La SQLite versionada en `wordpress/wp-content/database/.ht.sqlite` es esa semilla limpia.
+Si recreas el deploy **sin** esos volúmenes, la tienda vuelve a la **semilla** del repo: catálogo wiki (5 productos), Chilexpress staging, **sin pedidos**. La SQLite versionada en `wordpress/wp-content/database/.ht.sqlite` es esa semilla limpia. El entrypoint actualiza schema/plantilla de incidencias, pero conserva los tickets y runs ya creados en `wp_incidents`.
 
 ---
 
@@ -52,6 +53,17 @@ Dominio, `WP_HOME`, `CXP_AUTO_LOGIN=0` y etiquetas Traefik **ya están** en `doc
 6. Abre `http://chilexpress-woo.5-78-137-25.sslip.io`
    - Admin: `/wp-admin/` · usuario `admin` · clave `admin`
    - La barra de abajo es la **Consola réplica** (Tienda, Checkout, Incidencias, etc.)
+
+### Redeploy de una actualización
+
+1. Confirma que los cambios estén en la rama `main` de GitHub.
+2. Proyecto **alexwoocommerce** → servicio **chilexpress-woo**.
+3. Pulsa **Redeploy** / **Deploy** y fuerza build si Dokploy ofrece esa opción.
+4. Espera estado healthy.
+5. Comprueba la URL pública, `/wp-admin/` y la pestaña **Incidencias**.
+6. Verifica que existan **Crear flujo**, **Aplicar pila**, **PDF cliente** y **PDF técnico**.
+
+Los volúmenes conservan pedidos, uploads e incidencias. El código, README, docs, schema y plantilla se actualizan desde la imagen nueva.
 
 Si el deploy falla por puerto 80 ocupado, el compose **no** publica `80:80` en el host: Traefik es quien abre la URL.
 
@@ -98,6 +110,7 @@ Si Dokploy no usa compose:
 5. Añade volúmenes persistentes a mano:
    - `/var/www/html/wp-content/database`
    - `/var/www/html/wp-content/uploads`
+   - `/var/www/incidents`
 
 Sin el volumen de database, SQLite se pierde en cada redeploy.
 

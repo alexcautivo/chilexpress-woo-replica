@@ -101,6 +101,26 @@ Fuentes de plugin permitidas: `wordpress.org`, `zip_local`, `repo`. Tope: 40 plu
 
 Contrato: [incidents/schema/incident.schema.json](incidents/schema/incident.schema.json). Guía: [incidents/README.md](incidents/README.md). Ejemplo ficticio: [incidents/tickets/_EJEMPLO-1.1.json](incidents/tickets/_EJEMPLO-1.1.json).
 
+### Qué mandarle al cliente
+
+1. Consola → **Incidencias** → **Copiar JSON para el cliente**.
+2. En el correo pide: URL y error exacto; PHP y WordPress; tema; **todos los plugins con versión exacta y activo/inactivo**; pasos; correo crítico o `debug.log`.
+3. Indica dónde verlo: **WooCommerce → Estado** y **Herramientas → Salud del sitio → Información**.
+4. Pide que devuelva el JSON completo y que no incluya contraseñas, API keys ni datos de producción.
+
+Correo listo para copiar, ejemplos de plugins públicos/privados y operación paso a paso: [Guía de incidencias para clientes](docs/guia-incidencias-clientes.md).
+
+### Formas de armar la prueba
+
+- **Fiel al cliente:** importa el JSON y pulsa **Aplicar pila**. Instala automáticamente las versiones exactas y conserva un snapshot.
+- **Manual:** en **Laboratorio / Versiones** elige WordPress y cada plugin, carga ZIP privados autorizados y pulsa **Recargar WordPress completo**.
+- **Actualización general:** **Actualizar a latest**. Sirve para explorar, no para reproducir fielmente un ticket antiguo.
+
+Después, **Ejecutar flujo** compara el fallo y genera:
+
+- **PDF cliente:** explicación simple, impacto y próximos pasos.
+- **PDF técnico:** versiones, pasos, stack, logs, reglas y diff para desarrolladores de Chilexpress.
+
 ### Por qué fallaba SR-108688
 
 Chilexpress 1.4.0, en `plugins_loaded`, hace `require_once` de `abstract-wc-shipping-method.php`. Woo 11 usa ahí `ProductTaxStatus::TAXABLE`. En un **update in-place** el abstracto nuevo puede existir y el enum todavía no: PHP muere en `admin-ajax.php`.
@@ -137,6 +157,7 @@ Comprobaciones del laboratorio de incidencias (sitio en 8080):
 
 ```bash
 node tools/test-incident-lab.mjs
+node tools/test-functional.mjs
 ```
 
 ---
@@ -166,6 +187,8 @@ MySQL: `DB_ENGINE=mysql` y `docker compose -f docker-compose.local.yml --profile
 Compose: `docker-compose.yml`. Guía: [docs/dokploy.md](docs/dokploy.md).  
 Incidencias: variable `CXP_INCIDENTS_DIR=/var/www/incidents`.
 
+Dokploy usa tres volúmenes persistentes: SQLite, uploads e incidencias. Un redeploy actualiza código, documentos y contrato JSON sin borrar tickets/runs creados desde la consola.
+
 ---
 
 ## Documentación
@@ -175,6 +198,7 @@ Incidencias: variable `CXP_INCIDENTS_DIR=/var/www/incidents`.
 | [Guía de uso](docs/guia-de-uso.md) | Recorrido de una sesión |
 | [Consola réplica](docs/consola-replica.md) | Cada botón |
 | [Incidencias](incidents/README.md) | JSON 1.1, apply, runs, PDF |
+| [Guía de incidencias para clientes](docs/guia-incidencias-clientes.md) | Correo, JSON, versiones, ejecución e informes |
 | [Dokploy](docs/dokploy.md) | Deploy |
 | [Identificación / diagnóstico / respuesta](docs/cliente-identificacion.md) | Textos SR-108688 |
 | [FAQ](docs/faq-replica.md) | Montaje de la réplica |

@@ -121,6 +121,8 @@ Consola → **Documentos para el cliente**. Cada botón copia Markdown con las v
 
 Los pasos del JSON son declarativos y limitados al mismo sitio del laboratorio. No se ejecuta PHP ni shell enviado por el cliente.
 
+Correo listo para enviar, ayuda para obtener cada versión y explicación de los dos informes: [Guía fácil de incidencias](guia-incidencias-clientes.md).
+
 ---
 
 ## APIs Chilexpress (staging)

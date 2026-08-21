@@ -1,4 +1,33 @@
-# Instrucciones detalladas para el cliente — SR-108688
+# Instrucciones para reportar y resolver incidencias
+
+## Antes de diagnosticar: información que debe enviar el cliente
+
+Aeolabs enviará el JSON de **Consola → Incidencias → Copiar JSON para el cliente**.
+
+El cliente debe devolverlo con:
+
+1. URL y pantalla donde ocurre la falla.
+2. Texto exacto del error y cuándo comenzó.
+3. Versión completa de PHP y WordPress.
+4. Tema, tema padre y sus versiones.
+5. **Todos los plugins**, incluso desactivados: nombre, slug/carpeta, versión exacta y activo `true`/`false`.
+6. Pasos numerados para repetir el problema.
+7. Correo de error crítico, status HTTP o extracto de `debug.log`, si existen.
+
+Las versiones están en **WooCommerce → Estado** y **Herramientas → Salud del sitio → Información**.
+
+No enviar contraseñas, claves API, tarjetas ni dumps de producción. Para plugins privados, indicar `fuente: "zip_local"`; Aeolabs pedirá el ZIP por un canal autorizado.
+
+Guía completa y correo listo para copiar: `docs/guia-incidencias-clientes.md`.
+
+Al importar el JSON se crea un ticket, pero WordPress no cambia. Aeolabs revisa **Vista previa**, crea un snapshot y solo después confirma **Aplicar pila**. El resultado se entrega en:
+
+- **PDF cliente:** explicación simple, comparación y plan de acción.
+- **PDF técnico:** pila exacta, pasos, logs, stack trace y evidencia para los desarrolladores del plugin.
+
+---
+
+# Caso de referencia — SR-108688
 
 Usen estas instrucciones en **celularesenventa.cl** (producción) o en un staging clonado. Versiones objetivo:
 

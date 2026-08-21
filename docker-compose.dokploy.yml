@@ -36,6 +36,7 @@ services:
     volumes:
       - wp_database:/var/www/html/wp-content/database
       - wp_uploads:/var/www/html/wp-content/uploads
+      - wp_incidents:/var/www/incidents
     extra_hosts:
       - "qaservices.wschilexpress.com:135.237.61.242"
     dns:
@@ -61,6 +62,7 @@ services:
 volumes:
   wp_database:
   wp_uploads:
+  wp_incidents:
   db_data:
 
 networks:

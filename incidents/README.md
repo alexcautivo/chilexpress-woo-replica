@@ -6,6 +6,8 @@ Sirve para que Aeolabs reciba el mismo tipo de datos en cada reporte (este clien
 
 Autor: **Alexander Alejandro Cautivo Ramos** · desarrollador full stack · [Aeolabs.io](https://aeolabs.io)
 
+Guía fácil con correo listo para copiar, ejemplos JSON y operación completa: [`../docs/guia-incidencias-clientes.md`](../docs/guia-incidencias-clientes.md).
+
 ---
 
 ## Para qué existe

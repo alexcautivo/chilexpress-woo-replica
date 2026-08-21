@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "ticket_id": "",
-  "instrucciones_para_completar": "Completen este JSON y devuélvanlo pegado en el correo o el chat. No borren las claves. Si no saben un dato, dejen el texto vacio o escriban no_se. Las versiones salen en Escritorio → Herramientas → Salud del sitio, o en WooCommerce → Estado. Este archivo es el ticket: con el mismo JSON Aeolabs replica el entorno.",
+  "instrucciones_para_completar": "Completen este JSON y devuélvanlo pegado en el correo o el chat. No borren las claves. Si no saben un dato, dejen el texto vacio o escriban no_se. Versiones: Escritorio → Herramientas → Salud del sitio, o WooCommerce → Estado. El slug es la carpeta en /wp-content/plugins/NOMBRE/ (tambien aparece en la URL de wordpress.org). Dupliquen filas en plugins si tienen mas. fuente: wordpress.org si es plugin publico; si es premium o ZIP propio dejen zip_local y Aeolabs lo carga; Chilexpress Oficial del laboratorio es repo. No peguen contraseñas, claves API ni dumps. Los pasos humanos van en sintoma. El bloque flujo_reproduccion es opcional para ustedes: Aeolabs lo usa en la consola (solo URLs del sitio, sin codigo).",
   "origen": {
     "empresa": "",
     "sitio_url": "https://",
@@ -15,7 +15,7 @@
     "frecuencia": "siempre",
     "impacto": "sitio_caido",
     "mensaje_error": "Copiar el texto exacto. Ejemplo: Class Automattic\\WooCommerce\\Enums\\ProductTaxStatus not found",
-    "url_donde_falla": "https://sitio.cl/wp-admin/admin-ajax.php",
+    "url_donde_falla": "/wp-admin/admin-ajax.php",
     "pasos_para_reproducir": [
       "1. Entré a ...",
       "2. Pulsé ...",
@@ -24,17 +24,51 @@
   },
   "pila": {
     "php": "8.x.x",
-    "wordpress": "x.x.x",
-    "woocommerce": "x.x.x",
+    "wordpress": "6.8.2",
+    "woocommerce": "9.8.5",
     "chilexpress_oficial": "1.4.0",
-    "tema": "Nombre y version del tema hijo",
-    "tema_padre": "Nombre y version del padre si hay"
+    "tema": {
+      "nombre": "Nombre del tema (y si es hijo, el padre abajo)",
+      "version": "1.0.0",
+      "slug": "storefront",
+      "fuente": "wordpress.org",
+      "es_hijo": false,
+      "padre_slug": "",
+      "padre_version": "",
+      "archivo_zip": "",
+      "checksum": ""
+    }
   },
   "plugins": [
     {
+      "nombre": "WooCommerce",
+      "slug": "woocommerce",
+      "version": "9.8.5",
+      "activo": true,
+      "fuente": "wordpress.org",
+      "archivo_zip": "",
+      "checksum": "",
+      "notas": "Copiar version exacta de WooCommerce → Estado"
+    },
+    {
       "nombre": "Chilexpress Oficial",
+      "slug": "chilexpress-oficial",
       "version": "1.4.0",
-      "activo": true
+      "activo": true,
+      "fuente": "repo",
+      "archivo_zip": "",
+      "checksum": "",
+      "notas": "No parchear. Si su ZIP es otro, cambien fuente a zip_local."
+    },
+    {
+      "nombre": "Akismet Anti-spam",
+      "slug": "akismet",
+      "version": "5.3.7",
+      "activo": true,
+      "fuente": "wordpress.org",
+      "archivo_zip": "",
+      "checksum": "",
+      "notas": "Ejemplo. Reemplacen o borren y agreguen el resto de su lista."
     }
   ],
   "entorno": {
@@ -46,10 +80,45 @@
   "evidencia": {
     "correo_wordpress": "Pegar el correo de error critico si llego.",
     "debug_log_extracto": "Ultimas lineas de wp-content/debug.log si lo tienen.",
-    "capturas_notas": "Describir capturas o enlaces. No pongan contraseñas."
+    "capturas_notas": "Describir capturas o enlaces. No pongan contraseñas.",
+    "http_status": null,
+    "clase_error": "",
+    "archivo": "",
+    "linea": null
   },
   "pedido": {
     "que_necesitan": "Ej. recuperar el sitio / poder actualizar Woo / cotizar envios",
     "urgencia": "alta"
+  },
+  "flujo_reproduccion": {
+    "steps": [
+      {
+        "id": "abrir-url-del-fallo",
+        "op": "open_url",
+        "url": "/wp-admin/admin-ajax.php",
+        "descripcion": "Misma URL donde falla. Cambien la ruta si es checkout u otra pantalla."
+      }
+    ],
+    "assertions": [
+      {
+        "id": "texto-del-error",
+        "tipo": "body_contains",
+        "esperado": "Ha habido un error critico",
+        "paso": "abrir-url-del-fallo"
+      }
+    ],
+    "politicas": {
+      "timeout_segundos": 180,
+      "max_pasos": 20,
+      "limpiar_carrito": true,
+      "limpiar_transients": true,
+      "conservar_pedidos": true,
+      "restaurar_al_finalizar": true,
+      "versiones_exactas": true,
+      "permitir_latest": false,
+      "proteger_mu_cxp": true,
+      "proteger_sqlite": true,
+      "no_parchear_chilexpress": true
+    }
   }
 }

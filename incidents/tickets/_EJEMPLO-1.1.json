@@ -1,0 +1,175 @@
+{
+  "schema_version": "1.1",
+  "ticket_id": "CXP-EJEMPLO-11",
+  "origen": {
+    "empresa": "Andes Demo SpA (ficticio)",
+    "sitio_url": "https://tienda-andes.example",
+    "contacto_nombre": "Camila Núñez",
+    "contacto_email": "soporte@tienda-andes.example",
+    "fecha_utc": "2026-08-20T15:00:00Z"
+  },
+  "sintoma": {
+    "resumen": "En checkout clasico el recuadro de envio Chilexpress no cotiza y muestra un aviso de zona no cubierta, con Storefront y Woo 9.8.5.",
+    "cuando_empezo": "20 agosto 2026, manana (zona horaria Chile). Caso inventado para validar schema 1.1.",
+    "frecuencia": "solo_en_checkout",
+    "impacto": "cotizador",
+    "mensaje_error": "Chilexpress: no hay cobertura para la comuna seleccionada.",
+    "url_donde_falla": "/checkout/",
+    "pasos_para_reproducir": [
+      "Entrar a la ficha de un producto simple publicado",
+      "Agregar al carrito y ir a /checkout/",
+      "Elegir region Metropolitana y comuna de ejemplo",
+      "El bloque de envio no muestra tarifas"
+    ]
+  },
+  "pila": {
+    "php": "8.2.24",
+    "wordpress": "6.8.2",
+    "woocommerce": "9.8.5",
+    "chilexpress_oficial": "1.4.0",
+    "tema": {
+      "nombre": "Storefront",
+      "version": "4.6.1",
+      "slug": "storefront",
+      "fuente": "wordpress.org",
+      "es_hijo": false,
+      "padre_slug": "",
+      "padre_version": "",
+      "checksum": ""
+    }
+  },
+  "plugins": [
+    {
+      "nombre": "WooCommerce",
+      "slug": "woocommerce",
+      "version": "9.8.5",
+      "activo": true,
+      "fuente": "wordpress.org",
+      "checksum": "",
+      "notas": "Atajo tambien en pila.woocommerce; gana este valor si hubiera conflicto."
+    },
+    {
+      "nombre": "Chilexpress Oficial",
+      "slug": "chilexpress-oficial",
+      "version": "1.4.0",
+      "activo": true,
+      "fuente": "repo",
+      "checksum": "",
+      "notas": "Desde el arbol del laboratorio."
+    },
+    {
+      "nombre": "Akismet Anti-spam",
+      "slug": "akismet",
+      "version": "5.3.7",
+      "activo": true,
+      "fuente": "wordpress.org",
+      "checksum": "",
+      "notas": ""
+    },
+    {
+      "nombre": "Andes Checkout Tweaks (ficticio)",
+      "slug": "andes-checkout-tweaks",
+      "version": "1.0.2",
+      "activo": true,
+      "fuente": "zip_local",
+      "checksum": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+      "notas": "Plugin inventado. ZIP lo carga Aeolabs; no existe en wordpress.org."
+    }
+  ],
+  "entorno": {
+    "hosting": "Hosting de demostracion",
+    "actualizacion_en_curso": false,
+    "checkout": "clasico",
+    "ambiente": "staging"
+  },
+  "evidencia": {
+    "correo_wordpress": "",
+    "debug_log_extracto": "[20-Aug-2026 15:02:11 UTC] Chilexpress coverage empty for county_code=DEMO",
+    "capturas_notas": "Caso ficticio. No corresponde a un cliente real.",
+    "http_status": 200,
+    "clase_error": "",
+    "archivo": "",
+    "linea": null
+  },
+  "pedido": {
+    "que_necesitan": "Ver si el aviso es de cobertura o de un plugin extra en checkout.",
+    "urgencia": "media"
+  },
+  "laboratorio": {
+    "estado": "pendiente",
+    "notas": "Ejemplo schema 1.1. No aplicar en produccion."
+  },
+  "flujo_reproduccion": {
+    "steps": [
+      {
+        "id": "activar-woo",
+        "op": "activate_plugin",
+        "slug": "woocommerce",
+        "descripcion": "WooCommerce 9.8.5."
+      },
+      {
+        "id": "activar-cxp",
+        "op": "activate_plugin",
+        "slug": "chilexpress-oficial",
+        "descripcion": "Chilexpress desde repo."
+      },
+      {
+        "id": "limpiar-caches",
+        "op": "clear_cache",
+        "alcance": "transients",
+        "descripcion": "Transients de sesion/carrito de laboratorio."
+      },
+      {
+        "id": "abrir-checkout",
+        "op": "open_url",
+        "url": "/checkout/",
+        "descripcion": "Checkout clasico Storefront."
+      },
+      {
+        "id": "esperar-fragmentos",
+        "op": "wait",
+        "segundos": 2,
+        "descripcion": "Espera corta para fragmentos de Woo."
+      },
+      {
+        "id": "texto-cobertura",
+        "op": "assert_text",
+        "texto": "no hay cobertura",
+        "descripcion": "El aviso reportado por el ejemplo."
+      }
+    ],
+    "assertions": [
+      {
+        "id": "http-checkout-ok",
+        "tipo": "http_status",
+        "esperado": 200,
+        "paso": "abrir-checkout"
+      },
+      {
+        "id": "cuerpo-aviso",
+        "tipo": "body_contains",
+        "esperado": "no hay cobertura",
+        "paso": "abrir-checkout"
+      },
+      {
+        "id": "sin-fatal",
+        "tipo": "body_not_contains",
+        "esperado": "Ha habido un error critico",
+        "paso": "abrir-checkout"
+      }
+    ],
+    "politicas": {
+      "timeout_segundos": 120,
+      "max_pasos": 20,
+      "limpiar_carrito": true,
+      "limpiar_transients": true,
+      "conservar_pedidos": true,
+      "restaurar_al_finalizar": true,
+      "versiones_exactas": true,
+      "permitir_latest": false,
+      "proteger_mu_cxp": true,
+      "proteger_sqlite": true,
+      "no_parchear_chilexpress": true
+    }
+  }
+}

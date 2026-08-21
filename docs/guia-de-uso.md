@@ -1,6 +1,6 @@
 # Guía de uso — laboratorio WordPress + Chilexpress
 
-Software de **prueba** para reproducir, explicar y documentar el fatal de Chilexpress Oficial 1.4.0 con WooCommerce 11 (`ProductTaxStatus` no encontrado), ticket **SR-108688** (tienda de producción [celularesenventa.cl](https://celularesenventa.cl)).
+Laboratorio para reproducir incidencias de WooCommerce (cualquier cliente). El caso de referencia es Chilexpress Oficial 1.4.0 + Woo 11 (`ProductTaxStatus` no encontrado), ticket **SR-108688** ([celularesenventa.cl](https://celularesenventa.cl)).
 
 Autor: **Alexander Alejandro Cautivo Ramos** · [alexander.cautivo@aeolabs.io](mailto:alexander.cautivo@aeolabs.io)
 
@@ -18,7 +18,7 @@ No es un hosting de producción. Chilexpress Oficial **no se parchea** aquí: el
 │  Botón amarillo «Llenar datos válidos»                  │
 ├─────────────────────────────────────────────────────────┤
 │  ▸ CONSOLA RÉPLICA  (barra negra inferior, clic)        │
-│    Documentos · Pila/versiones · SR-108688 · Lab ZIP    │
+│    Incidencias · Documentos · Pila · SR-108688 · Lab    │
 │    APIs · Pedidos / OT · Plugins · Créditos             │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -107,6 +107,19 @@ Eso **esconde/restaura** el enum de Woo; no toca PHP de Chilexpress.
 ### 5. Genera documentos para el ticket
 
 Consola → **Documentos para el cliente**. Cada botón copia Markdown con las versiones *actuales* de este contenedor.
+
+### 6. Reproduce otra incidencia
+
+1. Consola → **Incidencias** → copia la plantilla JSON 1.1.
+2. Importa la respuesta del cliente con **Crear ticket**. Esto no modifica el sitio.
+3. Revisa **Vista previa** y entrega en `drop-plugins/` los ZIP privados autorizados que indique el ticket.
+4. Pulsa **Aplicar pila**. La consola guarda un snapshot e instala WordPress, plugins y tema en las versiones exactas.
+5. Si pide otra PHP, reinicia `start.sh` o reconstruye Docker y vuelve a pulsar **Aplicar pila** para continuar el mismo run.
+6. Pulsa **Ejecutar flujo**. Se abre una pestaña de Chrome y se capturan errores de navegador, HTTP y `debug.log`.
+7. Revisa **Resultado**: reportado vs reproducido, marcadores que coinciden y causa probable basada en reglas.
+8. Descarga **PDF cliente** o **PDF técnico** y termina con **Restaurar snapshot**.
+
+Los pasos del JSON son declarativos y limitados al mismo sitio del laboratorio. No se ejecuta PHP ni shell enviado por el cliente.
 
 ---
 

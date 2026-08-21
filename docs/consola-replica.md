@@ -46,9 +46,18 @@ Cualquier cliente, no solo SR-108688. Carpeta del repo: `incidents/`.
 |---|---|
 | **Copiar JSON para el cliente** | Plantilla `incidents/templates/para-el-cliente.json` |
 | **Crear ticket con este JSON** | Valida y guarda `incidents/tickets/{id}.json` |
-| **Ver JSON** | Abre un ticket ya creado |
+| **JSON** | Abre un ticket ya creado |
+| **Vista previa** | Compara PHP, WordPress, plugins y tema actuales con los solicitados |
+| **Crear flujo** | Genera pasos declarativos seguros desde la URL y el error del ticket; nunca ejecuta código del cliente |
+| **Aplicar pila** | Snapshot completo + instalación exacta desde wordpress.org o ZIP local autorizado |
+| **Ejecutar flujo** | Abre la URL segura en Chrome, ejecuta pasos declarativos y captura HTTP/JS/PHP |
+| **Resultado** | Muestra pasos, evidencia real, coincidencias, diferencias y causas probables |
+| **PDF cliente / PDF técnico** | Genera los dos entregables dinámicos del run seleccionado |
+| **Restaurar snapshot** | Devuelve core, plugins, temas, configuración y SQLite al estado anterior |
 
 El plan explícito de SR-108688 (por qué falló, qué hacer hoy, mejoras al plugin Chilexpress) está en `incidents/planes/SR-108688/`.
+
+Crear un ticket no cambia WordPress. **Aplicar pila** es una acción distinta, confirmada y con snapshot. Si PHP no coincide, la consola prepara el runtime y pide reiniciar antes de continuar. Los artefactos se guardan en `incidents/runs/{ticket}/{run}/`.
 
 Abajo, la tabla **Pedidos** lista hasta 100 órdenes con **Detalle**, **Generar OT** y **Borrar**.
 
@@ -88,6 +97,7 @@ MU-plugin: `cxp-stack-versions.php`. Caja verde/amarilla arriba de la consola (p
 | **Restaurar 1.4.0** (Chilexpress) | Copia intacta desde `chilexpress-oficial/` del repo. No se parchea PHP |
 | Otro plugin (slug wordpress.org) | Instala cualquier plugin público por slug + versión |
 | **Recargar WordPress completo** | Reinstala el core (versión del selector) **y** todos los plugins de la tabla. Conserva uploads/DB. Recarga el navegador |
+| **Actualizar WordPress + plugins públicos a latest** | Utilidad separada para actualizar todo lo público. No usar para reproducir un ticket con versiones exactas |
 | **Volver a pila del cliente** | WP **7.0.3** + Woo **11.0.1** + Chilexpress **1.4.0** + Woodmart Child |
 | **Correo de laboratorio** | Cambia el mail de admin WP, usuario `admin`, Woo from/stock, remitente Chilexpress y prefill del checkout |
 

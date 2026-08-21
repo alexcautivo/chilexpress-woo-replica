@@ -28,6 +28,7 @@ final class Cxp_Stack_Versions {
 		add_action( 'wp_ajax_nopriv_cxp_stack_set_email', array( __CLASS__, 'ajax_set_email' ) );
 		add_action( 'wp_ajax_cxp_stack_switch_php', array( __CLASS__, 'ajax_switch_php' ) );
 		add_action( 'wp_ajax_nopriv_cxp_stack_switch_php', array( __CLASS__, 'ajax_switch_php' ) );
+		add_action( 'wp_ajax_cxp_stack_update_all_latest', array( __CLASS__, 'ajax_update_all_latest' ) );
 	}
 
 	public static function console_panel() {
@@ -135,6 +136,7 @@ final class Cxp_Stack_Versions {
 			</div>
 			<div class="cxp-lab-row">
 				<button type="button" class="cxp-stack-reload" id="cxp-stack-reload">Recargar WordPress completo (core + plugins de la tabla)</button>
+				<button type="button" class="cxp-stack-reload" id="cxp-stack-latest">Actualizar WordPress + plugins públicos a latest</button>
 				<button type="button" class="cxp-stack-default" id="cxp-stack-default">Volver a pila del cliente (WP 7.0.3 + Woo 11.0.1 + CXP 1.4.0)</button>
 			</div>
 			<p><strong>Correo de laboratorio</strong> — se aplica a admin de WP, usuario <code>admin</code>, WooCommerce (from), remitente Chilexpress y checkout de prueba.</p>
@@ -230,6 +232,11 @@ final class Cxp_Stack_Versions {
 				e.stopPropagation();
 				post('cxp_stack_restore_client', {}, '¿Volver a WP 7.0.3 + Woo 11.0.1 + Chilexpress 1.4.0 + Woodmart Child?');
 			});
+			var latest = document.getElementById('cxp-stack-latest');
+			if (latest) latest.addEventListener('click', function (e) {
+				e.stopPropagation();
+				post('cxp_stack_update_all_latest', {}, 'Esta utilidad NO reproduce una incidencia: instalará latest para WordPress y todos los plugins públicos de la tabla. ¿Continuar?');
+			});
 			var emailGo = document.getElementById('cxp-stack-email-go');
 			if (emailGo) emailGo.addEventListener('click', function (e) {
 				e.stopPropagation();
@@ -274,6 +281,38 @@ final class Cxp_Stack_Versions {
 		}
 		$log[] = 'Tema activo: woodmart-child';
 		$log[] = 'Pila del cliente restaurada. Recargando.';
+		wp_send_json_success( array( 'text' => implode( "\n", $log ), 'reload' => true ) );
+	}
+
+	public static function ajax_update_all_latest() {
+		self::guard();
+		@set_time_limit( 900 );
+		$log = array();
+		$response = wp_remote_get( 'https://api.wordpress.org/core/version-check/1.7/', array( 'timeout' => 30 ) );
+		if ( is_wp_error( $response ) ) {
+			wp_send_json_error( $response->get_error_message() );
+		}
+		$payload = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+		$latest = sanitize_text_field( (string) ( $payload['offers'][0]['current'] ?? '' ) );
+		if ( ! $latest ) {
+			wp_send_json_error( 'WordPress.org no devolvió la versión actual.' );
+		}
+		$wp = self::install_wordpress( $latest, true );
+		if ( is_wp_error( $wp ) ) {
+			wp_send_json_error( $wp->get_error_message() );
+		}
+		$log[] = $wp;
+		foreach ( self::switchable_plugins() as $slug => $meta ) {
+			if ( 'repo' === $meta['source'] || 'sqlite-database-integration' === $slug ) {
+				$log[] = $slug . ': conservado (' . $meta['source'] . ')';
+				continue;
+			}
+			$done = self::install_plugin_zip( $slug, '' );
+			$log[] = is_wp_error( $done ) ? $slug . ': ERROR ' . $done->get_error_message() : $done;
+		}
+		if ( function_exists( 'opcache_reset' ) ) {
+			@opcache_reset();
+		}
 		wp_send_json_success( array( 'text' => implode( "\n", $log ), 'reload' => true ) );
 	}
 
@@ -433,7 +472,7 @@ final class Cxp_Stack_Versions {
 		return false;
 	}
 
-	private static function set_php_target( $version ) {
+	public static function set_php_target( $version ) {
 		update_option( 'cxp_php_target', $version, false );
 		$runtime = dirname( ABSPATH ) . '/runtime';
 		if ( ! wp_mkdir_p( $runtime ) ) {
@@ -645,7 +684,7 @@ final class Cxp_Stack_Versions {
 		return $catalog;
 	}
 
-	private static function switch_component( $target, $version ) {
+	public static function switch_component( $target, $version ) {
 		if ( 'wordpress' === $target ) {
 			return self::install_wordpress( $version );
 		}
@@ -662,7 +701,7 @@ final class Cxp_Stack_Versions {
 		return new WP_Error( 'cxp_stack', 'Objetivo desconocido: ' . $target );
 	}
 
-	private static function install_wordpress( $version, $force = false ) {
+	public static function install_wordpress( $version, $force = false ) {
 		$version = preg_replace( '/[^0-9.]/', '', $version );
 		if ( $version === '' ) {
 			return new WP_Error( 'cxp_stack', 'Falta la versión de WordPress' );
@@ -711,7 +750,7 @@ final class Cxp_Stack_Versions {
 		return 'WordPress ' . $version . ' instalado (core). wp-content no se tocó.';
 	}
 
-	private static function install_plugin_zip( $slug, $version ) {
+	public static function install_plugin_zip( $slug, $version ) {
 		$version = preg_replace( '/[^0-9.]/', '', $version );
 		if ( $version === '' ) {
 			$url = 'https://downloads.wordpress.org/plugin/' . rawurlencode( $slug ) . '.zip';
@@ -747,7 +786,7 @@ final class Cxp_Stack_Versions {
 		return $slug . ' ' . ( $version ?: 'latest' ) . ' instalado y activado.';
 	}
 
-	private static function activate_slug( $slug ) {
+	public static function activate_slug( $slug ) {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
@@ -759,7 +798,101 @@ final class Cxp_Stack_Versions {
 		}
 	}
 
-	private static function restore_chilexpress() {
+	public static function deactivate_slug( $slug ) {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		foreach ( get_plugins() as $file => $data ) {
+			if ( 0 === strpos( $file, $slug . '/' ) || $file === $slug . '.php' ) {
+				deactivate_plugins( $file, true, false );
+				return true;
+			}
+		}
+		return new WP_Error( 'cxp_stack', 'No está instalado ' . $slug );
+	}
+
+	public static function installed_plugin_version( $slug ) {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		foreach ( get_plugins() as $file => $data ) {
+			if ( 0 === strpos( $file, $slug . '/' ) || $file === $slug . '.php' ) {
+				return (string) ( $data['Version'] ?? '' );
+			}
+		}
+		return '';
+	}
+
+	public static function install_theme_zip( $slug, $version = '' ) {
+		$slug = sanitize_key( $slug );
+		$version = preg_replace( '/[^0-9.]/', '', (string) $version );
+		if ( ! $slug ) {
+			return new WP_Error( 'cxp_stack', 'Falta el slug del tema' );
+		}
+		$url = $version
+			? 'https://downloads.wordpress.org/theme/' . rawurlencode( $slug ) . '.' . rawurlencode( $version ) . '.zip'
+			: 'https://downloads.wordpress.org/theme/' . rawurlencode( $slug ) . '.zip';
+		$zip = self::download_zip( $url, $slug . '-' . ( $version ?: 'latest' ) . '-theme.zip' );
+		if ( is_wp_error( $zip ) ) {
+			return $zip;
+		}
+		self::load_fs();
+		$tmp = self::tmp_dir( 'theme-' . $slug );
+		$unzip = unzip_file( $zip, $tmp );
+		if ( is_wp_error( $unzip ) ) {
+			self::rmdir( $tmp );
+			return $unzip;
+		}
+		$root = is_dir( $tmp . '/' . $slug ) ? $tmp . '/' . $slug : $tmp;
+		if ( ! is_readable( $root . '/style.css' ) ) {
+			self::rmdir( $tmp );
+			return new WP_Error( 'cxp_stack', 'El ZIP no contiene un tema válido' );
+		}
+		$dest = get_theme_root() . '/' . $slug;
+		if ( is_dir( $dest ) ) {
+			self::rmdir( $dest );
+		}
+		if ( ! copy_dir( $root, $dest ) ) {
+			self::rmdir( $tmp );
+			return new WP_Error( 'cxp_stack', 'No se pudo copiar el tema ' . $slug );
+		}
+		self::rmdir( $tmp );
+		wp_delete_file( $zip );
+		switch_theme( $slug );
+		return 'Tema ' . $slug . ' ' . ( $version ?: 'latest' ) . ' instalado y activado.';
+	}
+
+	public static function install_theme_local_zip( $slug, $zip ) {
+		$slug = sanitize_key( $slug );
+		if ( ! $slug || ! is_readable( $zip ) || 'zip' !== strtolower( pathinfo( $zip, PATHINFO_EXTENSION ) ) ) {
+			return new WP_Error( 'cxp_stack', 'ZIP local de tema inválido' );
+		}
+		self::load_fs();
+		$tmp = self::tmp_dir( 'theme-local-' . $slug );
+		$unzip = unzip_file( $zip, $tmp );
+		if ( is_wp_error( $unzip ) ) {
+			self::rmdir( $tmp );
+			return $unzip;
+		}
+		$root = is_dir( $tmp . '/' . $slug ) ? $tmp . '/' . $slug : $tmp;
+		if ( ! is_readable( $root . '/style.css' ) ) {
+			self::rmdir( $tmp );
+			return new WP_Error( 'cxp_stack', 'El ZIP local no contiene style.css para ' . $slug );
+		}
+		$dest = get_theme_root() . '/' . $slug;
+		if ( is_dir( $dest ) ) {
+			self::rmdir( $dest );
+		}
+		if ( ! copy_dir( $root, $dest ) ) {
+			self::rmdir( $tmp );
+			return new WP_Error( 'cxp_stack', 'No se pudo copiar el tema local ' . $slug );
+		}
+		self::rmdir( $tmp );
+		switch_theme( $slug );
+		return 'Tema ' . $slug . ' instalado desde ZIP local y activado.';
+	}
+
+	public static function restore_chilexpress() {
 		$src = dirname( ABSPATH ) . '/chilexpress-oficial';
 		if ( ! is_dir( $src ) || ! is_readable( $src . '/chilexpress-woo-oficial.php' ) ) {
 			$src = WP_PLUGIN_DIR . '/chilexpress-oficial';

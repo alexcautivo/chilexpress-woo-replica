@@ -321,7 +321,7 @@ final class Cxp_Plugin_Lab {
 		echo '<div class="notice notice-warning"><p><strong>Laboratorio:</strong> modo seguro activo (WooCommerce + Chilexpress + SQLite). Salir desde la consola de réplica.</p></div>';
 	}
 
-	private static function install_zip( $zip_path, $activate, $snapshot_first ) {
+	public static function install_zip( $zip_path, $activate = true, $snapshot_first = false ) {
 		self::load_fs();
 		$tmp = self::snapshots_dir() . '/tmp-' . wp_generate_password( 8, false );
 		wp_mkdir_p( $tmp );

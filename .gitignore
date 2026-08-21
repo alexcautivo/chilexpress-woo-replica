@@ -4,3 +4,6 @@
 wordpress/wp-config.php
 .DS_Store
 Thumbs.db
+
+# Snapshots completos de runs: pueden contener core/plugins premium y bases de datos.
+incidents/runs/*/*/snapshot/

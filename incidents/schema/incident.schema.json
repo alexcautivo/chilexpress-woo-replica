@@ -1,32 +1,45 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/alexcautivo/chilexpress-woo-replica/incidents/schema/incident.schema.json",
-  "title": "Ticket de incidencia Aeolabs (WordPress / Woo / Chilexpress)",
+  "title": "Ticket de incidencia Aeolabs (WordPress / Woo / Chilexpress) — schema 1.1",
+  "description": "Contrato 1.1. La pila (stack) declara PHP, WordPress, tema y plugins con fuente instalable. El flujo de reproducción es declarativo: solo operaciones permitidas, sin PHP ni comandos del cliente. URLs de pasos son rutas relativas del laboratorio.",
   "type": "object",
-  "required": ["schema_version", "origen", "sintoma", "pila"],
+  "additionalProperties": false,
+  "required": ["schema_version", "origen", "sintoma", "pila", "plugins"],
   "properties": {
-    "schema_version": { "type": "string", "const": "1.0" },
+    "schema_version": {
+      "type": "string",
+      "const": "1.1"
+    },
     "ticket_id": {
       "type": "string",
+      "maxLength": 64,
+      "pattern": "^$|^[A-Za-z0-9][A-Za-z0-9._-]{0,62}$",
       "description": "Vacío al enviarlo al cliente. Aeolabs lo asigna al crear el ticket (ej. SR-108688 o CXP-20260820-221500)."
+    },
+    "instrucciones_para_completar": {
+      "type": "string",
+      "description": "Solo en la plantilla para el cliente. Se puede omitir al guardar el ticket."
     },
     "origen": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["sitio_url"],
       "properties": {
-        "empresa": { "type": "string" },
-        "sitio_url": { "type": "string" },
-        "contacto_nombre": { "type": "string" },
-        "contacto_email": { "type": "string" },
-        "fecha_utc": { "type": "string" }
+        "empresa": { "type": "string", "maxLength": 200 },
+        "sitio_url": { "type": "string", "maxLength": 500 },
+        "contacto_nombre": { "type": "string", "maxLength": 200 },
+        "contacto_email": { "type": "string", "maxLength": 254 },
+        "fecha_utc": { "type": "string", "maxLength": 40 }
       }
     },
     "sintoma": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["resumen"],
       "properties": {
-        "resumen": { "type": "string" },
-        "cuando_empezo": { "type": "string" },
+        "resumen": { "type": "string", "maxLength": 2000 },
+        "cuando_empezo": { "type": "string", "maxLength": 500 },
         "frecuencia": {
           "type": "string",
           "enum": ["siempre", "intermitente", "solo_al_actualizar", "solo_en_checkout", "solo_en_admin", "desconocido"]
@@ -35,40 +48,29 @@
           "type": "string",
           "enum": ["sitio_caido", "admin_caido", "checkout", "cotizador", "ot_envio", "otro"]
         },
-        "mensaje_error": { "type": "string" },
-        "url_donde_falla": { "type": "string" },
+        "mensaje_error": { "type": "string", "maxLength": 4000 },
+        "url_donde_falla": { "type": "string", "maxLength": 500 },
         "pasos_para_reproducir": {
           "type": "array",
-          "items": { "type": "string" }
+          "maxItems": 30,
+          "items": { "type": "string", "maxLength": 500 }
         }
       }
     },
     "pila": {
-      "type": "object",
-      "properties": {
-        "php": { "type": "string" },
-        "wordpress": { "type": "string" },
-        "woocommerce": { "type": "string" },
-        "chilexpress_oficial": { "type": "string" },
-        "tema": { "type": "string" },
-        "tema_padre": { "type": "string" }
-      }
+      "$ref": "#/$defs/pila"
     },
     "plugins": {
       "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "nombre": { "type": "string" },
-          "version": { "type": "string" },
-          "activo": { "type": "boolean" }
-        }
-      }
+      "minItems": 1,
+      "maxItems": 40,
+      "items": { "$ref": "#/$defs/plugin" }
     },
     "entorno": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "hosting": { "type": "string" },
+        "hosting": { "type": "string", "maxLength": 200 },
         "actualizacion_en_curso": { "type": "boolean" },
         "checkout": { "type": "string", "enum": ["clasico", "bloques", "desconocido"] },
         "ambiente": { "type": "string", "enum": ["produccion", "staging", "local", "desconocido"] }
@@ -76,17 +78,388 @@
     },
     "evidencia": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "correo_wordpress": { "type": "string" },
-        "debug_log_extracto": { "type": "string" },
-        "capturas_notas": { "type": "string" }
+        "correo_wordpress": { "type": "string", "maxLength": 20000 },
+        "debug_log_extracto": { "type": "string", "maxLength": 20000 },
+        "capturas_notas": { "type": "string", "maxLength": 4000 },
+        "http_status": { "type": ["integer", "null"], "minimum": 100, "maximum": 599 },
+        "clase_error": { "type": "string", "maxLength": 400 },
+        "archivo": { "type": "string", "maxLength": 400 },
+        "linea": { "type": ["integer", "null"], "minimum": 0, "maximum": 1000000 }
       }
     },
     "pedido": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "que_necesitan": { "type": "string" },
+        "que_necesitan": { "type": "string", "maxLength": 2000 },
         "urgencia": { "type": "string", "enum": ["critica", "alta", "media", "baja"] }
+      }
+    },
+    "laboratorio": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Estado de réplica. Lo llena Aeolabs, no el cliente.",
+      "properties": {
+        "estado": {
+          "type": "string",
+          "enum": ["pendiente", "pila_aplicada", "parcial", "no_aplicable"]
+        },
+        "notas": { "type": "string", "maxLength": 2000 }
+      }
+    },
+    "flujo_reproduccion": {
+      "$ref": "#/$defs/flujo_reproduccion"
+    },
+    "diagnostico": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Diagnóstico ya establecido. No se muta al ejecutar un run.",
+      "properties": {
+        "resumen": { "type": "string", "maxLength": 4000 },
+        "causa_probable": { "type": "string", "maxLength": 200 },
+        "no_es": {
+          "type": "array",
+          "maxItems": 20,
+          "items": { "type": "string", "maxLength": 200 }
+        }
+      }
+    },
+    "plan_repo": {
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^$|^incidents/planes/[A-Za-z0-9._-]+/?$",
+      "description": "Ruta relativa al plan en el repo, si existe."
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Carpeta del plugin o tema (wp-content/plugins/SLUG o /themes/SLUG), no el título comercial."
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^(latest|[0-9]+(?:\\.[0-9A-Za-z]+){0,4})$",
+      "description": "Versión exacta. latest solo si politicas.permitir_latest es true."
+    },
+    "fuente": {
+      "type": "string",
+      "enum": ["wordpress.org", "zip_local", "repo"],
+      "description": "wordpress.org = ZIP público. zip_local = ZIP cargado por Aeolabs en el laboratorio. repo = árbol del repositorio (Chilexpress Oficial). Nunca fuentes no autorizadas."
+    },
+    "checksum": {
+      "type": "string",
+      "description": "Vacío o sha256: más 64 hex. Obligatorio en la práctica para zip_local.",
+      "pattern": "^$|^sha256:[a-fA-F0-9]{64}$"
+    },
+    "safe_path": {
+      "type": "string",
+      "maxLength": 300,
+      "pattern": "^/[A-Za-z0-9._~:/?#@!$'()*+,;=%\\[\\]&-]*$",
+      "description": "Solo ruta relativa del sitio de laboratorio. Prohibido javascript:, data:, file:// y hosts arbitrarios."
+    },
+    "step_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "ajax_action": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "pila": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Stack exacto a replicar. php no se instala desde wordpress.org.",
+      "properties": {
+        "php": { "type": "string", "maxLength": 32 },
+        "wordpress": { "$ref": "#/$defs/version" },
+        "woocommerce": { "type": "string", "maxLength": 32 },
+        "chilexpress_oficial": { "type": "string", "maxLength": 32 },
+        "tema": { "$ref": "#/$defs/tema" }
+      }
+    },
+    "tema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nombre"],
+      "properties": {
+        "nombre": { "type": "string", "maxLength": 120 },
+        "version": { "type": "string", "maxLength": 32 },
+        "slug": { "type": "string", "maxLength": 80 },
+        "fuente": { "$ref": "#/$defs/fuente" },
+        "es_hijo": { "type": "boolean" },
+        "padre_slug": { "type": "string", "maxLength": 80 },
+        "padre_version": { "type": "string", "maxLength": 32 },
+        "archivo_zip": { "type": "string", "maxLength": 160, "pattern": "^$|^[A-Za-z0-9._-]+\\.zip$" },
+        "checksum": { "$ref": "#/$defs/checksum" }
+      }
+    },
+    "plugin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nombre", "slug", "version", "activo", "fuente"],
+      "properties": {
+        "nombre": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "slug": { "$ref": "#/$defs/slug" },
+        "version": { "$ref": "#/$defs/version" },
+        "activo": { "type": "boolean" },
+        "fuente": { "$ref": "#/$defs/fuente" },
+        "archivo_zip": { "type": "string", "maxLength": 160, "pattern": "^$|^[A-Za-z0-9._-]+\\.zip$" },
+        "checksum": { "$ref": "#/$defs/checksum" },
+        "notas": { "type": "string", "maxLength": 500 }
+      }
+    },
+    "flujo_reproduccion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 40,
+          "items": { "$ref": "#/$defs/step" }
+        },
+        "assertions": {
+          "type": "array",
+          "maxItems": 40,
+          "items": { "$ref": "#/$defs/assertion" }
+        },
+        "politicas": { "$ref": "#/$defs/politicas" }
+      }
+    },
+    "politicas": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "timeout_segundos": { "type": "integer", "minimum": 5, "maximum": 600 },
+        "max_pasos": { "type": "integer", "minimum": 1, "maximum": 40 },
+        "limpiar_carrito": { "type": "boolean" },
+        "limpiar_transients": { "type": "boolean" },
+        "conservar_pedidos": { "type": "boolean" },
+        "restaurar_al_finalizar": { "type": "boolean" },
+        "versiones_exactas": { "type": "boolean" },
+        "permitir_latest": { "type": "boolean" },
+        "proteger_mu_cxp": { "type": "boolean" },
+        "proteger_sqlite": { "type": "boolean" },
+        "no_parchear_chilexpress": { "type": "boolean" }
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "op"],
+      "properties": {
+        "id": { "$ref": "#/$defs/step_id" },
+        "op": {
+          "type": "string",
+          "enum": [
+            "request",
+            "open_url",
+            "post_ajax",
+            "activate_plugin",
+            "deactivate_plugin",
+            "clear_cache",
+            "wait",
+            "assert_http",
+            "assert_text",
+            "assert_log",
+            "run_internal_scenario"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "op": { "const": "request" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "url"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "request" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "url": { "$ref": "#/$defs/safe_path" },
+              "method": { "type": "string", "enum": ["GET", "POST", "HEAD"] }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "open_url" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "url"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "open_url" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "url": { "$ref": "#/$defs/safe_path" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "post_ajax" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "action"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "post_ajax" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "action": { "$ref": "#/$defs/ajax_action" },
+              "campos": {
+                "type": "object",
+                "maxProperties": 20,
+                "additionalProperties": { "type": ["string", "number", "boolean"] }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "activate_plugin" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "slug"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "activate_plugin" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "slug": { "$ref": "#/$defs/slug" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "deactivate_plugin" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "slug"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "deactivate_plugin" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "slug": { "$ref": "#/$defs/slug" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "clear_cache" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "clear_cache" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "alcance": {
+                "type": "string",
+                "enum": ["transients", "opcache", "object_cache", "todo_lab"]
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "wait" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "segundos"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "wait" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "segundos": { "type": "integer", "minimum": 1, "maximum": 30 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "assert_http" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "status"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "assert_http" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "status": { "type": "integer", "minimum": 100, "maximum": 599 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "assert_text" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "texto"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "assert_text" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "texto": { "type": "string", "minLength": 1, "maxLength": 500 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "assert_log" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "texto"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "assert_log" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "texto": { "type": "string", "minLength": 1, "maxLength": 500 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "op": { "const": "run_internal_scenario" } }, "required": ["op"] },
+          "then": {
+            "additionalProperties": false,
+            "required": ["id", "op", "escenario"],
+            "properties": {
+              "id": { "$ref": "#/$defs/step_id" },
+              "op": { "const": "run_internal_scenario" },
+              "descripcion": { "type": "string", "maxLength": 500 },
+              "escenario": {
+                "type": "string",
+                "description": "Nombre de un escenario registrado en el laboratorio. No es código del cliente.",
+                "pattern": "^[a-z][a-z0-9_]{2,64}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "tipo", "esperado"],
+      "properties": {
+        "id": { "$ref": "#/$defs/step_id" },
+        "tipo": {
+          "type": "string",
+          "enum": [
+            "http_status",
+            "body_contains",
+            "body_not_contains",
+            "log_contains",
+            "php_error_class",
+            "php_error_file",
+            "php_error_line",
+            "php_error_type"
+          ]
+        },
+        "esperado": {
+          "type": ["string", "integer"],
+          "maxLength": 500
+        },
+        "paso": { "$ref": "#/$defs/step_id" }
       }
     }
   }

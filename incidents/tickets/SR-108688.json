@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "ticket_id": "SR-108688",
   "origen": {
     "empresa": "UPMOVIL / celularesenventa.cl",
@@ -27,12 +27,36 @@
     "wordpress": "7.0.3",
     "woocommerce": "11.0.1",
     "chilexpress_oficial": "1.4.0",
-    "tema": "Woodmart Child 1.0.0",
-    "tema_padre": "Woodmart 8.5.7"
+    "tema": {
+      "nombre": "Woodmart Child",
+      "version": "1.0.0",
+      "slug": "woodmart-child",
+      "fuente": "zip_local",
+      "es_hijo": true,
+      "padre_slug": "woodmart",
+      "padre_version": "8.5.7",
+      "checksum": ""
+    }
   },
   "plugins": [
-    { "nombre": "Chilexpress Oficial", "version": "1.4.0", "activo": true },
-    { "nombre": "WooCommerce", "version": "11.0.1", "activo": true }
+    {
+      "nombre": "Chilexpress Oficial",
+      "slug": "chilexpress-oficial",
+      "version": "1.4.0",
+      "activo": true,
+      "fuente": "repo",
+      "checksum": "",
+      "notas": "Arbol del repositorio. No parchear."
+    },
+    {
+      "nombre": "WooCommerce",
+      "slug": "woocommerce",
+      "version": "11.0.1",
+      "activo": true,
+      "fuente": "wordpress.org",
+      "checksum": "",
+      "notas": ""
+    }
   ],
   "entorno": {
     "hosting": "Produccion celularesenventa.cl",
@@ -43,11 +67,115 @@
   "evidencia": {
     "correo_wordpress": "E_ERROR linea 84 abstract-wc-shipping-method.php. Stack incluye class-chilexpress-woo-oficial-admin.php y wp-admin/admin-ajax.php.",
     "debug_log_extracto": "",
-    "capturas_notas": "Plan de accion en incidents/planes/SR-108688/. Laboratorio no parchea chilexpress-oficial."
+    "capturas_notas": "Plan de accion en incidents/planes/SR-108688/. Laboratorio no parchea chilexpress-oficial.",
+    "http_status": 500,
+    "clase_error": "Automattic\\WooCommerce\\Enums\\ProductTaxStatus",
+    "archivo": "includes/abstracts/abstract-wc-shipping-method.php",
+    "linea": 84
   },
   "pedido": {
     "que_necesitan": "Entender el fatal, recuperar el sitio y poder actualizar Woo sin caer. Chilexpress debe publicar un arranque tardio.",
     "urgencia": "critica"
+  },
+  "laboratorio": {
+    "estado": "pila_aplicada",
+    "notas": "Pila de referencia del laboratorio. El fatal se replica con escenario interno de update incompleto, no editando Chilexpress."
+  },
+  "diagnostico": {
+    "resumen": "Chilexpress Oficial 1.4.0 hace require_once de abstract-wc-shipping-method.php en plugins_loaded. Woo 11 usa ProductTaxStatus::TAXABLE en esa abstracta. Durante un update in-place el abstracto nuevo puede existir y el enum todavia no: E_ERROR identico al correo. Con Woo 11.0.1 completo el mismo require_once no fataliza. No es Woodmart, ni PHP 8.4 incompatible, ni que haya que bajar Woo.",
+    "causa_probable": "carga_prematura_durante_update_incompleto",
+    "no_es": [
+      "tema Woodmart",
+      "PHP 8.4 incompatible",
+      "incompatibilidad fija Chilexpress 1.4.0 vs Woo 11.0.1 completo",
+      "claves API Chilexpress"
+    ]
+  },
+  "flujo_reproduccion": {
+    "steps": [
+      {
+        "id": "activar-chilexpress",
+        "op": "activate_plugin",
+        "slug": "chilexpress-oficial",
+        "descripcion": "Chilexpress Oficial 1.4.0 activo, sin parche."
+      },
+      {
+        "id": "activar-woocommerce",
+        "op": "activate_plugin",
+        "slug": "woocommerce",
+        "descripcion": "WooCommerce 11.0.1 activo."
+      },
+      {
+        "id": "simular-update-incompleto",
+        "op": "run_internal_scenario",
+        "escenario": "sr108688_incomplete_woo_update",
+        "descripcion": "Simula la ventana del actualizador: ruta de ProductTaxStatus.php presente, clase ausente. No modifica chilexpress-oficial."
+      },
+      {
+        "id": "pegar-admin-ajax",
+        "op": "request",
+        "method": "GET",
+        "url": "/wp-admin/admin-ajax.php",
+        "descripcion": "Misma entrada que el correo del 11 ago."
+      },
+      {
+        "id": "marcar-fatal-en-log",
+        "op": "assert_log",
+        "texto": "ProductTaxStatus",
+        "descripcion": "El log o la captura del fatal debe mencionar el enum."
+      },
+      {
+        "id": "restaurar-enum",
+        "op": "run_internal_scenario",
+        "escenario": "sr108688_restore_enum",
+        "descripcion": "Restaurar ProductTaxStatus.php para no dejar el laboratorio caido."
+      }
+    ],
+    "assertions": [
+      {
+        "id": "fatal-clase",
+        "tipo": "php_error_class",
+        "esperado": "Automattic\\WooCommerce\\Enums\\ProductTaxStatus",
+        "paso": "pegar-admin-ajax"
+      },
+      {
+        "id": "fatal-archivo",
+        "tipo": "php_error_file",
+        "esperado": "abstract-wc-shipping-method.php",
+        "paso": "pegar-admin-ajax"
+      },
+      {
+        "id": "fatal-linea",
+        "tipo": "php_error_line",
+        "esperado": 84,
+        "paso": "pegar-admin-ajax"
+      },
+      {
+        "id": "fatal-tipo",
+        "tipo": "php_error_type",
+        "esperado": "E_ERROR",
+        "paso": "pegar-admin-ajax"
+      },
+      {
+        "id": "stack-chilexpress",
+        "tipo": "log_contains",
+        "esperado": "class-chilexpress-woo-oficial-admin.php",
+        "paso": "pegar-admin-ajax"
+      }
+    ],
+    "politicas": {
+      "timeout_segundos": 180,
+      "max_pasos": 20,
+      "limpiar_carrito": true,
+      "limpiar_transients": true,
+      "conservar_pedidos": true,
+      "restaurar_al_finalizar": true,
+      "versiones_exactas": true,
+      "permitir_latest": false,
+      "proteger_mu_cxp": true,
+      "proteger_sqlite": true,
+      "no_parchear_chilexpress": true
+    }
   },
   "plan_repo": "incidents/planes/SR-108688/"
 }

@@ -30,6 +30,9 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 			if ( function_exists( 'cxp_storefront_dims_markup' ) ) {
 				echo cxp_storefront_dims_markup( $product, 'card' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
+			if ( function_exists( 'cxp_storefront_loop_qty_html' ) ) {
+				echo cxp_storefront_loop_qty_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
 			?>
 			<div class="wd-add-btn wd-add-btn-replace">
 				<?php woocommerce_template_loop_add_to_cart(); ?>

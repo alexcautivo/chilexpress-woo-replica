@@ -83,7 +83,7 @@ add_action(
 			'cxp-checkout-cxp',
 			content_url( 'mu-plugins/cxp-checkout-debug/checkout-cxp.css' ),
 			array( 'chilexpress-woo-oficial-storefront' ),
-			'1.8.2'
+			'1.8.3'
 		);
 
 		wp_enqueue_script(
@@ -518,6 +518,7 @@ function cxp_storefront_loop_qty_html() {
 	ob_start();
 	?>
 	<div class="cxp-qty" data-max="10">
+		<span class="cxp-qty__label">Cantidad</span>
 		<button type="button" class="cxp-qty__btn" data-dir="-1" aria-label="Quitar uno"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'minus' ) : '−'; ?></button>
 		<input class="cxp-qty__input" type="number" min="1" max="10" value="1" inputmode="numeric" aria-label="Cantidad">
 		<button type="button" class="cxp-qty__btn" data-dir="1" aria-label="Agregar uno"><?php echo function_exists( 'cxp_icon' ) ? cxp_icon( 'plus' ) : '+'; ?></button>
@@ -525,6 +526,10 @@ function cxp_storefront_loop_qty_html() {
 	<?php
 	return ob_get_clean();
 }
+
+add_filter( 'loop_shop_columns', static function () {
+	return 3;
+} );
 
 add_action(
 	'woocommerce_after_shop_loop_item',

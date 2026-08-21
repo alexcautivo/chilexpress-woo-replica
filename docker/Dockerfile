@@ -42,7 +42,7 @@ RUN sed -i 's/\r$//' /usr/local/bin/cxp-entrypoint.sh \
 
 WORKDIR /var/www/html
 EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=8s --start-period=40s --retries=5 \
-	CMD curl -sS -o /dev/null -w "%{http_code}" http://127.0.0.1/ | grep -qE "^(200|301|302|303)$"
+HEALTHCHECK --interval=15s --timeout=5s --start-period=25s --retries=4 \
+	CMD bash -c "echo >/dev/tcp/127.0.0.1/80"
 ENTRYPOINT ["/usr/local/bin/cxp-entrypoint.sh"]
 CMD ["apache2-foreground"]
